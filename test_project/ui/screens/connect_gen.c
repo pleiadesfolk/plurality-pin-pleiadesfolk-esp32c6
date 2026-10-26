@@ -56,9 +56,21 @@ lv_obj_t * connect_create(void)
         lv_obj_set_width(qrcode_b_0, 170);
         lv_obj_set_height(qrcode_b_0, 170);
 
-        lv_obj_t * scan_for_web_dashboard_access_ensure_that_you_are_connected_to_the_pin_0 = scan_for_web_dashboard_access_ensure_that_you_are_connected_to_the_pin_create(row_0);
-        lv_obj_set_width(scan_for_web_dashboard_access_ensure_that_you_are_connected_to_the_pin_0, 224);
-        lv_obj_set_height(scan_for_web_dashboard_access_ensure_that_you_are_connected_to_the_pin_0, 250);
+        lv_obj_t * container_0 = container_create(row_0);
+        lv_obj_set_width(container_0, 224);
+        lv_obj_set_height(container_0, 250);
+        lv_obj_t * label_0 = label_create(container_0);
+        lv_obj_set_align(label_0, LV_ALIGN_LEFT_MID);
+        lv_obj_set_x(label_0, 0);
+        lv_obj_set_width(label_0, 224);
+        lv_obj_set_height(label_0, LV_SIZE_CONTENT);
+        lv_label_set_text(label_0, "Scan to connect to the web dashboard");
+        lv_obj_set_style_text_font(label_0, font_ibm_plex_mono_regular_36, 0);
+        lv_obj_set_style_text_letter_space(label_0, 1, 0);
+        lv_obj_set_style_text_line_space(label_0, -10, 0);
+        lv_obj_set_style_text_color(label_0, lv_color_hex(0xFFFFFF), 0);
+        lv_obj_set_style_text_align(label_0, LV_TEXT_ALIGN_LEFT, 0);
+        lv_label_set_long_mode(label_0, LV_LABEL_LONG_MODE_WRAP);
 
         the_root = lv_obj_0;
     }

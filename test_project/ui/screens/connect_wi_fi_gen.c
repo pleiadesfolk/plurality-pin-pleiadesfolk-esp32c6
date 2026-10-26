@@ -60,15 +60,17 @@ lv_obj_t * connect_wi_fi_create(void)
         lv_obj_set_width(container_0, 224);
         lv_obj_set_height(container_0, 250);
         lv_obj_t * label_0 = label_create(container_0);
+        lv_obj_set_align(label_0, LV_ALIGN_LEFT_MID);
         lv_obj_set_x(label_0, 0);
-        lv_obj_set_y(label_0, 0);
         lv_obj_set_width(label_0, 224);
-        lv_obj_set_height(label_0, 250);
+        lv_obj_set_height(label_0, LV_SIZE_CONTENT);
         lv_label_set_text(label_0, "Scan to connect to the pin");
         lv_obj_set_style_text_font(label_0, font_ibm_plex_mono_regular_36, 0);
         lv_obj_set_style_text_letter_space(label_0, 0, 0);
+        lv_obj_set_style_text_line_space(label_0, -10, 0);
         lv_obj_set_style_text_color(label_0, lv_color_hex(0xFFFFFF), 0);
-        lv_label_set_long_mode(label_0, LV_LABEL_LONG_MODE_CLIP);
+        lv_obj_set_style_text_align(label_0, LV_TEXT_ALIGN_LEFT, 0);
+        lv_label_set_long_mode(label_0, LV_LABEL_LONG_MODE_WRAP);
 
         the_root = lv_obj_0;
     }

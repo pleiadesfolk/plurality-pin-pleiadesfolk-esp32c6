@@ -5,6 +5,9 @@ build/
 managed_components/
 sdkconfig.old
 
+# Downloaded npm packages (reinstall from package-lock.json, see firmware/pin/tools/sync_ui.py)
+node_modules/
+
 # LVGL Editor preview output
 preview-build/
 preview-bin/

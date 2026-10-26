@@ -46,22 +46,32 @@ lv_obj_t * namecard_mode_create(void)
         lv_obj_set_style_pad_all(lv_obj_0, 0, 0);
 
         lv_obj_add_style(lv_obj_0, &style_screen_base_global, 0);
+        lv_obj_t * panel_0 = panel_create(lv_obj_0);
+        lv_obj_set_x(panel_0, 0);
+        lv_obj_set_y(panel_0, 0);
+        lv_obj_set_width(panel_0, 456);
+        lv_obj_set_height(panel_0, 280);
+        lv_obj_set_style_bg_color(panel_0, lv_color_hex(0x1F3B5C), 0);
+        lv_obj_set_style_bg_grad_color(panel_0, lv_color_hex(0x468DC3), 0);
+        lv_obj_set_style_bg_grad_dir(panel_0, LV_GRAD_DIR_HOR, 0);
+
         lv_obj_t * container_0 = container_create(lv_obj_0);
         lv_obj_set_x(container_0, 20);
         lv_obj_set_y(container_0, 11);
         lv_obj_set_width(container_0, 416);
         lv_obj_set_height(container_0, 260);
         lv_obj_t * label_0 = label_create(container_0);
-        lv_obj_set_align(label_0, LV_ALIGN_CENTER);
+        lv_obj_set_align(label_0, LV_ALIGN_LEFT_MID);
         lv_obj_set_x(label_0, 0);
-        lv_obj_set_y(label_0, 0);
+        lv_obj_set_y(label_0, -10);
         lv_obj_set_width(label_0, 416);
-        lv_obj_set_height(label_0, 260);
-        lv_label_set_text(label_0, "Helvetica Ellis\nof the\nPleiadesfolk");
+        lv_obj_set_height(label_0, LV_SIZE_CONTENT);
+        lv_label_set_text(label_0, "Helvetica Ellis of the Pleiadesfolk");
         lv_obj_set_style_text_font(label_0, font_playwrite_us_trad_regular_52, 0);
-        lv_obj_set_style_text_line_space(label_0, -22, 0);
+        lv_obj_set_style_text_line_space(label_0, -30, 0);
         lv_obj_set_style_text_color(label_0, lv_color_hex(0xFFFFFF), 0);
-        lv_label_set_long_mode(label_0, LV_LABEL_LONG_MODE_CLIP);
+        lv_obj_set_style_text_align(label_0, LV_TEXT_ALIGN_LEFT, 0);
+        lv_label_set_long_mode(label_0, LV_LABEL_LONG_MODE_WRAP);
 
         the_root = lv_obj_0;
     }

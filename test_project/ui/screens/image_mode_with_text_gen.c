@@ -66,8 +66,7 @@ lv_obj_t * image_mode_with_text_create(void)
         lv_obj_set_height(column_0, 256);
         lv_obj_t * label_0 = label_create(column_0);
         lv_obj_set_width(label_0, lv_pct(100));
-        lv_obj_set_height(label_0, 0);
-        lv_obj_set_flex_grow(label_0, 1);
+        lv_obj_set_height(label_0, LV_SIZE_CONTENT);
         lv_label_set_text(label_0, "Meredith\nEllis");
         lv_obj_set_style_text_font(label_0, font_playwrite_us_trad_regular_40, 0);
         lv_obj_set_style_text_line_space(label_0, -18, 0);

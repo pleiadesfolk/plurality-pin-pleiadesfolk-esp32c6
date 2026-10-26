@@ -11,7 +11,9 @@
  * panel and touch drivers.
  */
 
+#include <string.h>
 #include "display.h"
+#include "esp_timer.h"
 #include "esp_heap_caps.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_io.h"
@@ -34,6 +36,7 @@ static esp_lcd_panel_handle_t panel;
 static esp_lcd_panel_io_handle_t panel_io;
 static esp_lcd_touch_handle_t touch;
 static uint16_t *rotate_buf;            /* DMA buffer holding the rotated strip */
+static display_stats_t stats;
 
 /* ---------- display ---------- */
 
@@ -51,6 +54,7 @@ static inline void to_panel(int x, int y, int *px, int *py)
 
 static void flush_cb(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
 {
+    int64_t t0 = esp_timer_get_time();
     const uint16_t *src = (const uint16_t *)px_map;
     const int w = lv_area_get_width(area);
     const int h = lv_area_get_height(area);
@@ -73,8 +77,19 @@ static void flush_cb(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
         }
     }
 
+    stats.rotate_us += esp_timer_get_time() - t0;
+    stats.flushes++;
+    stats.pixels += w * h;
+
     /* Asynchronous: flush_done_cb tells LVGL when the transfer has finished. */
     esp_lcd_panel_draw_bitmap(panel, px1, py1, px1 + pw, py1 + w, rotate_buf);
+}
+
+display_stats_t display_take_stats(void)
+{
+    display_stats_t s = stats;
+    memset(&stats, 0, sizeof(stats));
+    return s;
 }
 
 static bool flush_done_cb(esp_lcd_panel_io_handle_t io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
@@ -95,6 +110,44 @@ static void rounder_cb(lv_event_t *e)
 
 /* ---------- touch ---------- */
 
+#define SWIPE_MIN_DISTANCE  60          /* px the finger must travel to count as a swipe */
+
+static display_swipe_cb_t swipe_cb;
+
+static void swipe_async(void *dir)
+{
+    swipe_cb((lv_dir_t)(uintptr_t)dir);
+}
+
+/* Swipes are detected here from raw touch data rather than with LVGL gestures,
+ * which are swallowed whenever a screen contains something scrollable. */
+static void detect_swipe(bool pressed, lv_point_t point)
+{
+    static bool was_pressed;
+    static lv_point_t start, last;
+
+    if (pressed) {
+        if (!was_pressed) {
+            start = point;
+        }
+        last = point;
+    } else if (was_pressed && swipe_cb) {
+        int dx = last.x - start.x;
+        int dy = last.y - start.y;
+        lv_dir_t dir = LV_DIR_NONE;
+        if (LV_ABS(dx) > SWIPE_MIN_DISTANCE && LV_ABS(dx) > 2 * LV_ABS(dy)) {
+            dir = dx > 0 ? LV_DIR_RIGHT : LV_DIR_LEFT;
+        } else if (LV_ABS(dy) > SWIPE_MIN_DISTANCE && LV_ABS(dy) > 2 * LV_ABS(dx)) {
+            dir = dy > 0 ? LV_DIR_BOTTOM : LV_DIR_TOP;
+        }
+        /* Called later, outside of input processing, so the callback may change screens */
+        if (dir != LV_DIR_NONE) {
+            lv_async_call(swipe_async, (void *)(uintptr_t)dir);
+        }
+    }
+    was_pressed = pressed;
+}
+
 static void touch_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
 {
     esp_lcd_touch_point_data_t point;
@@ -105,6 +158,7 @@ static void touch_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
 
     if (count == 0) {
         data->state = LV_INDEV_STATE_RELEASED;
+        detect_swipe(false, data->point);
         return;
     }
     /* Inverse of to_panel(): physical portrait point -> logical landscape point */
@@ -116,9 +170,15 @@ static void touch_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
     data->point.y = point.x;
 #endif
     data->state = LV_INDEV_STATE_PRESSED;
+    detect_swipe(true, data->point);
 }
 
 /* ---------- public ---------- */
+
+void display_set_swipe_cb(display_swipe_cb_t cb)
+{
+    swipe_cb = cb;
+}
 
 void display_set_brightness(uint8_t percent)
 {
