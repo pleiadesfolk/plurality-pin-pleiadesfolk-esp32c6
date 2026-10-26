@@ -1,0 +1,523 @@
+<globals>
+  <consts>
+    <!-- ────────────────── <lvgl-figma-flow begin="consts"/> ───────────────────
+         Regenerated on each export. Add your own entries outside the fence. -->
+
+    <color name="const_baselib_accent_global" value="0x70609C" />
+    <int name="const_baselib_unit_sm_global" value="4" />
+
+    <!-- ─────────────────── <lvgl-figma-flow end="consts"/> ──────────────────── -->
+  </consts>
+
+  <images>
+    <!-- ────────────────── <lvgl-figma-flow begin="images"/> ───────────────────
+         Regenerated on each export. Add your own entries outside the fence. -->
+
+    <data name="image_img_02c5506b" src_path="images/img_02c5506b.png" color_format="rgb565a8" />
+    <data name="image_img_45c6bb3a" src_path="images/img_45c6bb3a.png" color_format="rgb565a8" />
+    <data name="image_vec_37_864" src_path="images/vec_37_864.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2604" src_path="images/vec_6_2604.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2605" src_path="images/vec_6_2605.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2608" src_path="images/vec_6_2608.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2609" src_path="images/vec_6_2609.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2610" src_path="images/vec_6_2610.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2611" src_path="images/vec_6_2611.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2612" src_path="images/vec_6_2612.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2613" src_path="images/vec_6_2613.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2614" src_path="images/vec_6_2614.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2615" src_path="images/vec_6_2615.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2616" src_path="images/vec_6_2616.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2617" src_path="images/vec_6_2617.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2618" src_path="images/vec_6_2618.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2619" src_path="images/vec_6_2619.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2620" src_path="images/vec_6_2620.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2621" src_path="images/vec_6_2621.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2622" src_path="images/vec_6_2622.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2623" src_path="images/vec_6_2623.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2624" src_path="images/vec_6_2624.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2625" src_path="images/vec_6_2625.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2626" src_path="images/vec_6_2626.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2627" src_path="images/vec_6_2627.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2628" src_path="images/vec_6_2628.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2629" src_path="images/vec_6_2629.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2630" src_path="images/vec_6_2630.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2631" src_path="images/vec_6_2631.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2632" src_path="images/vec_6_2632.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2633" src_path="images/vec_6_2633.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2634" src_path="images/vec_6_2634.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2635" src_path="images/vec_6_2635.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2636" src_path="images/vec_6_2636.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2637" src_path="images/vec_6_2637.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2638" src_path="images/vec_6_2638.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2639" src_path="images/vec_6_2639.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2640" src_path="images/vec_6_2640.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2641" src_path="images/vec_6_2641.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2642" src_path="images/vec_6_2642.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2643" src_path="images/vec_6_2643.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2644" src_path="images/vec_6_2644.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2645" src_path="images/vec_6_2645.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2646" src_path="images/vec_6_2646.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2647" src_path="images/vec_6_2647.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2648" src_path="images/vec_6_2648.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2649" src_path="images/vec_6_2649.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2650" src_path="images/vec_6_2650.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2651" src_path="images/vec_6_2651.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2652" src_path="images/vec_6_2652.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2653" src_path="images/vec_6_2653.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2654" src_path="images/vec_6_2654.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2655" src_path="images/vec_6_2655.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2656" src_path="images/vec_6_2656.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2657" src_path="images/vec_6_2657.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2658" src_path="images/vec_6_2658.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2659" src_path="images/vec_6_2659.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2660" src_path="images/vec_6_2660.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2661" src_path="images/vec_6_2661.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2662" src_path="images/vec_6_2662.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2663" src_path="images/vec_6_2663.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2664" src_path="images/vec_6_2664.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2665" src_path="images/vec_6_2665.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2666" src_path="images/vec_6_2666.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2667" src_path="images/vec_6_2667.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2668" src_path="images/vec_6_2668.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2669" src_path="images/vec_6_2669.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2670" src_path="images/vec_6_2670.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2671" src_path="images/vec_6_2671.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2672" src_path="images/vec_6_2672.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2673" src_path="images/vec_6_2673.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2674" src_path="images/vec_6_2674.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2675" src_path="images/vec_6_2675.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2676" src_path="images/vec_6_2676.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2677" src_path="images/vec_6_2677.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2678" src_path="images/vec_6_2678.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2679" src_path="images/vec_6_2679.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2680" src_path="images/vec_6_2680.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2681" src_path="images/vec_6_2681.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2682" src_path="images/vec_6_2682.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2683" src_path="images/vec_6_2683.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2684" src_path="images/vec_6_2684.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2685" src_path="images/vec_6_2685.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2686" src_path="images/vec_6_2686.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2687" src_path="images/vec_6_2687.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2688" src_path="images/vec_6_2688.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2689" src_path="images/vec_6_2689.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2690" src_path="images/vec_6_2690.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2691" src_path="images/vec_6_2691.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2692" src_path="images/vec_6_2692.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2693" src_path="images/vec_6_2693.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2694" src_path="images/vec_6_2694.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2695" src_path="images/vec_6_2695.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2696" src_path="images/vec_6_2696.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2697" src_path="images/vec_6_2697.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2698" src_path="images/vec_6_2698.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2699" src_path="images/vec_6_2699.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2700" src_path="images/vec_6_2700.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2701" src_path="images/vec_6_2701.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2702" src_path="images/vec_6_2702.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2703" src_path="images/vec_6_2703.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2704" src_path="images/vec_6_2704.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2705" src_path="images/vec_6_2705.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2706" src_path="images/vec_6_2706.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2707" src_path="images/vec_6_2707.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2708" src_path="images/vec_6_2708.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2709" src_path="images/vec_6_2709.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2710" src_path="images/vec_6_2710.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2711" src_path="images/vec_6_2711.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2712" src_path="images/vec_6_2712.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2713" src_path="images/vec_6_2713.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2714" src_path="images/vec_6_2714.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2715" src_path="images/vec_6_2715.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2716" src_path="images/vec_6_2716.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2717" src_path="images/vec_6_2717.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2718" src_path="images/vec_6_2718.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2719" src_path="images/vec_6_2719.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2720" src_path="images/vec_6_2720.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2721" src_path="images/vec_6_2721.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2722" src_path="images/vec_6_2722.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2723" src_path="images/vec_6_2723.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2724" src_path="images/vec_6_2724.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2725" src_path="images/vec_6_2725.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2726" src_path="images/vec_6_2726.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2727" src_path="images/vec_6_2727.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2728" src_path="images/vec_6_2728.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2729" src_path="images/vec_6_2729.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2730" src_path="images/vec_6_2730.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2731" src_path="images/vec_6_2731.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2732" src_path="images/vec_6_2732.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2733" src_path="images/vec_6_2733.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2734" src_path="images/vec_6_2734.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2735" src_path="images/vec_6_2735.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2736" src_path="images/vec_6_2736.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2737" src_path="images/vec_6_2737.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2738" src_path="images/vec_6_2738.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2739" src_path="images/vec_6_2739.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2740" src_path="images/vec_6_2740.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2741" src_path="images/vec_6_2741.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2742" src_path="images/vec_6_2742.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2743" src_path="images/vec_6_2743.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2744" src_path="images/vec_6_2744.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2745" src_path="images/vec_6_2745.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2746" src_path="images/vec_6_2746.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2747" src_path="images/vec_6_2747.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2748" src_path="images/vec_6_2748.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2749" src_path="images/vec_6_2749.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2750" src_path="images/vec_6_2750.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2751" src_path="images/vec_6_2751.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2752" src_path="images/vec_6_2752.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2753" src_path="images/vec_6_2753.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2754" src_path="images/vec_6_2754.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2755" src_path="images/vec_6_2755.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2756" src_path="images/vec_6_2756.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2757" src_path="images/vec_6_2757.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2758" src_path="images/vec_6_2758.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2759" src_path="images/vec_6_2759.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2760" src_path="images/vec_6_2760.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2761" src_path="images/vec_6_2761.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2762" src_path="images/vec_6_2762.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2763" src_path="images/vec_6_2763.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2764" src_path="images/vec_6_2764.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2765" src_path="images/vec_6_2765.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2766" src_path="images/vec_6_2766.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2767" src_path="images/vec_6_2767.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2768" src_path="images/vec_6_2768.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2769" src_path="images/vec_6_2769.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2770" src_path="images/vec_6_2770.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2771" src_path="images/vec_6_2771.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2772" src_path="images/vec_6_2772.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2773" src_path="images/vec_6_2773.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2774" src_path="images/vec_6_2774.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2775" src_path="images/vec_6_2775.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2776" src_path="images/vec_6_2776.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2777" src_path="images/vec_6_2777.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2778" src_path="images/vec_6_2778.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2779" src_path="images/vec_6_2779.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2780" src_path="images/vec_6_2780.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2781" src_path="images/vec_6_2781.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2782" src_path="images/vec_6_2782.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2783" src_path="images/vec_6_2783.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2784" src_path="images/vec_6_2784.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2785" src_path="images/vec_6_2785.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2786" src_path="images/vec_6_2786.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2787" src_path="images/vec_6_2787.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2788" src_path="images/vec_6_2788.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2789" src_path="images/vec_6_2789.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2790" src_path="images/vec_6_2790.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2791" src_path="images/vec_6_2791.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2792" src_path="images/vec_6_2792.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2793" src_path="images/vec_6_2793.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2794" src_path="images/vec_6_2794.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2795" src_path="images/vec_6_2795.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2796" src_path="images/vec_6_2796.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2797" src_path="images/vec_6_2797.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2798" src_path="images/vec_6_2798.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2799" src_path="images/vec_6_2799.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2800" src_path="images/vec_6_2800.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2801" src_path="images/vec_6_2801.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2802" src_path="images/vec_6_2802.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2803" src_path="images/vec_6_2803.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2804" src_path="images/vec_6_2804.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2805" src_path="images/vec_6_2805.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2806" src_path="images/vec_6_2806.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2807" src_path="images/vec_6_2807.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2808" src_path="images/vec_6_2808.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2809" src_path="images/vec_6_2809.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2810" src_path="images/vec_6_2810.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2811" src_path="images/vec_6_2811.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2812" src_path="images/vec_6_2812.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2813" src_path="images/vec_6_2813.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2814" src_path="images/vec_6_2814.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2815" src_path="images/vec_6_2815.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2816" src_path="images/vec_6_2816.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2817" src_path="images/vec_6_2817.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2818" src_path="images/vec_6_2818.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2819" src_path="images/vec_6_2819.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2820" src_path="images/vec_6_2820.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2821" src_path="images/vec_6_2821.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2822" src_path="images/vec_6_2822.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2823" src_path="images/vec_6_2823.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2824" src_path="images/vec_6_2824.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2825" src_path="images/vec_6_2825.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2826" src_path="images/vec_6_2826.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2827" src_path="images/vec_6_2827.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2828" src_path="images/vec_6_2828.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2829" src_path="images/vec_6_2829.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2830" src_path="images/vec_6_2830.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2831" src_path="images/vec_6_2831.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2832" src_path="images/vec_6_2832.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2833" src_path="images/vec_6_2833.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2834" src_path="images/vec_6_2834.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2835" src_path="images/vec_6_2835.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2836" src_path="images/vec_6_2836.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2837" src_path="images/vec_6_2837.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2838" src_path="images/vec_6_2838.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2839" src_path="images/vec_6_2839.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2840" src_path="images/vec_6_2840.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2841" src_path="images/vec_6_2841.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2842" src_path="images/vec_6_2842.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2843" src_path="images/vec_6_2843.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2844" src_path="images/vec_6_2844.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2845" src_path="images/vec_6_2845.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2846" src_path="images/vec_6_2846.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2847" src_path="images/vec_6_2847.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2848" src_path="images/vec_6_2848.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2849" src_path="images/vec_6_2849.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2850" src_path="images/vec_6_2850.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2851" src_path="images/vec_6_2851.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2852" src_path="images/vec_6_2852.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2853" src_path="images/vec_6_2853.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2854" src_path="images/vec_6_2854.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2855" src_path="images/vec_6_2855.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2856" src_path="images/vec_6_2856.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2857" src_path="images/vec_6_2857.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2858" src_path="images/vec_6_2858.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2859" src_path="images/vec_6_2859.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2860" src_path="images/vec_6_2860.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2861" src_path="images/vec_6_2861.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2862" src_path="images/vec_6_2862.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2863" src_path="images/vec_6_2863.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2864" src_path="images/vec_6_2864.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2865" src_path="images/vec_6_2865.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2866" src_path="images/vec_6_2866.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2867" src_path="images/vec_6_2867.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2868" src_path="images/vec_6_2868.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2869" src_path="images/vec_6_2869.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2870" src_path="images/vec_6_2870.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2871" src_path="images/vec_6_2871.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2872" src_path="images/vec_6_2872.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2873" src_path="images/vec_6_2873.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2874" src_path="images/vec_6_2874.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2875" src_path="images/vec_6_2875.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2876" src_path="images/vec_6_2876.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2877" src_path="images/vec_6_2877.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2878" src_path="images/vec_6_2878.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2879" src_path="images/vec_6_2879.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2880" src_path="images/vec_6_2880.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2881" src_path="images/vec_6_2881.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2882" src_path="images/vec_6_2882.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2883" src_path="images/vec_6_2883.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2884" src_path="images/vec_6_2884.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2885" src_path="images/vec_6_2885.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2886" src_path="images/vec_6_2886.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2887" src_path="images/vec_6_2887.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2888" src_path="images/vec_6_2888.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2889" src_path="images/vec_6_2889.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2890" src_path="images/vec_6_2890.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2891" src_path="images/vec_6_2891.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2892" src_path="images/vec_6_2892.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2893" src_path="images/vec_6_2893.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2894" src_path="images/vec_6_2894.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2895" src_path="images/vec_6_2895.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2896" src_path="images/vec_6_2896.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2897" src_path="images/vec_6_2897.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2898" src_path="images/vec_6_2898.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2899" src_path="images/vec_6_2899.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2900" src_path="images/vec_6_2900.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2901" src_path="images/vec_6_2901.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2902" src_path="images/vec_6_2902.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2903" src_path="images/vec_6_2903.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2904" src_path="images/vec_6_2904.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2905" src_path="images/vec_6_2905.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2906" src_path="images/vec_6_2906.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2907" src_path="images/vec_6_2907.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2908" src_path="images/vec_6_2908.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2909" src_path="images/vec_6_2909.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2910" src_path="images/vec_6_2910.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2911" src_path="images/vec_6_2911.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2912" src_path="images/vec_6_2912.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2913" src_path="images/vec_6_2913.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2914" src_path="images/vec_6_2914.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2915" src_path="images/vec_6_2915.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2916" src_path="images/vec_6_2916.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2917" src_path="images/vec_6_2917.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2918" src_path="images/vec_6_2918.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2919" src_path="images/vec_6_2919.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2920" src_path="images/vec_6_2920.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2921" src_path="images/vec_6_2921.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2922" src_path="images/vec_6_2922.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2923" src_path="images/vec_6_2923.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2924" src_path="images/vec_6_2924.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2925" src_path="images/vec_6_2925.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2926" src_path="images/vec_6_2926.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2927" src_path="images/vec_6_2927.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2928" src_path="images/vec_6_2928.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2929" src_path="images/vec_6_2929.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2930" src_path="images/vec_6_2930.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2931" src_path="images/vec_6_2931.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2932" src_path="images/vec_6_2932.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2933" src_path="images/vec_6_2933.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2934" src_path="images/vec_6_2934.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2935" src_path="images/vec_6_2935.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2936" src_path="images/vec_6_2936.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2937" src_path="images/vec_6_2937.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2938" src_path="images/vec_6_2938.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2939" src_path="images/vec_6_2939.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2940" src_path="images/vec_6_2940.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2943" src_path="images/vec_6_2943.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2944" src_path="images/vec_6_2944.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2947" src_path="images/vec_6_2947.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2948" src_path="images/vec_6_2948.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2951" src_path="images/vec_6_2951.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2952" src_path="images/vec_6_2952.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2955" src_path="images/vec_6_2955.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2956" src_path="images/vec_6_2956.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2959" src_path="images/vec_6_2959.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2960" src_path="images/vec_6_2960.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2963" src_path="images/vec_6_2963.png" color_format="rgb565a8" />
+    <data name="image_vec_6_2964" src_path="images/vec_6_2964.png" color_format="rgb565a8" />
+    <data name="image_vec_25_1105" src_path="images/vec_25_1105.png" color_format="rgb565a8" />
+    <data name="image_vec_34_869" src_path="images/vec_34_869.png" color_format="rgb565a8" />
+    <data name="image_vec_34_872" src_path="images/vec_34_872.png" color_format="rgb565a8" />
+    <data name="image_vec_23_372" src_path="images/vec_23_372.png" color_format="rgb565a8" />
+    <data name="image_vec_42_877" src_path="images/vec_42_877.png" color_format="rgb565a8" />
+    <data name="image_vec_12_212" src_path="images/vec_12_212.png" color_format="rgb565a8" />
+    <data name="image_vec_42_862" src_path="images/vec_42_862.png" color_format="rgb565a8" />
+    <data name="image_vec_7_1590" src_path="images/vec_7_1590.png" color_format="rgb565a8" />
+    <data name="image_vec_7_1412" src_path="images/vec_7_1412.png" color_format="rgb565a8" />
+    <data name="image_vec_1_241" src_path="images/vec_1_241.png" color_format="rgb565a8" />
+    <data name="image_vec_7_1491" src_path="images/vec_7_1491.png" color_format="rgb565a8" />
+    <data name="image_vec_7_1493" src_path="images/vec_7_1493.png" color_format="rgb565a8" />
+    <data name="image_vec_1_790" src_path="images/vec_1_790.png" color_format="rgb565a8" />
+    <data name="image_vec_1_882" src_path="images/vec_1_882.png" color_format="rgb565a8" />
+    <data name="image_vec_25_1004" src_path="images/vec_25_1004.png" color_format="rgb565a8" />
+    <data name="image_vec_7_1415" src_path="images/vec_7_1415.png" color_format="rgb565a8" />
+    <data name="image_vec_42_2416" src_path="images/vec_42_2416.png" color_format="rgb565a8" />
+    <data name="image_vec_42_2418" src_path="images/vec_42_2418.png" color_format="rgb565a8" />
+    <data name="image_vec_23_214" src_path="images/vec_23_214.png" color_format="rgb565a8" />
+
+    <!-- ─────────────────── <lvgl-figma-flow end="images"/> ──────────────────── -->
+  </images>
+
+  <fonts>
+    <!-- ─────────────────── <lvgl-figma-flow begin="fonts"/> ───────────────────
+         Regenerated on each export. Add your own entries outside the fence. -->
+
+    <tiny_ttf
+      name="font_ibm_plex_mono_regular_26"
+      size="26"
+      as_file="true"
+      src_path="fonts/IBMPlexMono-Regular.ttf" />
+    <tiny_ttf
+      name="font_ibm_plex_mono_semibold_150"
+      size="150"
+      as_file="true"
+      src_path="fonts/IBMPlexMono-SemiBold.ttf" />
+    <tiny_ttf
+      name="font_inter_medium_24_460227966308594"
+      size="24"
+      as_file="true"
+      src_path="fonts/Inter-Medium.ttf" />
+    <tiny_ttf
+      name="font_roboto_semibold_22"
+      size="22"
+      as_file="true"
+      src_path="fonts/Roboto-SemiBold.ttf" />
+    <tiny_ttf
+      name="font_inter_semi_bold_12"
+      size="12"
+      as_file="true"
+      src_path="fonts/Inter-SemiBold.ttf" />
+    <tiny_ttf name="font_inter_bold_28" size="28" as_file="true" src_path="fonts/Inter-Bold.ttf" />
+    <tiny_ttf
+      name="font_inter_semi_bold_16"
+      size="16"
+      as_file="true"
+      src_path="fonts/Inter-SemiBold.ttf" />
+    <tiny_ttf
+      name="font_inter_semi_bold_14"
+      size="14"
+      as_file="true"
+      src_path="fonts/Inter-SemiBold.ttf" />
+    <tiny_ttf
+      name="font_inter_medium_11"
+      size="11"
+      as_file="true"
+      src_path="fonts/Inter-Medium.ttf" />
+    <tiny_ttf name="font_inter_bold_14" size="14" as_file="true" src_path="fonts/Inter-Bold.ttf" />
+    <tiny_ttf name="font_inter_bold_20" size="20" as_file="true" src_path="fonts/Inter-Bold.ttf" />
+    <tiny_ttf name="font_inter_bold_23" size="23" as_file="true" src_path="fonts/Inter-Bold.ttf" />
+    <tiny_ttf
+      name="font_inter_semi_bold_13"
+      size="13"
+      as_file="true"
+      src_path="fonts/Inter-SemiBold.ttf" />
+    <tiny_ttf
+      name="font_playwrite_us_trad_regular_40"
+      size="40"
+      as_file="true"
+      src_path="fonts/PlaywriteUSTrad-Regular.ttf" />
+    <tiny_ttf
+      name="font_playwrite_us_trad_regular_52"
+      size="52"
+      as_file="true"
+      src_path="fonts/PlaywriteUSTrad-Regular.ttf" />
+    <tiny_ttf
+      name="font_inter_semi_bold_8"
+      size="8"
+      as_file="true"
+      src_path="fonts/Inter-SemiBold.ttf" />
+    <tiny_ttf
+      name="font_inter_semi_bold_11"
+      size="11"
+      as_file="true"
+      src_path="fonts/Inter-SemiBold.ttf" />
+    <tiny_ttf
+      name="font_roboto_medium_14"
+      size="14"
+      as_file="true"
+      src_path="fonts/Roboto-Medium.ttf" />
+    <tiny_ttf
+      name="font_ibm_plex_mono_regular_36"
+      size="36"
+      as_file="true"
+      src_path="fonts/IBMPlexMono-Regular.ttf" />
+
+    <!-- ──────────────────── <lvgl-figma-flow end="fonts"/> ──────────────────── -->
+
+    <!-- Hand-added (outside the plugin's block, so re-exports keep them). Screens/components use
+         these font names but the export did not define them. Project fonts are IBM Plex Mono,
+         Playwrite and Inter; any other family (e.g. Roboto) is mapped to Inter.
+         If a future export defines any of these names itself, delete that entry here. -->
+    <tiny_ttf
+      name="font_roboto_medium_16"
+      size="16"
+      as_file="true"
+      src_path="fonts/Inter-Medium.ttf" />
+    <tiny_ttf
+      name="font_ibm_plex_mono_medium_14"
+      size="14"
+      as_file="true"
+      src_path="fonts/IBMPlexMono-Medium.ttf" />
+    <tiny_ttf
+      name="font_ibm_plex_mono_regular_29"
+      size="29"
+      as_file="true"
+      src_path="fonts/IBMPlexMono-Regular.ttf" />
+
+    <!-- Used by the hand-edited (OWNED_BY=USER) pull-down menu files: status_bar.xml,
+         pull_down_menu_initial.xml, pull_down_menu_connected.xml. Own names, so they do not
+         depend on names the plugin generates (which change with the Figma font size). -->
+    <tiny_ttf
+      name="font_inter_medium_24_manual"
+      size="24"
+      as_file="true"
+      src_path="fonts/Inter-Medium.ttf" />
+    <tiny_ttf
+      name="font_inter_semi_bold_22_manual"
+      size="22"
+      as_file="true"
+      src_path="fonts/Inter-SemiBold.ttf" />
+  </fonts>
+
+  <styles>
+    <!-- ────────────────── <lvgl-figma-flow begin="styles"/> ───────────────────
+         Regenerated on each export. Add your own entries outside the fence. -->
+
+    <style
+      name="style_screen_base_global"
+      border_width="0"
+      radius="0"
+      shadow_width="0"
+      shadow_opa="0" />
+
+    <!-- ─────────────────── <lvgl-figma-flow end="styles"/> ──────────────────── -->
+  </styles>
+</globals>

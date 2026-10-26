@@ -1,0 +1,16 @@
+.DS_Store
+
+# ESP-IDF build output and downloaded components (recreated by idf.py build)
+build/
+managed_components/
+sdkconfig.old
+
+# LVGL Editor preview output
+preview-build/
+preview-bin/
+
+# Claude Code per-machine settings
+.claude/settings.local.json
+
+# Waveshare vendor package (re-downloadable; the parts we use are copied into firmware/)
+ESP32-C6-Touch-AMOLED-1.64-main/

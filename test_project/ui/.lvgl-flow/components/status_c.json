@@ -1,0 +1,1834 @@
+{
+  "id": "23:119",
+  "name": "Status",
+  "type": "COMPONENT",
+  "description": "",
+  "propertyDefinitions": {},
+  "componentSetId": null,
+  "isDefaultVariant": false,
+  "node": {
+    "id": "23:119",
+    "name": "Status",
+    "type": "COMPONENT",
+    "visible": true,
+    "locked": false,
+    "width": 44,
+    "height": 143,
+    "x": -125,
+    "y": 584,
+    "rotation": -90,
+    "minWidth": null,
+    "maxWidth": null,
+    "minHeight": null,
+    "maxHeight": null,
+    "layoutSizingHorizontal": "FIXED",
+    "layoutSizingVertical": "HUG",
+    "relativeTransform": [
+      [
+        3.469446951953614e-18,
+        -1,
+        -125
+      ],
+      [
+        1,
+        3.469446951953614e-18,
+        584
+      ]
+    ],
+    "absoluteTransform": [
+      [
+        3.469446951953614e-18,
+        -1,
+        -125
+      ],
+      [
+        1,
+        3.469446951953614e-18,
+        584
+      ]
+    ],
+    "absoluteBoundingBox": {
+      "x": -268,
+      "y": 584,
+      "width": 143,
+      "height": 44
+    },
+    "absoluteRenderBounds": {
+      "x": -268,
+      "y": 584,
+      "width": 143,
+      "height": 44
+    },
+    "targetAspectRatio": null,
+    "constraints": {
+      "horizontal": "MIN",
+      "vertical": "MIN"
+    },
+    "fills": [],
+    "strokes": [],
+    "strokeWeight": 1,
+    "strokeAlign": "INSIDE",
+    "strokeJoin": "MITER",
+    "strokeCap": "NONE",
+    "strokeMiterLimit": 4,
+    "dashPattern": [],
+    "fillGeometry": [
+      {
+        "windingRule": "NONZERO",
+        "data": "M0 0 L44 0 L44 143 L0 143 L0 0 Z"
+      }
+    ],
+    "cornerRadius": 0,
+    "cornerSmoothing": 0,
+    "layoutMode": "HORIZONTAL",
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "primaryAxisAlignItems": "MIN",
+    "counterAxisAlignItems": "MIN",
+    "counterAxisAlignContent": "AUTO",
+    "itemSpacing": 0,
+    "counterAxisSpacing": 0,
+    "layoutWrap": "NO_WRAP",
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "AUTO",
+    "itemReverseZIndex": false,
+    "strokesIncludedInLayout": true,
+    "clipsContent": false,
+    "inferredAutoLayout": {
+      "layoutMode": "HORIZONTAL",
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "primaryAxisAlignItems": "MIN",
+      "counterAxisAlignItems": "MIN",
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "AUTO",
+      "itemSpacing": 0
+    },
+    "layoutGrow": 0,
+    "layoutAlign": "STRETCH",
+    "layoutPositioning": "AUTO",
+    "opacity": 1,
+    "blendMode": "PASS_THROUGH",
+    "isMask": false,
+    "maskType": "ALPHA",
+    "effects": [],
+    "variantProperties": null,
+    "devStatus": null,
+    "children": [
+      {
+        "id": "7:1444",
+        "name": "Toggle button",
+        "type": "INSTANCE",
+        "visible": true,
+        "locked": false,
+        "width": 143,
+        "height": 44,
+        "x": 0,
+        "y": 143,
+        "rotation": 90,
+        "minWidth": null,
+        "maxWidth": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "layoutSizingHorizontal": "FIXED",
+        "layoutSizingVertical": "FIXED",
+        "relativeTransform": [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            -1,
+            0,
+            143
+          ]
+        ],
+        "absoluteTransform": [
+          [
+            1,
+            3.469446951953614e-18,
+            -268
+          ],
+          [
+            -3.469446951953614e-18,
+            1,
+            584
+          ]
+        ],
+        "absoluteBoundingBox": {
+          "x": -268,
+          "y": 584,
+          "width": 143,
+          "height": 44
+        },
+        "absoluteRenderBounds": {
+          "x": -268,
+          "y": 584,
+          "width": 143,
+          "height": 44
+        },
+        "targetAspectRatio": null,
+        "constraints": {
+          "horizontal": "MIN",
+          "vertical": "MIN"
+        },
+        "fills": [],
+        "strokes": [],
+        "strokeWeight": 1,
+        "strokeAlign": "INSIDE",
+        "strokeJoin": "MITER",
+        "strokeCap": "NONE",
+        "strokeMiterLimit": 4,
+        "dashPattern": [],
+        "fillGeometry": [
+          {
+            "windingRule": "NONZERO",
+            "data": "M0 0 L143 0 L143 44 L0 44 L0 0 Z"
+          }
+        ],
+        "cornerRadius": 0,
+        "cornerSmoothing": 0,
+        "layoutMode": "HORIZONTAL",
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "primaryAxisAlignItems": "CENTER",
+        "counterAxisAlignItems": "CENTER",
+        "counterAxisAlignContent": "AUTO",
+        "itemSpacing": 0,
+        "counterAxisSpacing": 0,
+        "layoutWrap": "NO_WRAP",
+        "primaryAxisSizingMode": "FIXED",
+        "counterAxisSizingMode": "FIXED",
+        "itemReverseZIndex": false,
+        "strokesIncludedInLayout": false,
+        "clipsContent": false,
+        "inferredAutoLayout": {
+          "layoutMode": "HORIZONTAL",
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "primaryAxisAlignItems": "CENTER",
+          "counterAxisAlignItems": "CENTER",
+          "primaryAxisSizingMode": "FIXED",
+          "counterAxisSizingMode": "FIXED",
+          "itemSpacing": 0
+        },
+        "layoutGrow": 0,
+        "layoutAlign": "INHERIT",
+        "layoutPositioning": "AUTO",
+        "opacity": 1,
+        "blendMode": "PASS_THROUGH",
+        "isMask": false,
+        "maskType": "ALPHA",
+        "effects": [],
+        "variantProperties": {
+          "Type": "Round",
+          "Size": "Small",
+          "State": "Enabled",
+          "Selected": "False"
+        },
+        "mainComponentId": "7:886",
+        "mainComponentName": "Type=Round, Size=Small, State=Enabled, Selected=False",
+        "componentProperties": {
+          "Show focus indicator#58653:1668": {
+            "type": "BOOLEAN",
+            "value": false
+          },
+          "Icon#58653:1567": {
+            "type": "INSTANCE_SWAP",
+            "value": "1:881"
+          },
+          "Icon (selected)#58680:2408": {
+            "type": "INSTANCE_SWAP",
+            "value": "1:789"
+          },
+          "Show icon#58653:1466": {
+            "type": "BOOLEAN",
+            "value": true
+          },
+          "Label text#58653:1365": {
+            "type": "TEXT",
+            "value": "Status"
+          },
+          "Type": {
+            "type": "VARIANT",
+            "value": "Round"
+          },
+          "Size": {
+            "type": "VARIANT",
+            "value": "Small"
+          },
+          "State": {
+            "type": "VARIANT",
+            "value": "Enabled"
+          },
+          "Selected": {
+            "type": "VARIANT",
+            "value": "False"
+          }
+        },
+        "isExposedInstance": false,
+        "overrides": [
+          {
+            "id": "7:1444",
+            "overriddenFields": [
+              "height",
+              "primaryAxisSizingMode",
+              "reactions",
+              "width"
+            ]
+          },
+          {
+            "id": "I7:1444;58653:25972",
+            "overriddenFields": [
+              "counterAxisSizingMode",
+              "fillStyleId",
+              "fills",
+              "layoutAlign",
+              "layoutGrow",
+              "primaryAxisSizingMode"
+            ]
+          },
+          {
+            "id": "I7:1444;58653:25973",
+            "overriddenFields": [
+              "layoutAlign",
+              "paddingBottom",
+              "paddingLeft",
+              "paddingRight",
+              "paddingTop",
+              "primaryAxisSizingMode"
+            ]
+          },
+          {
+            "id": "I7:1444;58653:25974",
+            "overriddenFields": [
+              "name"
+            ]
+          },
+          {
+            "id": "I7:1444;58653:25974;54616:25460",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills",
+              "fontSize"
+            ]
+          },
+          {
+            "id": "I7:1444;58653:25975",
+            "overriddenFields": [
+              "boundVariables",
+              "fillStyleId",
+              "fills",
+              "fontName",
+              "fontSize",
+              "letterSpacing",
+              "lineHeight",
+              "textDecorationSkipInk",
+              "textStyleId"
+            ]
+          }
+        ],
+        "reactions": [
+          {
+            "trigger": {
+              "type": "ON_HOVER"
+            },
+            "actions": [
+              {
+                "type": "NODE",
+                "destinationId": "7:887",
+                "navigation": "CHANGE_TO",
+                "transition": {
+                  "type": "SMART_ANIMATE",
+                  "duration": 0.20000000298023224,
+                  "easing": "CUSTOM_CUBIC_BEZIER",
+                  "easingDetail": {
+                    "type": "CUSTOM_CUBIC_BEZIER",
+                    "bezier": {
+                      "x1": 0.20000000298023224,
+                      "y1": 0,
+                      "x2": 0,
+                      "y2": 1
+                    }
+                  }
+                },
+                "resetVideoPosition": false
+              }
+            ]
+          }
+        ],
+        "devStatus": null,
+        "children": [
+          {
+            "id": "I7:1444;58653:25972",
+            "name": "Content",
+            "type": "FRAME",
+            "visible": true,
+            "locked": false,
+            "width": 143,
+            "height": 44,
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FILL",
+            "layoutSizingVertical": "FILL",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                3.469446951953614e-18,
+                -268
+              ],
+              [
+                -3.469446951953614e-18,
+                1,
+                584
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": -268,
+              "y": 584,
+              "width": 143,
+              "height": 44
+            },
+            "absoluteRenderBounds": {
+              "x": -268,
+              "y": 584,
+              "width": 143,
+              "height": 44
+            },
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [
+              {
+                "type": "SOLID",
+                "r": 0.8509804010391235,
+                "g": 0.8509804010391235,
+                "b": 0.8509804010391235,
+                "a": 1,
+                "opacity": 1,
+                "blendMode": "NORMAL",
+                "boundVariables": {
+                  "color": {
+                    "type": "VARIABLE_ALIAS",
+                    "id": "VariableID:3fe6117980bb52e96ac3ed63a40765746e689874/5613:372"
+                  }
+                }
+              }
+            ],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 22 C0 9.84974 9.84974 0 22 0 L121 0 C133.15 0 143 9.84974 143 22 L143 22 C143 34.1503 133.15 44 121 44 L22 44 C9.84973 44 0 34.1503 0 22 L0 22 Z"
+              }
+            ],
+            "cornerRadius": 100,
+            "cornerSmoothing": 0,
+            "layoutMode": "VERTICAL",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "CENTER",
+            "counterAxisAlignItems": "CENTER",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "FIXED",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": true,
+            "inferredAutoLayout": {
+              "layoutMode": "VERTICAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 1,
+            "layoutAlign": "STRETCH",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "boundVariables": {
+              "fills": [
+                {
+                  "type": "VARIABLE_ALIAS",
+                  "id": "VariableID:3fe6117980bb52e96ac3ed63a40765746e689874/5613:372"
+                }
+              ]
+            },
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I7:1444;58653:25973",
+                "name": "State-layer",
+                "type": "FRAME",
+                "visible": true,
+                "locked": false,
+                "width": 143,
+                "height": 58,
+                "x": 0,
+                "y": -7,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FILL",
+                "layoutSizingVertical": "HUG",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    -7
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    3.469446951953614e-18,
+                    -268
+                  ],
+                  [
+                    -3.469446951953614e-18,
+                    1,
+                    577
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": -268,
+                  "y": 577,
+                  "width": 143,
+                  "height": 58
+                },
+                "absoluteRenderBounds": {
+                  "x": -268,
+                  "y": 584,
+                  "width": 143,
+                  "height": 44
+                },
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "MIN",
+                  "vertical": "MIN"
+                },
+                "fills": [],
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M0 0 L143 0 L143 58 L0 58 L0 0 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutMode": "HORIZONTAL",
+                "paddingLeft": 30,
+                "paddingRight": 30,
+                "paddingTop": 15,
+                "paddingBottom": 15,
+                "primaryAxisAlignItems": "CENTER",
+                "counterAxisAlignItems": "CENTER",
+                "counterAxisAlignContent": "AUTO",
+                "itemSpacing": 8,
+                "counterAxisSpacing": 0,
+                "layoutWrap": "NO_WRAP",
+                "primaryAxisSizingMode": "FIXED",
+                "counterAxisSizingMode": "AUTO",
+                "itemReverseZIndex": false,
+                "strokesIncludedInLayout": false,
+                "clipsContent": false,
+                "inferredAutoLayout": {
+                  "layoutMode": "HORIZONTAL",
+                  "paddingLeft": 30,
+                  "paddingRight": 30,
+                  "paddingTop": 15,
+                  "paddingBottom": 15,
+                  "primaryAxisAlignItems": "CENTER",
+                  "counterAxisAlignItems": "CENTER",
+                  "primaryAxisSizingMode": "FIXED",
+                  "counterAxisSizingMode": "AUTO",
+                  "itemSpacing": 8
+                },
+                "layoutGrow": 0,
+                "layoutAlign": "STRETCH",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "devStatus": null,
+                "children": [
+                  {
+                    "id": "I7:1444;58653:25974",
+                    "name": "Icon",
+                    "type": "INSTANCE",
+                    "visible": true,
+                    "locked": false,
+                    "width": 20,
+                    "height": 20,
+                    "x": 23,
+                    "y": 19,
+                    "rotation": 0,
+                    "minWidth": null,
+                    "maxWidth": null,
+                    "minHeight": null,
+                    "maxHeight": null,
+                    "layoutSizingHorizontal": "FIXED",
+                    "layoutSizingVertical": "FIXED",
+                    "relativeTransform": [
+                      [
+                        1,
+                        0,
+                        23
+                      ],
+                      [
+                        0,
+                        1,
+                        19
+                      ]
+                    ],
+                    "absoluteTransform": [
+                      [
+                        1,
+                        3.469446951953614e-18,
+                        -245.5
+                      ],
+                      [
+                        -3.469446951953614e-18,
+                        1,
+                        596
+                      ]
+                    ],
+                    "absoluteBoundingBox": {
+                      "x": -245.5,
+                      "y": 596,
+                      "width": 20,
+                      "height": 20
+                    },
+                    "absoluteRenderBounds": {
+                      "x": -245.5,
+                      "y": 596,
+                      "width": 20,
+                      "height": 20
+                    },
+                    "targetAspectRatio": null,
+                    "constraints": {
+                      "horizontal": "MIN",
+                      "vertical": "MIN"
+                    },
+                    "fills": [],
+                    "strokes": [],
+                    "strokeWeight": 1,
+                    "strokeAlign": "INSIDE",
+                    "strokeJoin": "MITER",
+                    "strokeCap": "NONE",
+                    "strokeMiterLimit": 4,
+                    "dashPattern": [],
+                    "fillGeometry": [
+                      {
+                        "windingRule": "NONZERO",
+                        "data": "M0 0 L20 0 L20 20 L0 20 L0 0 Z"
+                      }
+                    ],
+                    "cornerRadius": 0,
+                    "cornerSmoothing": 0,
+                    "layoutMode": "NONE",
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "paddingTop": 0,
+                    "paddingBottom": 0,
+                    "primaryAxisAlignItems": "MIN",
+                    "counterAxisAlignItems": "MIN",
+                    "counterAxisAlignContent": "AUTO",
+                    "itemSpacing": 0,
+                    "counterAxisSpacing": 0,
+                    "layoutWrap": "NO_WRAP",
+                    "primaryAxisSizingMode": "AUTO",
+                    "counterAxisSizingMode": "FIXED",
+                    "itemReverseZIndex": false,
+                    "strokesIncludedInLayout": false,
+                    "clipsContent": true,
+                    "inferredAutoLayout": {
+                      "layoutMode": "HORIZONTAL",
+                      "paddingLeft": 1.6666665077209473,
+                      "paddingRight": 1.6666674613952637,
+                      "paddingTop": 1.6666665077209473,
+                      "paddingBottom": 1.6666674613952637,
+                      "primaryAxisAlignItems": "CENTER",
+                      "counterAxisAlignItems": "CENTER",
+                      "primaryAxisSizingMode": "FIXED",
+                      "counterAxisSizingMode": "FIXED",
+                      "itemSpacing": 0
+                    },
+                    "layoutGrow": 0,
+                    "layoutAlign": "INHERIT",
+                    "layoutPositioning": "AUTO",
+                    "opacity": 1,
+                    "blendMode": "PASS_THROUGH",
+                    "isMask": false,
+                    "maskType": "ALPHA",
+                    "effects": [],
+                    "variantProperties": null,
+                    "componentPropertyReferences": {
+                      "visible": "Show icon#58653:1466",
+                      "mainComponent": "Icon#58653:1567"
+                    },
+                    "mainComponentId": "1:881",
+                    "mainComponentName": "account_circle",
+                    "componentProperties": {},
+                    "isExposedInstance": false,
+                    "overrides": [
+                      {
+                        "id": "I7:1444;58653:25974",
+                        "overriddenFields": [
+                          "name"
+                        ]
+                      },
+                      {
+                        "id": "I7:1444;58653:25974;54616:25460",
+                        "overriddenFields": [
+                          "fillStyleId",
+                          "fills",
+                          "fontSize"
+                        ]
+                      }
+                    ],
+                    "devStatus": null,
+                    "children": [
+                      {
+                        "id": "I7:1444;58653:25974;54616:25460",
+                        "name": "icon",
+                        "type": "VECTOR",
+                        "visible": true,
+                        "locked": false,
+                        "width": 17,
+                        "height": 17,
+                        "x": 2,
+                        "y": 2,
+                        "rotation": 0,
+                        "minWidth": null,
+                        "maxWidth": null,
+                        "minHeight": null,
+                        "maxHeight": null,
+                        "layoutSizingHorizontal": "FIXED",
+                        "layoutSizingVertical": "FIXED",
+                        "relativeTransform": [
+                          [
+                            1,
+                            0,
+                            2
+                          ],
+                          [
+                            0,
+                            1,
+                            2
+                          ]
+                        ],
+                        "absoluteTransform": [
+                          [
+                            1,
+                            3.469446951953614e-18,
+                            -243.8333282470703
+                          ],
+                          [
+                            -3.469446951953614e-18,
+                            1,
+                            597.6666870117188
+                          ]
+                        ],
+                        "absoluteBoundingBox": {
+                          "x": -243.8333282470703,
+                          "y": 597.6666870117188,
+                          "width": 16.66666603088379,
+                          "height": 16.66666603088379
+                        },
+                        "absoluteRenderBounds": {
+                          "x": -243.8333282470703,
+                          "y": 597.6666870117188,
+                          "width": 16.666671752929688,
+                          "height": 16.66668701171875
+                        },
+                        "targetAspectRatio": null,
+                        "constraints": {
+                          "horizontal": "SCALE",
+                          "vertical": "SCALE"
+                        },
+                        "fills": [
+                          {
+                            "type": "SOLID",
+                            "r": 0.35435372591018677,
+                            "g": 0.35435372591018677,
+                            "b": 0.35435372591018677,
+                            "a": 1,
+                            "opacity": 1,
+                            "blendMode": "NORMAL",
+                            "boundVariables": {
+                              "color": {
+                                "type": "VARIABLE_ALIAS",
+                                "id": "VariableID:d1f99eb6c874bda6bd1ffe0a2f565864dc755735/5613:330"
+                              }
+                            }
+                          }
+                        ],
+                        "strokes": [],
+                        "strokeWeight": 0.02500000037252903,
+                        "strokeAlign": "INSIDE",
+                        "strokeJoin": "MITER",
+                        "strokeCap": "NONE",
+                        "strokeMiterLimit": 4,
+                        "dashPattern": [],
+                        "fillGeometry": [
+                          {
+                            "windingRule": "NONZERO",
+                            "data": "M3.20833 12.5833 C3.91667 12.0417 4.70833 11.6146 5.58333 11.3021 C6.45833 10.9896 7.375 10.8333 8.33333 10.8333 C9.29167 10.8333 10.2083 10.9896 11.0833 11.3021 C11.9583 11.6146 12.75 12.0417 13.4583 12.5833 C13.9444 12.0139 14.3229 11.3681 14.5938 10.6458 C14.8646 9.92361 15 9.15278 15 8.33333 C15 6.48611 14.3507 4.91319 13.0521 3.61458 C11.7535 2.31597 10.1806 1.66667 8.33333 1.66667 C6.48611 1.66667 4.91319 2.31597 3.61458 3.61458 C2.31597 4.91319 1.66667 6.48611 1.66667 8.33333 C1.66667 9.15278 1.80208 9.92361 2.07292 10.6458 C2.34375 11.3681 2.72222 12.0139 3.20833 12.5833 Z M8.33333 9.16667 C7.51389 9.16667 6.82292 8.88542 6.26042 8.32292 C5.69792 7.76042 5.41667 7.06944 5.41667 6.25 C5.41667 5.43056 5.69792 4.73958 6.26042 4.17708 C6.82292 3.61458 7.51389 3.33333 8.33333 3.33333 C9.15278 3.33333 9.84375 3.61458 10.4062 4.17708 C10.9688 4.73958 11.25 5.43056 11.25 6.25 C11.25 7.06944 10.9688 7.76042 10.4062 8.32292 C9.84375 8.88542 9.15278 9.16667 8.33333 9.16667 Z M8.33333 16.6667 C7.18056 16.6667 6.09722 16.4479 5.08333 16.0104 C4.06944 15.5729 3.1875 14.9792 2.4375 14.2292 C1.6875 13.4792 1.09375 12.5972 0.65625 11.5833 C0.21875 10.5694 0 9.48611 0 8.33333 C0 7.18056 0.21875 6.09722 0.65625 5.08333 C1.09375 4.06944 1.6875 3.1875 2.4375 2.4375 C3.1875 1.6875 4.06944 1.09375 5.08333 0.65625 C6.09722 0.21875 7.18056 0 8.33333 0 C9.48611 0 10.5694 0.21875 11.5833 0.65625 C12.5972 1.09375 13.4792 1.6875 14.2292 2.4375 C14.9792 3.1875 15.5729 4.06944 16.0104 5.08333 C16.4479 6.09722 16.6667 7.18056 16.6667 8.33333 C16.6667 9.48611 16.4479 10.5694 16.0104 11.5833 C15.5729 12.5972 14.9792 13.4792 14.2292 14.2292 C13.4792 14.9792 12.5972 15.5729 11.5833 16.0104 C10.5694 16.4479 9.48611 16.6667 8.33333 16.6667 Z"
+                          }
+                        ],
+                        "cornerRadius": 0,
+                        "cornerSmoothing": 0,
+                        "layoutGrow": 0,
+                        "layoutAlign": "INHERIT",
+                        "layoutPositioning": "AUTO",
+                        "opacity": 1,
+                        "blendMode": "PASS_THROUGH",
+                        "isMask": false,
+                        "maskType": "ALPHA",
+                        "effects": [],
+                        "vectorPaths": [
+                          {
+                            "windingRule": "NONZERO",
+                            "data": "M 3.2083333301544146 12.583333171208688 C 3.91666665633519 12.041666495402643 4.708333332538598 11.614582890272143 5.58333335876464 11.30208290219307 C 6.458333384990682 10.989582914114 7.3749997385342905 10.833332920074463 8.333333015441895 10.833332920074463 C 9.291666292349499 10.833332920074463 10.208333043257392 10.989582914114 11.083333069483434 11.30208290219307 C 11.958333095709476 11.614582890272143 12.74999917586646 12.041666495402643 13.458332502047234 12.583333171208688 C 13.944443627728369 12.013888745175455 14.322916741172449 11.368055655029066 14.593750079075472 10.645833404064161 C 14.864583416978494 9.923611153099257 14.99999942779541 9.152777392201955 14.99999942779541 8.333333015441895 C 14.99999942779541 6.486110837194656 14.350694168541157 4.913194290134641 13.052083153327295 3.6145832749207787 C 11.753472138113434 2.3159722597069163 10.180555193689134 1.666666603088379 8.333333015441895 1.666666603088379 C 6.486110837194656 1.666666603088379 4.913194290134641 2.3159722597069163 3.6145832749207787 3.6145832749207787 C 2.3159722597069163 4.913194290134641 1.666666603088379 6.486110837194656 1.666666603088379 8.333333015441895 C 1.666666603088379 9.152777392201955 1.802083209951721 9.923611153099257 2.072916547854743 10.645833404064161 C 2.343749885757765 11.368055655029066 2.7222222044732804 12.013888745175455 3.2083333301544146 12.583333171208688 Z M 8.333333015441895 9.166666316986085 C 7.513888638681834 9.166666316986085 6.822916654745728 8.885416496594742 6.260416666269293 8.322916508118306 C 5.6979166777928585 7.760416519641871 5.416666460037232 7.069444138341481 5.416666460037232 6.249999761581421 C 5.416666460037232 5.430555384821361 5.6979166777928585 4.739583400885254 6.260416666269293 4.17708341240882 C 6.822916654745728 3.614583423932385 7.513888638681834 3.333333206176758 8.333333015441895 3.333333206176758 C 9.152777392201955 3.333333206176758 9.843749773502344 3.614583423932385 10.40624976197878 4.17708341240882 C 10.968749750455215 4.739583400885254 11.249999570846558 5.430555384821361 11.249999570846558 6.249999761581421 C 11.249999570846558 7.069444138341481 10.968749750455215 7.760416519641871 10.40624976197878 8.322916508118306 C 9.843749773502344 8.885416496594742 9.152777392201955 9.166666316986085 8.333333015441895 9.166666316986085 Z M 8.333333015441895 16.66666603088379 C 7.1805552882618375 16.66666603088379 6.097221936649749 16.447915751139334 5.0833330599467 16.010415738026314 C 4.06944418324365 15.572915724913294 3.187499868472418 14.97916676084198 2.437499867280326 14.229166759649889 C 1.6874998660882343 13.479166758457797 1.0937500079472842 12.597222245004424 0.6562499948342634 11.583333368301375 C 0.21874998172124266 10.569444491598325 0 9.486110742621952 0 8.333333015441895 C 0 7.1805552882618375 0.21874998172124266 6.097221936649749 0.6562499948342634 5.0833330599467 C 1.0937500079472842 4.06944418324365 1.6874998660882343 3.187499868472418 2.437499867280326 2.437499867280326 C 3.187499868472418 1.6874998660882343 4.06944418324365 1.0937500079472842 5.0833330599467 0.6562499948342634 C 6.097221936649749 0.21874998172124266 7.1805552882618375 0 8.333333015441895 0 C 9.486110742621952 0 10.569444491598325 0.21874998172124266 11.583333368301375 0.6562499948342634 C 12.597222245004424 1.0937500079472842 13.479166758457797 1.6874998660882343 14.229166759649889 2.437499867280326 C 14.97916676084198 3.187499868472418 15.572915724913294 4.06944418324365 16.010415738026314 5.0833330599467 C 16.447915751139334 6.097221936649749 16.66666603088379 7.1805552882618375 16.66666603088379 8.333333015441895 C 16.66666603088379 9.486110742621952 16.447915751139334 10.569444491598325 16.010415738026314 11.583333368301375 C 15.572915724913294 12.597222245004424 14.97916676084198 13.479166758457797 14.229166759649889 14.229166759649889 C 13.479166758457797 14.97916676084198 12.597222245004424 15.572915724913294 11.583333368301375 16.010415738026314 C 10.569444491598325 16.447915751139334 9.486110742621952 16.66666603088379 8.333333015441895 16.66666603088379 Z"
+                          }
+                        ],
+                        "vectorNetwork": {
+                          "vertices": [
+                            {
+                              "x": 3.2083333301544146,
+                              "y": 12.583333171208688,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 5.58333335876464,
+                              "y": 11.30208290219307,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 8.333333015441895,
+                              "y": 10.833332920074463,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 11.083333069483434,
+                              "y": 11.30208290219307,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 13.458332502047234,
+                              "y": 12.583333171208688,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 14.593750079075472,
+                              "y": 10.645833404064161,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 14.99999942779541,
+                              "y": 8.333333015441895,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 13.052083153327295,
+                              "y": 3.6145832749207787,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 8.333333015441895,
+                              "y": 1.666666603088379,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 3.6145832749207787,
+                              "y": 3.6145832749207787,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 1.666666603088379,
+                              "y": 8.333333015441895,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 2.072916547854743,
+                              "y": 10.645833404064161,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 8.333333015441895,
+                              "y": 9.166666316986085,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 6.260416666269293,
+                              "y": 8.322916508118306,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 5.416666460037232,
+                              "y": 6.249999761581421,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 6.260416666269293,
+                              "y": 4.17708341240882,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 8.333333015441895,
+                              "y": 3.333333206176758,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 10.40624976197878,
+                              "y": 4.17708341240882,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 11.249999570846558,
+                              "y": 6.249999761581421,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 10.40624976197878,
+                              "y": 8.322916508118306,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 8.333333015441895,
+                              "y": 16.66666603088379,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 5.0833330599467,
+                              "y": 16.010415738026314,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 2.437499867280326,
+                              "y": 14.229166759649889,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 0.6562499948342634,
+                              "y": 11.583333368301375,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 0,
+                              "y": 8.333333015441895,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 0.6562499948342634,
+                              "y": 5.0833330599467,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 2.437499867280326,
+                              "y": 2.437499867280326,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 5.0833330599467,
+                              "y": 0.6562499948342634,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 8.333333015441895,
+                              "y": 0,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 11.583333368301375,
+                              "y": 0.6562499948342634,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 14.229166759649889,
+                              "y": 2.437499867280326,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 16.010415738026314,
+                              "y": 5.0833330599467,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 16.66666603088379,
+                              "y": 8.333333015441895,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 16.010415738026314,
+                              "y": 11.583333368301375,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 14.229166759649889,
+                              "y": 14.229166759649889,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            },
+                            {
+                              "x": 11.583333368301375,
+                              "y": 16.010415738026314,
+                              "strokeCap": "NONE",
+                              "strokeJoin": "MITER",
+                              "cornerRadius": 0,
+                              "handleMirroring": "NONE"
+                            }
+                          ],
+                          "segments": [
+                            {
+                              "start": 0,
+                              "end": 1,
+                              "tangentStart": {
+                                "x": 0.7083333261807753,
+                                "y": -0.5416666758060444
+                              },
+                              "tangentEnd": {
+                                "x": -0.8750000262260414,
+                                "y": 0.3124999880790711
+                              }
+                            },
+                            {
+                              "start": 1,
+                              "end": 2,
+                              "tangentStart": {
+                                "x": 0.8750000262260414,
+                                "y": -0.3124999880790711
+                              },
+                              "tangentEnd": {
+                                "x": -0.9583332769076037,
+                                "y": 0
+                              }
+                            },
+                            {
+                              "start": 2,
+                              "end": 3,
+                              "tangentStart": {
+                                "x": 0.9583332769076037,
+                                "y": 0
+                              },
+                              "tangentEnd": {
+                                "x": -0.8750000262260414,
+                                "y": -0.3124999880790711
+                              }
+                            },
+                            {
+                              "start": 3,
+                              "end": 4,
+                              "tangentStart": {
+                                "x": 0.8750000262260414,
+                                "y": 0.3124999880790711
+                              },
+                              "tangentEnd": {
+                                "x": -0.7083333261807753,
+                                "y": -0.5416666758060444
+                              }
+                            },
+                            {
+                              "start": 4,
+                              "end": 5,
+                              "tangentStart": {
+                                "x": 0.4861111256811341,
+                                "y": -0.5694444260332319
+                              },
+                              "tangentEnd": {
+                                "x": -0.2708333379030222,
+                                "y": 0.7222222509649043
+                              }
+                            },
+                            {
+                              "start": 5,
+                              "end": 6,
+                              "tangentStart": {
+                                "x": 0.2708333379030222,
+                                "y": -0.7222222509649043
+                              },
+                              "tangentEnd": {
+                                "x": 0,
+                                "y": 0.8194443767600603
+                              }
+                            },
+                            {
+                              "start": 6,
+                              "end": 7,
+                              "tangentStart": {
+                                "x": 0,
+                                "y": -1.8472221782472389
+                              },
+                              "tangentEnd": {
+                                "x": 1.2986110152138624,
+                                "y": 1.2986110152138624
+                              }
+                            },
+                            {
+                              "start": 7,
+                              "end": 8,
+                              "tangentStart": {
+                                "x": -1.2986110152138624,
+                                "y": -1.2986110152138624
+                              },
+                              "tangentEnd": {
+                                "x": 1.8472221782472389,
+                                "y": 0
+                              }
+                            },
+                            {
+                              "start": 8,
+                              "end": 9,
+                              "tangentStart": {
+                                "x": -1.8472221782472389,
+                                "y": 0
+                              },
+                              "tangentEnd": {
+                                "x": 1.2986110152138624,
+                                "y": -1.2986110152138624
+                              }
+                            },
+                            {
+                              "start": 9,
+                              "end": 10,
+                              "tangentStart": {
+                                "x": -1.2986110152138624,
+                                "y": 1.2986110152138624
+                              },
+                              "tangentEnd": {
+                                "x": 0,
+                                "y": -1.8472221782472389
+                              }
+                            },
+                            {
+                              "start": 10,
+                              "end": 11,
+                              "tangentStart": {
+                                "x": 0,
+                                "y": 0.8194443767600603
+                              },
+                              "tangentEnd": {
+                                "x": -0.2708333379030222,
+                                "y": -0.7222222509649043
+                              }
+                            },
+                            {
+                              "start": 11,
+                              "end": 0,
+                              "tangentStart": {
+                                "x": 0.2708333379030222,
+                                "y": 0.7222222509649043
+                              },
+                              "tangentEnd": {
+                                "x": -0.4861111256811341,
+                                "y": -0.5694444260332319
+                              }
+                            },
+                            {
+                              "start": 12,
+                              "end": 13,
+                              "tangentStart": {
+                                "x": -0.8194443767600603,
+                                "y": 0
+                              },
+                              "tangentEnd": {
+                                "x": 0.562499988476435,
+                                "y": 0.562499988476435
+                              }
+                            },
+                            {
+                              "start": 13,
+                              "end": 14,
+                              "tangentStart": {
+                                "x": -0.562499988476435,
+                                "y": -0.562499988476435
+                              },
+                              "tangentEnd": {
+                                "x": 0,
+                                "y": 0.8194443767600603
+                              }
+                            },
+                            {
+                              "start": 14,
+                              "end": 15,
+                              "tangentStart": {
+                                "x": 0,
+                                "y": -0.8194443767600603
+                              },
+                              "tangentEnd": {
+                                "x": -0.562499988476435,
+                                "y": 0.562499988476435
+                              }
+                            },
+                            {
+                              "start": 15,
+                              "end": 16,
+                              "tangentStart": {
+                                "x": 0.562499988476435,
+                                "y": -0.562499988476435
+                              },
+                              "tangentEnd": {
+                                "x": -0.8194443767600603,
+                                "y": 0
+                              }
+                            },
+                            {
+                              "start": 16,
+                              "end": 17,
+                              "tangentStart": {
+                                "x": 0.8194443767600603,
+                                "y": 0
+                              },
+                              "tangentEnd": {
+                                "x": -0.562499988476435,
+                                "y": -0.562499988476435
+                              }
+                            },
+                            {
+                              "start": 17,
+                              "end": 18,
+                              "tangentStart": {
+                                "x": 0.562499988476435,
+                                "y": 0.562499988476435
+                              },
+                              "tangentEnd": {
+                                "x": 0,
+                                "y": -0.8194443767600603
+                              }
+                            },
+                            {
+                              "start": 18,
+                              "end": 19,
+                              "tangentStart": {
+                                "x": 0,
+                                "y": 0.8194443767600603
+                              },
+                              "tangentEnd": {
+                                "x": 0.562499988476435,
+                                "y": -0.562499988476435
+                              }
+                            },
+                            {
+                              "start": 19,
+                              "end": 12,
+                              "tangentStart": {
+                                "x": -0.562499988476435,
+                                "y": 0.562499988476435
+                              },
+                              "tangentEnd": {
+                                "x": 0.8194443767600603,
+                                "y": 0
+                              }
+                            },
+                            {
+                              "start": 20,
+                              "end": 21,
+                              "tangentStart": {
+                                "x": -1.1527777271800574,
+                                "y": 0
+                              },
+                              "tangentEnd": {
+                                "x": 1.0138888767030494,
+                                "y": 0.4375000131130207
+                              }
+                            },
+                            {
+                              "start": 21,
+                              "end": 22,
+                              "tangentStart": {
+                                "x": -1.0138888767030494,
+                                "y": -0.4375000131130207
+                              },
+                              "tangentEnd": {
+                                "x": 0.7500000011920918,
+                                "y": 0.7500000011920918
+                              }
+                            },
+                            {
+                              "start": 22,
+                              "end": 23,
+                              "tangentStart": {
+                                "x": -0.7500000011920918,
+                                "y": -0.7500000011920918
+                              },
+                              "tangentEnd": {
+                                "x": 0.4375000131130207,
+                                "y": 1.0138888767030494
+                              }
+                            },
+                            {
+                              "start": 23,
+                              "end": 24,
+                              "tangentStart": {
+                                "x": -0.4375000131130207,
+                                "y": -1.0138888767030494
+                              },
+                              "tangentEnd": {
+                                "x": 0,
+                                "y": 1.1527777271800574
+                              }
+                            },
+                            {
+                              "start": 24,
+                              "end": 25,
+                              "tangentStart": {
+                                "x": 0,
+                                "y": -1.1527777271800574
+                              },
+                              "tangentEnd": {
+                                "x": -0.4375000131130207,
+                                "y": 1.0138888767030494
+                              }
+                            },
+                            {
+                              "start": 25,
+                              "end": 26,
+                              "tangentStart": {
+                                "x": 0.4375000131130207,
+                                "y": -1.0138888767030494
+                              },
+                              "tangentEnd": {
+                                "x": -0.7500000011920918,
+                                "y": 0.7500000011920918
+                              }
+                            },
+                            {
+                              "start": 26,
+                              "end": 27,
+                              "tangentStart": {
+                                "x": 0.7500000011920918,
+                                "y": -0.7500000011920918
+                              },
+                              "tangentEnd": {
+                                "x": -1.0138888767030494,
+                                "y": 0.4375000131130207
+                              }
+                            },
+                            {
+                              "start": 27,
+                              "end": 28,
+                              "tangentStart": {
+                                "x": 1.0138888767030494,
+                                "y": -0.4375000131130207
+                              },
+                              "tangentEnd": {
+                                "x": -1.1527777271800574,
+                                "y": 0
+                              }
+                            },
+                            {
+                              "start": 28,
+                              "end": 29,
+                              "tangentStart": {
+                                "x": 1.1527777271800574,
+                                "y": 0
+                              },
+                              "tangentEnd": {
+                                "x": -1.0138888767030494,
+                                "y": -0.4375000131130207
+                              }
+                            },
+                            {
+                              "start": 29,
+                              "end": 30,
+                              "tangentStart": {
+                                "x": 1.0138888767030494,
+                                "y": 0.4375000131130207
+                              },
+                              "tangentEnd": {
+                                "x": -0.7500000011920918,
+                                "y": -0.7500000011920918
+                              }
+                            },
+                            {
+                              "start": 30,
+                              "end": 31,
+                              "tangentStart": {
+                                "x": 0.7500000011920918,
+                                "y": 0.7500000011920918
+                              },
+                              "tangentEnd": {
+                                "x": -0.4375000131130207,
+                                "y": -1.0138888767030494
+                              }
+                            },
+                            {
+                              "start": 31,
+                              "end": 32,
+                              "tangentStart": {
+                                "x": 0.4375000131130207,
+                                "y": 1.0138888767030494
+                              },
+                              "tangentEnd": {
+                                "x": 0,
+                                "y": -1.1527777271800574
+                              }
+                            },
+                            {
+                              "start": 32,
+                              "end": 33,
+                              "tangentStart": {
+                                "x": 0,
+                                "y": 1.1527777271800574
+                              },
+                              "tangentEnd": {
+                                "x": 0.4375000131130207,
+                                "y": -1.0138888767030494
+                              }
+                            },
+                            {
+                              "start": 33,
+                              "end": 34,
+                              "tangentStart": {
+                                "x": -0.4375000131130207,
+                                "y": 1.0138888767030494
+                              },
+                              "tangentEnd": {
+                                "x": 0.7500000011920918,
+                                "y": -0.7500000011920918
+                              }
+                            },
+                            {
+                              "start": 34,
+                              "end": 35,
+                              "tangentStart": {
+                                "x": -0.7500000011920918,
+                                "y": 0.7500000011920918
+                              },
+                              "tangentEnd": {
+                                "x": 1.0138888767030494,
+                                "y": -0.4375000131130207
+                              }
+                            },
+                            {
+                              "start": 35,
+                              "end": 20,
+                              "tangentStart": {
+                                "x": -1.0138888767030494,
+                                "y": 0.4375000131130207
+                              },
+                              "tangentEnd": {
+                                "x": 1.1527777271800574,
+                                "y": 0
+                              }
+                            }
+                          ],
+                          "regions": [
+                            {
+                              "windingRule": "NONZERO",
+                              "loops": [
+                                [
+                                  0,
+                                  1,
+                                  2,
+                                  3,
+                                  4,
+                                  5,
+                                  6,
+                                  7,
+                                  8,
+                                  9,
+                                  10,
+                                  11
+                                ],
+                                [
+                                  12,
+                                  13,
+                                  14,
+                                  15,
+                                  16,
+                                  17,
+                                  18,
+                                  19
+                                ],
+                                [
+                                  20,
+                                  21,
+                                  22,
+                                  23,
+                                  24,
+                                  25,
+                                  26,
+                                  27,
+                                  28,
+                                  29,
+                                  30,
+                                  31,
+                                  32,
+                                  33,
+                                  34,
+                                  35
+                                ]
+                              ],
+                              "fillStyleId": "",
+                              "fills": [
+                                {
+                                  "type": "SOLID",
+                                  "visible": true,
+                                  "opacity": 1,
+                                  "blendMode": "NORMAL",
+                                  "color": {
+                                    "r": 0.35435372591018677,
+                                    "g": 0.35435372591018677,
+                                    "b": 0.35435372591018677
+                                  },
+                                  "boundVariables": {
+                                    "color": {
+                                      "type": "VARIABLE_ALIAS",
+                                      "id": "VariableID:d1f99eb6c874bda6bd1ffe0a2f565864dc755735/5613:330"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "handleMirroring": "NONE",
+                        "boundVariables": {
+                          "fills": [
+                            {
+                              "type": "VARIABLE_ALIAS",
+                              "id": "VariableID:d1f99eb6c874bda6bd1ffe0a2f565864dc755735/5613:330"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "I7:1444;58653:25975",
+                    "name": "Label",
+                    "type": "TEXT",
+                    "visible": true,
+                    "locked": false,
+                    "width": 70,
+                    "height": 28,
+                    "x": 51,
+                    "y": 15,
+                    "rotation": 0,
+                    "minWidth": null,
+                    "maxWidth": null,
+                    "minHeight": null,
+                    "maxHeight": null,
+                    "layoutSizingHorizontal": "HUG",
+                    "layoutSizingVertical": "HUG",
+                    "relativeTransform": [
+                      [
+                        1,
+                        0,
+                        51
+                      ],
+                      [
+                        0,
+                        1,
+                        15
+                      ]
+                    ],
+                    "absoluteTransform": [
+                      [
+                        1,
+                        3.469446951953614e-18,
+                        -217.5
+                      ],
+                      [
+                        -3.469446951953614e-18,
+                        1,
+                        592
+                      ]
+                    ],
+                    "absoluteBoundingBox": {
+                      "x": -217.5,
+                      "y": 592,
+                      "width": 70,
+                      "height": 28
+                    },
+                    "absoluteRenderBounds": {
+                      "x": -216.5,
+                      "y": 597.78125,
+                      "width": 67.21484375,
+                      "height": 16.4609375
+                    },
+                    "targetAspectRatio": null,
+                    "constraints": {
+                      "horizontal": "MIN",
+                      "vertical": "MIN"
+                    },
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "r": 0.35435372591018677,
+                        "g": 0.35435372591018677,
+                        "b": 0.35435372591018677,
+                        "a": 1,
+                        "opacity": 1,
+                        "blendMode": "NORMAL",
+                        "boundVariables": {
+                          "color": {
+                            "type": "VARIABLE_ALIAS",
+                            "id": "VariableID:d1f99eb6c874bda6bd1ffe0a2f565864dc755735/5613:330"
+                          }
+                        }
+                      }
+                    ],
+                    "strokes": [],
+                    "strokeWeight": 0,
+                    "strokeAlign": "CENTER",
+                    "strokeJoin": "MITER",
+                    "strokeCap": "NONE",
+                    "strokeMiterLimit": 4,
+                    "dashPattern": [],
+                    "fillGeometry": [
+                      {
+                        "windingRule": "NONZERO",
+                        "data": "M10.2734 10.3984 C10.2005 9.71615 9.89323 9.1849 9.35156 8.80469 C8.8151 8.42448 8.11719 8.23438 7.25781 8.23438 C6.65365 8.23438 6.13542 8.32552 5.70313 8.50781 C5.27083 8.6901 4.9401 8.9375 4.71094 9.25 C4.48177 9.5625 4.36458 9.91927 4.35938 10.3203 C4.35938 10.6536 4.4349 10.9427 4.58594 11.1875 C4.74219 11.4323 4.95313 11.6406 5.21875 11.8125 C5.48438 11.9792 5.77865 12.1198 6.10156 12.2344 C6.42448 12.349 6.75 12.4453 7.07813 12.5234 L8.57812 12.8984 C9.18229 13.0391 9.76302 13.2292 10.3203 13.4688 C10.8828 13.7083 11.3854 14.0104 11.8281 14.375 C12.276 14.7396 12.6302 15.1797 12.8906 15.6953 C13.151 16.2109 13.2812 16.8151 13.2812 17.5078 C13.2812 18.4453 13.0417 19.2708 12.5625 19.9844 C12.0833 20.6927 11.3906 21.2474 10.4844 21.6484 C9.58333 22.0443 8.49219 22.2422 7.21094 22.2422 C5.96615 22.2422 4.88542 22.0495 3.96875 21.6641 C3.05729 21.2786 2.34375 20.7161 1.82812 19.9766 C1.31771 19.237 1.04167 18.3359 1 17.2734 L3.85156 17.2734 C3.89323 17.8307 4.0651 18.2943 4.36719 18.6641 C4.66927 19.0339 5.0625 19.3099 5.54688 19.4922 C6.03646 19.6745 6.58333 19.7656 7.1875 19.7656 C7.81771 19.7656 8.36979 19.6719 8.84375 19.4844 C9.32292 19.2917 9.69792 19.026 9.96875 18.6875 C10.2396 18.3438 10.3776 17.9427 10.3828 17.4844 C10.3776 17.0677 10.2552 16.724 10.0156 16.4531 C9.77604 16.1771 9.4401 15.9479 9.00781 15.7656 C8.58073 15.5781 8.08073 15.4115 7.50781 15.2656 L5.6875 14.7969 C4.36979 14.4583 3.32812 13.9453 2.5625 13.2578 C1.80208 12.5651 1.42188 11.6458 1.42188 10.5 C1.42188 9.55729 1.67708 8.73177 2.1875 8.02344 C2.70313 7.3151 3.40365 6.76562 4.28906 6.375 C5.17448 5.97917 6.17708 5.78125 7.29688 5.78125 C8.43229 5.78125 9.42708 5.97917 10.2812 6.375 C11.1406 6.76562 11.8151 7.3099 12.3047 8.00781 C12.7943 8.70052 13.0469 9.4974 13.0625 10.3984 L10.2734 10.3984 Z M21.7324 10 L21.7324 12.1875 L14.834 12.1875 L14.834 10 L21.7324 10 Z M16.5371 7.125 L19.3652 7.125 L19.3652 18.3906 C19.3652 18.7708 19.4225 19.0625 19.5371 19.2656 C19.6569 19.4635 19.8132 19.599 20.0059 19.6719 C20.1986 19.7448 20.4121 19.7812 20.6465 19.7812 C20.8236 19.7812 20.985 19.7682 21.1309 19.7422 C21.2819 19.7161 21.3965 19.6927 21.4746 19.6719 L21.9512 21.8828 C21.8001 21.9349 21.584 21.9922 21.3027 22.0547 C21.0267 22.1172 20.6882 22.1536 20.2871 22.1641 C19.5788 22.1849 18.9408 22.0781 18.373 21.8438 C17.8053 21.6042 17.3548 21.2344 17.0215 20.7344 C16.6934 20.2344 16.5319 19.6094 16.5371 18.8594 L16.5371 7.125 Z M27.5508 22.2422 C26.7904 22.2422 26.1055 22.1068 25.4961 21.8359 C24.8919 21.5599 24.4128 21.1536 24.0586 20.6172 C23.7096 20.0807 23.5352 19.4193 23.5352 18.6328 C23.5352 17.9557 23.6602 17.3958 23.9102 16.9531 C24.1602 16.5104 24.5013 16.1562 24.9336 15.8906 C25.3659 15.625 25.8529 15.4245 26.3945 15.2891 C26.9414 15.1484 27.5065 15.0469 28.0898 14.9844 C28.793 14.9115 29.3633 14.8464 29.8008 14.7891 C30.2383 14.7266 30.556 14.6328 30.7539 14.5078 C30.957 14.3776 31.0586 14.1771 31.0586 13.9062 L31.0586 13.8594 C31.0586 13.2708 30.8841 12.8151 30.5352 12.4922 C30.1862 12.1693 29.6836 12.0078 29.0273 12.0078 C28.3346 12.0078 27.7852 12.1589 27.3789 12.4609 C26.9779 12.763 26.707 13.1198 26.5664 13.5312 L23.9258 13.1562 C24.1341 12.4271 24.4779 11.8177 24.957 11.3281 C25.4362 10.8333 26.0221 10.4635 26.7148 10.2188 C27.4076 9.96875 28.1732 9.84375 29.0117 9.84375 C29.5898 9.84375 30.1654 9.91146 30.7383 10.0469 C31.3112 10.1823 31.8346 10.4062 32.3086 10.7187 C32.7826 11.026 33.1628 11.4453 33.4492 11.9766 C33.7409 12.5078 33.8867 13.1719 33.8867 13.9687 L33.8867 22 L31.168 22 L31.168 20.3516 L31.0742 20.3516 C30.9023 20.6849 30.6602 20.9974 30.3477 21.2891 C30.0404 21.5755 29.6523 21.8073 29.1836 21.9844 C28.7201 22.1562 28.1758 22.2422 27.5508 22.2422 Z M28.2852 20.1641 C28.8529 20.1641 29.3451 20.0521 29.7617 19.8281 C30.1784 19.599 30.4987 19.2969 30.7227 18.9219 C30.9518 18.5469 31.0664 18.138 31.0664 17.6953 L31.0664 16.2812 C30.9779 16.3542 30.8268 16.4219 30.6133 16.4844 C30.4049 16.5469 30.1706 16.6016 29.9102 16.6484 C29.6497 16.6953 29.3919 16.737 29.1367 16.7734 C28.8815 16.8099 28.6602 16.8411 28.4727 16.8672 C28.0508 16.9245 27.6732 17.0182 27.3398 17.1484 C27.0065 17.2786 26.7435 17.4609 26.5508 17.6953 C26.3581 17.9245 26.2617 18.2214 26.2617 18.5859 C26.2617 19.1068 26.4518 19.5 26.832 19.7656 C27.2122 20.0312 27.6966 20.1641 28.2852 20.1641 Z M42.7227 10 L42.7227 12.1875 L35.8242 12.1875 L35.8242 10 L42.7227 10 Z M37.5273 7.125 L40.3555 7.125 L40.3555 18.3906 C40.3555 18.7708 40.4128 19.0625 40.5273 19.2656 C40.6471 19.4635 40.8034 19.599 40.9961 19.6719 C41.1888 19.7448 41.4023 19.7812 41.6367 19.7812 C41.8138 19.7812 41.9753 19.7682 42.1211 19.7422 C42.2721 19.7161 42.3867 19.6927 42.4648 19.6719 L42.9414 21.8828 C42.7904 21.9349 42.5742 21.9922 42.293 22.0547 C42.0169 22.1172 41.6784 22.1536 41.2773 22.1641 C40.569 22.1849 39.931 22.0781 39.3633 21.8438 C38.7956 21.6042 38.3451 21.2344 38.0117 20.7344 C37.6836 20.2344 37.5221 19.6094 37.5273 18.8594 L37.5273 7.125 Z M52.7363 16.9531 L52.7363 10 L55.5645 10 L55.5645 22 L52.8223 22 L52.8223 19.8672 L52.6973 19.8672 C52.4264 20.5391 51.9811 21.0885 51.3613 21.5156 C50.7467 21.9427 49.9889 22.1562 49.0879 22.1562 C48.3014 22.1562 47.6061 21.9818 47.002 21.6328 C46.403 21.2786 45.9342 20.7656 45.5957 20.0938 C45.2572 19.4167 45.0879 18.599 45.0879 17.6406 L45.0879 10 L47.916 10 L47.916 17.2031 C47.916 17.9635 48.1243 18.5677 48.541 19.0156 C48.9577 19.4635 49.5046 19.6875 50.1816 19.6875 C50.5983 19.6875 51.002 19.5859 51.3926 19.3828 C51.7832 19.1797 52.1035 18.8776 52.3535 18.4766 C52.6087 18.0703 52.7363 17.5625 52.7363 16.9531 Z M67.957 13.1719 L65.3789 13.4531 C65.306 13.1927 65.1784 12.9479 64.9961 12.7188 C64.819 12.4896 64.5794 12.3047 64.2773 12.1641 C63.9753 12.0234 63.6055 11.9531 63.168 11.9531 C62.5794 11.9531 62.0846 12.0807 61.6836 12.3359 C61.2878 12.5911 61.0924 12.9219 61.0977 13.3281 C61.0924 13.6771 61.2201 13.9609 61.4805 14.1797 C61.7461 14.3984 62.1836 14.5781 62.793 14.7188 L64.8398 15.1562 C65.9753 15.401 66.819 15.7891 67.3711 16.3203 C67.9284 16.8516 68.2096 17.5469 68.2148 18.4062 C68.2096 19.1615 67.9883 19.8281 67.5508 20.4062 C67.1185 20.9792 66.5169 21.4271 65.7461 21.75 C64.9753 22.0729 64.0898 22.2344 63.0898 22.2344 C61.6211 22.2344 60.4388 21.9271 59.543 21.3125 C58.6471 20.6927 58.1133 19.8307 57.9414 18.7266 L60.6992 18.4609 C60.8242 19.0026 61.0898 19.4115 61.4961 19.6875 C61.9023 19.9635 62.431 20.1016 63.082 20.1016 C63.7539 20.1016 64.293 19.9635 64.6992 19.6875 C65.1107 19.4115 65.3164 19.0703 65.3164 18.6641 C65.3164 18.3203 65.1836 18.0365 64.918 17.8125 C64.6576 17.5885 64.2513 17.4167 63.6992 17.2969 L61.6523 16.8672 C60.5013 16.6276 59.6497 16.224 59.0977 15.6562 C58.5456 15.0833 58.2721 14.3594 58.2773 13.4844 C58.2721 12.7448 58.4727 12.1042 58.8789 11.5625 C59.2904 11.0156 59.8607 10.5938 60.5898 10.2969 C61.3242 9.99479 62.1706 9.84375 63.1289 9.84375 C64.5352 9.84375 65.6419 10.1432 66.4492 10.7422 C67.2617 11.3411 67.7643 12.151 67.957 13.1719 Z"
+                      }
+                    ],
+                    "layoutGrow": 0,
+                    "layoutAlign": "INHERIT",
+                    "layoutPositioning": "AUTO",
+                    "opacity": 1,
+                    "blendMode": "PASS_THROUGH",
+                    "isMask": false,
+                    "maskType": "ALPHA",
+                    "effects": [],
+                    "characters": "Status",
+                    "textAlignHorizontal": "LEFT",
+                    "textAlignVertical": "CENTER",
+                    "textAutoResize": "WIDTH_AND_HEIGHT",
+                    "textTruncation": "DISABLED",
+                    "maxLines": null,
+                    "hangingPunctuation": false,
+                    "hangingList": false,
+                    "listSpacing": 0,
+                    "autoRename": false,
+                    "fontName": {
+                      "family": "Inter",
+                      "style": "Semi Bold"
+                    },
+                    "fontSize": 22,
+                    "fontWeight": 600,
+                    "letterSpacing": {
+                      "value": 0,
+                      "unit": "PIXELS"
+                    },
+                    "lineHeight": {
+                      "unit": "PIXELS",
+                      "value": 28
+                    },
+                    "paragraphIndent": 0,
+                    "paragraphSpacing": 0,
+                    "textCase": "ORIGINAL",
+                    "textDecoration": "NONE",
+                    "textDecorationStyle": null,
+                    "textDecorationOffset": null,
+                    "textDecorationThickness": null,
+                    "textDecorationColor": null,
+                    "textDecorationSkipInk": null,
+                    "hyperlink": null,
+                    "openTypeFeatures": {},
+                    "leadingTrim": "NONE",
+                    "componentPropertyReferences": {
+                      "characters": "Label text#58653:1365"
+                    },
+                    "boundVariables": {
+                      "fills": [
+                        {
+                          "type": "VARIABLE_ALIAS",
+                          "id": "VariableID:d1f99eb6c874bda6bd1ffe0a2f565864dc755735/5613:330"
+                        }
+                      ],
+                      "lineHeight": [
+                        {
+                          "type": "VARIABLE_ALIAS",
+                          "id": "VariableID:3f719fbece5589b2562463cb714af4100a08f028/58148:283"
+                        }
+                      ],
+                      "letterSpacing": [
+                        {
+                          "type": "VARIABLE_ALIAS",
+                          "id": "VariableID:9408db80ac5e34d7f97afa1ccf46a6b356355df9/58148:284"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "remote": false,
+  "key": "666f42bffac89ab408a67272c1ef9b4bd19a241d",
+  "publishStatus": "UNPUBLISHED"
+}

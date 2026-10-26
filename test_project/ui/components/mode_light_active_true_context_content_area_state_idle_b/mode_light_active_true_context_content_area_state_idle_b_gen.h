@@ -1,0 +1,50 @@
+/**
+ * @file mode_light_active_true_context_content_area_state_idle_b_gen.h
+ */
+
+#ifndef LVGL_PRO_MODE_LIGHT_ACTIVE_TRUE_CONTEXT_CONTENT_AREA_STATE_IDLE_B_GEN_H
+#define LVGL_PRO_MODE_LIGHT_ACTIVE_TRUE_CONTEXT_CONTENT_AREA_STATE_IDLE_B_GEN_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*********************
+ *      INCLUDES
+ *********************/
+
+#ifdef LV_LVGL_H_INCLUDE_SIMPLE
+    #include "lvgl.h"
+    #include "lvgl_private.h"
+#else
+    #include "lvgl/lvgl.h"
+    #include "lvgl/lvgl_private.h"
+#endif
+
+#if defined(LV_USE_XML) && LV_USE_XML
+    #include "lv_xml/lv_xml.h"
+#endif
+
+/*********************
+ *      DEFINES
+ *********************/
+
+/**********************
+ *      TYPEDEFS
+ **********************/
+
+/**********************
+ * GLOBAL PROTOTYPES
+ **********************/
+
+lv_obj_t * mode_light_active_true_context_content_area_state_idle_b_create(lv_obj_t * parent);
+
+/**********************
+ *      MACROS
+ **********************/
+
+#ifdef __cplusplus
+} /*extern "C"*/
+#endif
+
+#endif /*LVGL_PRO_MODE_LIGHT_ACTIVE_TRUE_CONTEXT_CONTENT_AREA_STATE_IDLE_B_GEN_H*/

@@ -1,0 +1,4027 @@
+{
+  "id": "42:929",
+  "name": "Orientation=Horizontal, Size=XSmall, State=Enabled, Value=50",
+  "type": "COMPONENT",
+  "description": "Continuous slider\n\n\n[GDP / GM3 Design System] 🔍",
+  "propertyDefinitions": {},
+  "componentSetId": "42:928",
+  "isDefaultVariant": true,
+  "node": {
+    "id": "42:929",
+    "name": "Orientation=Horizontal, Size=XSmall, State=Enabled, Value=50",
+    "type": "COMPONENT",
+    "visible": true,
+    "locked": false,
+    "width": 354,
+    "height": 44,
+    "x": 16,
+    "y": 111,
+    "rotation": 0,
+    "minWidth": null,
+    "maxWidth": null,
+    "minHeight": null,
+    "maxHeight": null,
+    "layoutSizingHorizontal": "FIXED",
+    "layoutSizingVertical": "HUG",
+    "relativeTransform": [
+      [
+        1,
+        0,
+        16
+      ],
+      [
+        0,
+        1,
+        111
+      ]
+    ],
+    "absoluteTransform": [
+      [
+        1,
+        0,
+        78
+      ],
+      [
+        0,
+        1,
+        687
+      ]
+    ],
+    "absoluteBoundingBox": {
+      "x": 78,
+      "y": 687,
+      "width": 354,
+      "height": 44
+    },
+    "absoluteRenderBounds": {
+      "x": 78,
+      "y": 687,
+      "width": 354,
+      "height": 44
+    },
+    "targetAspectRatio": null,
+    "constraints": {
+      "horizontal": "MIN",
+      "vertical": "MIN"
+    },
+    "fills": [],
+    "strokes": [],
+    "strokeWeight": 1,
+    "strokeAlign": "INSIDE",
+    "strokeJoin": "MITER",
+    "strokeCap": "NONE",
+    "strokeMiterLimit": 4,
+    "dashPattern": [],
+    "fillGeometry": [
+      {
+        "windingRule": "NONZERO",
+        "data": "M0 0 L354 0 L354 44 L0 44 L0 0 Z"
+      }
+    ],
+    "cornerRadius": 0,
+    "cornerSmoothing": 0,
+    "layoutMode": "HORIZONTAL",
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "primaryAxisAlignItems": "MIN",
+    "counterAxisAlignItems": "CENTER",
+    "counterAxisAlignContent": "AUTO",
+    "itemSpacing": 6,
+    "counterAxisSpacing": 0,
+    "layoutWrap": "NO_WRAP",
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "AUTO",
+    "itemReverseZIndex": false,
+    "strokesIncludedInLayout": false,
+    "clipsContent": false,
+    "inferredAutoLayout": {
+      "layoutMode": "HORIZONTAL",
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "primaryAxisAlignItems": "MIN",
+      "counterAxisAlignItems": "CENTER",
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "AUTO",
+      "itemSpacing": 6
+    },
+    "layoutGrow": 0,
+    "layoutAlign": "INHERIT",
+    "layoutPositioning": "AUTO",
+    "opacity": 1,
+    "blendMode": "PASS_THROUGH",
+    "isMask": false,
+    "maskType": "ALPHA",
+    "effects": [],
+    "variantProperties": {
+      "Orientation": "Horizontal",
+      "Size": "XSmall",
+      "State": "Enabled",
+      "Value": "50"
+    },
+    "devStatus": null,
+    "children": [
+      {
+        "id": "42:1049",
+        "name": "Active track",
+        "type": "INSTANCE",
+        "visible": true,
+        "locked": false,
+        "width": 169,
+        "height": 16,
+        "x": 0,
+        "y": 14,
+        "rotation": 0,
+        "minWidth": null,
+        "maxWidth": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "layoutSizingHorizontal": "FILL",
+        "layoutSizingVertical": "FIXED",
+        "relativeTransform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            14
+          ]
+        ],
+        "absoluteTransform": [
+          [
+            1,
+            0,
+            78
+          ],
+          [
+            0,
+            1,
+            701
+          ]
+        ],
+        "absoluteBoundingBox": {
+          "x": 78,
+          "y": 701,
+          "width": 169,
+          "height": 16
+        },
+        "absoluteRenderBounds": {
+          "x": 78,
+          "y": 701,
+          "width": 169,
+          "height": 16
+        },
+        "targetAspectRatio": null,
+        "constraints": {
+          "horizontal": "MIN",
+          "vertical": "MIN"
+        },
+        "fills": [],
+        "strokes": [],
+        "strokeWeight": 1,
+        "strokeAlign": "INSIDE",
+        "strokeJoin": "MITER",
+        "strokeCap": "NONE",
+        "strokeMiterLimit": 4,
+        "dashPattern": [],
+        "fillGeometry": [
+          {
+            "windingRule": "NONZERO",
+            "data": "M0 0 L169 0 L169 16 L0 16 L0 0 Z"
+          }
+        ],
+        "cornerRadius": 0,
+        "cornerSmoothing": 0,
+        "layoutMode": "VERTICAL",
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "primaryAxisAlignItems": "CENTER",
+        "counterAxisAlignItems": "CENTER",
+        "counterAxisAlignContent": "AUTO",
+        "itemSpacing": 0,
+        "counterAxisSpacing": 0,
+        "layoutWrap": "NO_WRAP",
+        "primaryAxisSizingMode": "FIXED",
+        "counterAxisSizingMode": "FIXED",
+        "itemReverseZIndex": false,
+        "strokesIncludedInLayout": false,
+        "clipsContent": true,
+        "inferredAutoLayout": {
+          "layoutMode": "VERTICAL",
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "primaryAxisAlignItems": "CENTER",
+          "counterAxisAlignItems": "CENTER",
+          "primaryAxisSizingMode": "FIXED",
+          "counterAxisSizingMode": "FIXED",
+          "itemSpacing": 0
+        },
+        "layoutGrow": 1,
+        "layoutAlign": "INHERIT",
+        "layoutPositioning": "AUTO",
+        "opacity": 1,
+        "blendMode": "PASS_THROUGH",
+        "isMask": false,
+        "maskType": "ALPHA",
+        "effects": [],
+        "variantProperties": null,
+        "mainComponentId": "42:888",
+        "mainComponentName": ".Building Blocks/Active track",
+        "componentProperties": {},
+        "isExposedInstance": false,
+        "overrides": [
+          {
+            "id": "42:1049",
+            "overriddenFields": [
+              "bottomLeftRadius",
+              "bottomRightRadius",
+              "boundVariables",
+              "counterAxisSizingMode",
+              "height",
+              "name",
+              "topLeftRadius",
+              "topRightRadius",
+              "width"
+            ]
+          },
+          {
+            "id": "I42:1049;58008:12383",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          }
+        ],
+        "devStatus": null,
+        "children": [
+          {
+            "id": "I42:1049;58008:12383",
+            "name": "Track",
+            "type": "RECTANGLE",
+            "visible": true,
+            "locked": false,
+            "width": 169,
+            "height": 16,
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FILL",
+            "layoutSizingVertical": "FILL",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                78
+              ],
+              [
+                0,
+                1,
+                701
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 78,
+              "y": 701,
+              "width": 169,
+              "height": 16
+            },
+            "absoluteRenderBounds": {
+              "x": 78,
+              "y": 701,
+              "width": 169,
+              "height": 16
+            },
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [
+              {
+                "type": "SOLID",
+                "r": 0.40392157435417175,
+                "g": 0.3137255012989044,
+                "b": 0.6431372761726379,
+                "a": 1,
+                "opacity": 1,
+                "blendMode": "NORMAL",
+                "boundVariables": {
+                  "color": {
+                    "type": "VARIABLE_ALIAS",
+                    "id": "VariableID:76bfbbf87c5f600256e614f12eaf0699927c5a35/57966:62"
+                  }
+                }
+              }
+            ],
+            "fillStyleId": "S:b294a93f678911b63f49398e040365eb16cfba55,57966:63",
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 8 C0 3.58172 3.58172 0 8 0 L167 0 C168.105 0 169 0.895431 169 2 L169 14 C169 15.1046 168.105 16 167 16 L8 16 C3.58172 16 0 12.4183 0 8 L0 8 Z"
+              }
+            ],
+            "topLeftRadius": 16,
+            "topRightRadius": 2,
+            "bottomLeftRadius": 16,
+            "bottomRightRadius": 2,
+            "cornerSmoothing": 0,
+            "layoutGrow": 1,
+            "layoutAlign": "STRETCH",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "boundVariables": {
+              "topLeftRadius": {
+                "type": "VARIABLE_ALIAS",
+                "id": "VariableID:a9a10aea3147aafd53eac1afe93005032b727d12/55067:102"
+              },
+              "bottomLeftRadius": {
+                "type": "VARIABLE_ALIAS",
+                "id": "VariableID:a9a10aea3147aafd53eac1afe93005032b727d12/55067:102"
+              },
+              "fills": [
+                {
+                  "type": "VARIABLE_ALIAS",
+                  "id": "VariableID:76bfbbf87c5f600256e614f12eaf0699927c5a35/57966:62"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "42:1050",
+        "name": "Handle",
+        "type": "INSTANCE",
+        "visible": true,
+        "locked": false,
+        "width": 4,
+        "height": 44,
+        "x": 175,
+        "y": 0,
+        "rotation": 0,
+        "minWidth": null,
+        "maxWidth": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "layoutSizingHorizontal": "FIXED",
+        "layoutSizingVertical": "FIXED",
+        "relativeTransform": [
+          [
+            1,
+            0,
+            175
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "absoluteTransform": [
+          [
+            1,
+            0,
+            253
+          ],
+          [
+            0,
+            1,
+            687
+          ]
+        ],
+        "absoluteBoundingBox": {
+          "x": 253,
+          "y": 687,
+          "width": 4,
+          "height": 44
+        },
+        "absoluteRenderBounds": {
+          "x": 253,
+          "y": 687,
+          "width": 4,
+          "height": 44
+        },
+        "targetAspectRatio": null,
+        "constraints": {
+          "horizontal": "MIN",
+          "vertical": "MIN"
+        },
+        "fills": [
+          {
+            "type": "SOLID",
+            "r": 0.40392157435417175,
+            "g": 0.3137255012989044,
+            "b": 0.6431372761726379,
+            "a": 1,
+            "opacity": 1,
+            "blendMode": "NORMAL",
+            "boundVariables": {
+              "color": {
+                "type": "VARIABLE_ALIAS",
+                "id": "VariableID:76bfbbf87c5f600256e614f12eaf0699927c5a35/57966:62"
+              }
+            }
+          }
+        ],
+        "fillStyleId": "S:b294a93f678911b63f49398e040365eb16cfba55,57966:63",
+        "strokes": [],
+        "strokeWeight": 1,
+        "strokeAlign": "INSIDE",
+        "strokeJoin": "MITER",
+        "strokeCap": "NONE",
+        "strokeMiterLimit": 4,
+        "dashPattern": [],
+        "fillGeometry": [
+          {
+            "windingRule": "NONZERO",
+            "data": "M0 2 C0 0.895431 0.895431 0 2 0 L2 0 C3.10457 0 4 0.895431 4 2 L4 42 C4 43.1046 3.10457 44 2 44 L2 44 C0.895431 44 0 43.1046 0 42 L0 2 Z"
+          }
+        ],
+        "cornerRadius": 2,
+        "cornerSmoothing": 0,
+        "layoutMode": "NONE",
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "primaryAxisAlignItems": "MIN",
+        "counterAxisAlignItems": "MIN",
+        "counterAxisAlignContent": "AUTO",
+        "itemSpacing": 0,
+        "counterAxisSpacing": 0,
+        "layoutWrap": "NO_WRAP",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "itemReverseZIndex": false,
+        "strokesIncludedInLayout": false,
+        "clipsContent": true,
+        "inferredAutoLayout": null,
+        "layoutGrow": 0,
+        "layoutAlign": "INHERIT",
+        "layoutPositioning": "AUTO",
+        "opacity": 1,
+        "blendMode": "PASS_THROUGH",
+        "isMask": false,
+        "maskType": "ALPHA",
+        "effects": [],
+        "variantProperties": null,
+        "mainComponentId": "42:890",
+        "mainComponentName": ".Building Blocks/Handle",
+        "componentProperties": {},
+        "isExposedInstance": false,
+        "overrides": [
+          {
+            "id": "42:1050",
+            "overriddenFields": [
+              "fillStyleId",
+              "name"
+            ]
+          }
+        ],
+        "boundVariables": {
+          "fills": [
+            {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:76bfbbf87c5f600256e614f12eaf0699927c5a35/57966:62"
+            }
+          ]
+        },
+        "devStatus": null,
+        "children": [
+          {
+            "id": "I42:1050;58008:12361",
+            "name": "State-layer",
+            "type": "RECTANGLE",
+            "visible": false,
+            "locked": false,
+            "width": 4,
+            "height": 44,
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                253
+              ],
+              [
+                0,
+                1,
+                687
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 253,
+              "y": 687,
+              "width": 4,
+              "height": 44
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "STRETCH",
+              "vertical": "STRETCH"
+            },
+            "fills": [
+              {
+                "type": "SOLID",
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.07999999821186066,
+                "opacity": 0.07999999821186066,
+                "blendMode": "NORMAL",
+                "boundVariables": {
+                  "color": {
+                    "type": "VARIABLE_ALIAS",
+                    "id": "VariableID:7715d3796851d8931f06f8834c6c2dbfbdf86471/57299:22395"
+                  }
+                }
+              }
+            ],
+            "fillStyleId": "S:06c759445af1af9e85cb9b65074af88bfa602e16,58541:0",
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 2 C0 0.895431 0.895431 0 2 0 L2 0 C3.10457 0 4 0.895431 4 2 L4 42 C4 43.1046 3.10457 44 2 44 L2 44 C0.895431 44 0 43.1046 0 42 L0 2 Z"
+              }
+            ],
+            "cornerRadius": 4,
+            "cornerSmoothing": 0,
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "boundVariables": {
+              "fills": [
+                {
+                  "type": "VARIABLE_ALIAS",
+                  "id": "VariableID:7715d3796851d8931f06f8834c6c2dbfbdf86471/57299:22395"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "42:1051",
+        "name": "Inactive track",
+        "type": "INSTANCE",
+        "visible": true,
+        "locked": false,
+        "width": 169,
+        "height": 16,
+        "x": 185,
+        "y": 14,
+        "rotation": 0,
+        "minWidth": null,
+        "maxWidth": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "layoutSizingHorizontal": "FILL",
+        "layoutSizingVertical": "FIXED",
+        "relativeTransform": [
+          [
+            1,
+            0,
+            185
+          ],
+          [
+            0,
+            1,
+            14
+          ]
+        ],
+        "absoluteTransform": [
+          [
+            1,
+            0,
+            263
+          ],
+          [
+            0,
+            1,
+            701
+          ]
+        ],
+        "absoluteBoundingBox": {
+          "x": 263,
+          "y": 701,
+          "width": 169,
+          "height": 16
+        },
+        "absoluteRenderBounds": {
+          "x": 263,
+          "y": 701,
+          "width": 169,
+          "height": 16
+        },
+        "targetAspectRatio": null,
+        "constraints": {
+          "horizontal": "MIN",
+          "vertical": "MIN"
+        },
+        "fills": [],
+        "strokes": [],
+        "strokeWeight": 1,
+        "strokeAlign": "INSIDE",
+        "strokeJoin": "MITER",
+        "strokeCap": "NONE",
+        "strokeMiterLimit": 4,
+        "dashPattern": [],
+        "fillGeometry": [
+          {
+            "windingRule": "NONZERO",
+            "data": "M0 0 L169 0 L169 16 L0 16 L0 0 Z"
+          }
+        ],
+        "cornerRadius": 0,
+        "cornerSmoothing": 0,
+        "layoutMode": "HORIZONTAL",
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "primaryAxisAlignItems": "SPACE_BETWEEN",
+        "counterAxisAlignItems": "CENTER",
+        "counterAxisAlignContent": "AUTO",
+        "itemSpacing": 0,
+        "counterAxisSpacing": 0,
+        "layoutWrap": "NO_WRAP",
+        "primaryAxisSizingMode": "FIXED",
+        "counterAxisSizingMode": "FIXED",
+        "itemReverseZIndex": false,
+        "strokesIncludedInLayout": false,
+        "clipsContent": true,
+        "inferredAutoLayout": {
+          "layoutMode": "HORIZONTAL",
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "primaryAxisAlignItems": "SPACE_BETWEEN",
+          "counterAxisAlignItems": "CENTER",
+          "primaryAxisSizingMode": "FIXED",
+          "counterAxisSizingMode": "FIXED",
+          "itemSpacing": 0
+        },
+        "layoutGrow": 1,
+        "layoutAlign": "INHERIT",
+        "layoutPositioning": "AUTO",
+        "opacity": 1,
+        "blendMode": "PASS_THROUGH",
+        "isMask": false,
+        "maskType": "ALPHA",
+        "effects": [],
+        "variantProperties": null,
+        "mainComponentId": "42:904",
+        "mainComponentName": ".Building Blocks/Inactive track",
+        "componentProperties": {},
+        "isExposedInstance": false,
+        "overrides": [
+          {
+            "id": "42:1051",
+            "overriddenFields": [
+              "counterAxisSizingMode",
+              "height",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "id": "I42:1051;58008:12368",
+            "overriddenFields": [
+              "boundVariables",
+              "cornerRadius",
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1051;58008:21491;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          }
+        ],
+        "devStatus": null,
+        "children": [
+          {
+            "id": "I42:1051;58008:12368",
+            "name": "Track",
+            "type": "RECTANGLE",
+            "visible": true,
+            "locked": false,
+            "width": 169,
+            "height": 16,
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FILL",
+            "layoutSizingVertical": "FILL",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                263
+              ],
+              [
+                0,
+                1,
+                701
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 263,
+              "y": 701,
+              "width": 169,
+              "height": 16
+            },
+            "absoluteRenderBounds": {
+              "x": 263,
+              "y": 701,
+              "width": 169,
+              "height": 16
+            },
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [
+              {
+                "type": "SOLID",
+                "r": 0.9098039269447327,
+                "g": 0.8705882430076599,
+                "b": 0.9725490212440491,
+                "a": 1,
+                "opacity": 1,
+                "blendMode": "NORMAL",
+                "boundVariables": {
+                  "color": {
+                    "type": "VARIABLE_ALIAS",
+                    "id": "VariableID:f5a5418067dd181a126299ff0ab3ebda1692869b/57299:22453"
+                  }
+                }
+              }
+            ],
+            "fillStyleId": "S:efc367bf311007161add74dd1c10f644449c5d57,57299:22646",
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 2 C0 0.895431 0.895431 0 2 0 L161 0 C165.418 0 169 3.58172 169 8 L169 8 C169 12.4183 165.418 16 161 16 L2 16 C0.895431 16 0 15.1046 0 14 L0 2 Z"
+              }
+            ],
+            "topLeftRadius": 2,
+            "topRightRadius": 16,
+            "bottomLeftRadius": 2,
+            "bottomRightRadius": 16,
+            "cornerSmoothing": 0,
+            "layoutGrow": 1,
+            "layoutAlign": "STRETCH",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "boundVariables": {
+              "topRightRadius": {
+                "type": "VARIABLE_ALIAS",
+                "id": "VariableID:a9a10aea3147aafd53eac1afe93005032b727d12/55067:102"
+              },
+              "bottomRightRadius": {
+                "type": "VARIABLE_ALIAS",
+                "id": "VariableID:a9a10aea3147aafd53eac1afe93005032b727d12/55067:102"
+              },
+              "fills": [
+                {
+                  "type": "VARIABLE_ALIAS",
+                  "id": "VariableID:f5a5418067dd181a126299ff0ab3ebda1692869b/57299:22453"
+                }
+              ]
+            }
+          },
+          {
+            "id": "I42:1051;58008:21491",
+            "name": ".Building Blocks/Track stop",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 161,
+            "y": 6,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                161
+              ],
+              [
+                0,
+                1,
+                6
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                424
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 424,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": {
+              "x": 424,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MAX",
+              "vertical": "CENTER"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "ABSOLUTE",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1051;58008:21491;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1051;58008:21491;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    424
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 424,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": {
+                  "x": 424,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 0.29019609093666077,
+                    "g": 0.2666666805744171,
+                    "b": 0.3490196168422699,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:096f97a28047464f9ae9093037838744a1ff1eb8,57299:22643",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "42:1052",
+        "name": "Stops",
+        "type": "INSTANCE",
+        "visible": false,
+        "locked": false,
+        "width": 354,
+        "height": 4,
+        "x": 0,
+        "y": 20,
+        "rotation": 0,
+        "minWidth": null,
+        "maxWidth": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "layoutSizingHorizontal": "FIXED",
+        "layoutSizingVertical": "HUG",
+        "relativeTransform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            20
+          ]
+        ],
+        "absoluteTransform": [
+          [
+            1,
+            0,
+            78
+          ],
+          [
+            0,
+            1,
+            707
+          ]
+        ],
+        "absoluteBoundingBox": {
+          "x": 78,
+          "y": 707,
+          "width": 354,
+          "height": 4
+        },
+        "absoluteRenderBounds": null,
+        "targetAspectRatio": null,
+        "constraints": {
+          "horizontal": "STRETCH",
+          "vertical": "CENTER"
+        },
+        "fills": [],
+        "strokes": [],
+        "strokeWeight": 1,
+        "strokeAlign": "INSIDE",
+        "strokeJoin": "MITER",
+        "strokeCap": "NONE",
+        "strokeMiterLimit": 4,
+        "dashPattern": [],
+        "fillGeometry": [
+          {
+            "windingRule": "NONZERO",
+            "data": "M0 0 L354 0 L354 4 L0 4 L0 0 Z"
+          }
+        ],
+        "cornerRadius": 0,
+        "cornerSmoothing": 0,
+        "layoutMode": "HORIZONTAL",
+        "paddingLeft": 4,
+        "paddingRight": 4,
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "primaryAxisAlignItems": "SPACE_BETWEEN",
+        "counterAxisAlignItems": "CENTER",
+        "counterAxisAlignContent": "AUTO",
+        "itemSpacing": 33.81999969482422,
+        "counterAxisSpacing": 0,
+        "layoutWrap": "NO_WRAP",
+        "primaryAxisSizingMode": "FIXED",
+        "counterAxisSizingMode": "AUTO",
+        "itemReverseZIndex": false,
+        "strokesIncludedInLayout": false,
+        "clipsContent": false,
+        "inferredAutoLayout": {
+          "layoutMode": "HORIZONTAL",
+          "paddingLeft": 4,
+          "paddingRight": 4,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "primaryAxisAlignItems": "SPACE_BETWEEN",
+          "counterAxisAlignItems": "CENTER",
+          "primaryAxisSizingMode": "FIXED",
+          "counterAxisSizingMode": "AUTO",
+          "itemSpacing": 33.81999969482422
+        },
+        "layoutGrow": 0,
+        "layoutAlign": "INHERIT",
+        "layoutPositioning": "ABSOLUTE",
+        "opacity": 1,
+        "blendMode": "PASS_THROUGH",
+        "isMask": false,
+        "maskType": "ALPHA",
+        "effects": [],
+        "variantProperties": null,
+        "componentPropertyReferences": {
+          "visible": "Show stops#7528:242"
+        },
+        "mainComponentId": "42:907",
+        "mainComponentName": ".Building Blocks/Stops",
+        "componentProperties": {},
+        "isExposedInstance": false,
+        "overrides": [
+          {
+            "id": "42:1052",
+            "overriddenFields": [
+              "counterAxisAlignItems",
+              "layoutPositioning",
+              "name"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12371",
+            "overriddenFields": [
+              "strokeBottomWeight",
+              "strokeLeftWeight",
+              "strokeRightWeight",
+              "stokeTopWeight"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12371;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12372;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12373;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12374;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12375;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12376;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12377;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12378;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12379;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12380;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12381;58008:12363",
+            "overriddenFields": [
+              "fillStyleId",
+              "fills"
+            ]
+          }
+        ],
+        "devStatus": null,
+        "children": [
+          {
+            "id": "I42:1052;58008:12371",
+            "name": "Track stop 1",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 4,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                4
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                82
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 82,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12371",
+                "overriddenFields": [
+                  "strokeBottomWeight",
+                  "strokeLeftWeight",
+                  "strokeRightWeight",
+                  "stokeTopWeight"
+                ]
+              },
+              {
+                "id": "I42:1052;58008:12371;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12371;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    82
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 82,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 1,
+                    "g": 1,
+                    "b": 1,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:43e2fa808c95da8ac12fd3eddae33367c25249ed/57299:22455"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:1cb6df476ffc7edc1581ea734fe296bc297de44a,57299:22602",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:43e2fa808c95da8ac12fd3eddae33367c25249ed/57299:22455"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12372",
+            "name": "Track stop 2",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 38,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                38
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                116.19999694824219
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 116.19999694824219,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12372;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12372;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    116.19999694824219
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 116.19999694824219,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 1,
+                    "g": 1,
+                    "b": 1,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:43e2fa808c95da8ac12fd3eddae33367c25249ed/57299:22455"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:1cb6df476ffc7edc1581ea734fe296bc297de44a,57299:22602",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:43e2fa808c95da8ac12fd3eddae33367c25249ed/57299:22455"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12373",
+            "name": "Track stop 3",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 72,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                72
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                150.39999389648438
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 150.39999389648438,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12373;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12373;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    150.39999389648438
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 150.39999389648438,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 1,
+                    "g": 1,
+                    "b": 1,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:43e2fa808c95da8ac12fd3eddae33367c25249ed/57299:22455"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:1cb6df476ffc7edc1581ea734fe296bc297de44a,57299:22602",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:43e2fa808c95da8ac12fd3eddae33367c25249ed/57299:22455"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12374",
+            "name": "Track stop 4",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 107,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                107
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                184.60000610351562
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 184.60000610351562,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12374;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12374;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    184.60000610351562
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 184.60000610351562,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 1,
+                    "g": 1,
+                    "b": 1,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:43e2fa808c95da8ac12fd3eddae33367c25249ed/57299:22455"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:1cb6df476ffc7edc1581ea734fe296bc297de44a,57299:22602",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:43e2fa808c95da8ac12fd3eddae33367c25249ed/57299:22455"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12375",
+            "name": "Track stop 5",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 141,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                141
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                218.8000030517578
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 218.8000030517578,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12375;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12375;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    218.8000030517578
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 218.8000030517578,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 1,
+                    "g": 1,
+                    "b": 1,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:43e2fa808c95da8ac12fd3eddae33367c25249ed/57299:22455"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:1cb6df476ffc7edc1581ea734fe296bc297de44a,57299:22602",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:43e2fa808c95da8ac12fd3eddae33367c25249ed/57299:22455"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12376",
+            "name": "Track stop 6",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 175,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                175
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                253
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 253,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12376;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12376;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    253
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 253,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [],
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12377",
+            "name": "Track stop 7",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 209,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                209
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                287.20001220703125
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 287.20001220703125,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12377;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12377;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    287.20001220703125
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 287.20001220703125,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 0.29019609093666077,
+                    "g": 0.2666666805744171,
+                    "b": 0.3490196168422699,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:096f97a28047464f9ae9093037838744a1ff1eb8,57299:22643",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12378",
+            "name": "Track stop 8",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 243,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                243
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                321.3999938964844
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 321.3999938964844,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12378;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12378;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    321.3999938964844
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 321.3999938964844,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 0.29019609093666077,
+                    "g": 0.2666666805744171,
+                    "b": 0.3490196168422699,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:096f97a28047464f9ae9093037838744a1ff1eb8,57299:22643",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12379",
+            "name": "Track stop 9",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 278,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                278
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                355.6000061035156
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 355.6000061035156,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12379;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12379;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    355.6000061035156
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 355.6000061035156,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 0.29019609093666077,
+                    "g": 0.2666666805744171,
+                    "b": 0.3490196168422699,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:096f97a28047464f9ae9093037838744a1ff1eb8,57299:22643",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12380",
+            "name": "Track stop 10",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 312,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                312
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                389.8000183105469
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 389.8000183105469,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12380;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12380;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    389.8000183105469
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 389.8000183105469,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 0.29019609093666077,
+                    "g": 0.2666666805744171,
+                    "b": 0.3490196168422699,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:096f97a28047464f9ae9093037838744a1ff1eb8,57299:22643",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "I42:1052;58008:12381",
+            "name": "Track stop 11",
+            "type": "INSTANCE",
+            "visible": true,
+            "locked": false,
+            "width": 4,
+            "height": 4,
+            "x": 346,
+            "y": 0,
+            "rotation": 0,
+            "minWidth": null,
+            "maxWidth": null,
+            "minHeight": null,
+            "maxHeight": null,
+            "layoutSizingHorizontal": "FIXED",
+            "layoutSizingVertical": "FIXED",
+            "relativeTransform": [
+              [
+                1,
+                0,
+                346
+              ],
+              [
+                0,
+                1,
+                0
+              ]
+            ],
+            "absoluteTransform": [
+              [
+                1,
+                0,
+                424.0000305175781
+              ],
+              [
+                0,
+                1,
+                707
+              ]
+            ],
+            "absoluteBoundingBox": {
+              "x": 424.0000305175781,
+              "y": 707,
+              "width": 4,
+              "height": 4
+            },
+            "absoluteRenderBounds": null,
+            "targetAspectRatio": null,
+            "constraints": {
+              "horizontal": "MIN",
+              "vertical": "MIN"
+            },
+            "fills": [],
+            "strokes": [],
+            "strokeWeight": 1,
+            "strokeAlign": "INSIDE",
+            "strokeJoin": "MITER",
+            "strokeCap": "NONE",
+            "strokeMiterLimit": 4,
+            "dashPattern": [],
+            "fillGeometry": [
+              {
+                "windingRule": "NONZERO",
+                "data": "M0 0 L4 0 L4 4 L0 4 L0 0 Z"
+              }
+            ],
+            "cornerRadius": 0,
+            "cornerSmoothing": 0,
+            "layoutMode": "NONE",
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "primaryAxisAlignItems": "MIN",
+            "counterAxisAlignItems": "MIN",
+            "counterAxisAlignContent": "AUTO",
+            "itemSpacing": 0,
+            "counterAxisSpacing": 0,
+            "layoutWrap": "NO_WRAP",
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "FIXED",
+            "itemReverseZIndex": false,
+            "strokesIncludedInLayout": false,
+            "clipsContent": false,
+            "inferredAutoLayout": {
+              "layoutMode": "HORIZONTAL",
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "primaryAxisAlignItems": "CENTER",
+              "counterAxisAlignItems": "CENTER",
+              "primaryAxisSizingMode": "FIXED",
+              "counterAxisSizingMode": "FIXED",
+              "itemSpacing": 0
+            },
+            "layoutGrow": 0,
+            "layoutAlign": "INHERIT",
+            "layoutPositioning": "AUTO",
+            "opacity": 1,
+            "blendMode": "PASS_THROUGH",
+            "isMask": false,
+            "maskType": "ALPHA",
+            "effects": [],
+            "variantProperties": null,
+            "mainComponentId": "42:902",
+            "mainComponentName": ".Building Blocks/Track stop",
+            "componentProperties": {
+              "Show value indicator#7633:3": {
+                "type": "BOOLEAN",
+                "value": true
+              },
+              "Show icon#7633:2": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Show stops#7633:1": {
+                "type": "BOOLEAN",
+                "value": false
+              },
+              "Icon#7633:0": {
+                "type": "INSTANCE_SWAP",
+                "value": "42:900"
+              }
+            },
+            "isExposedInstance": false,
+            "overrides": [
+              {
+                "id": "I42:1052;58008:12381;58008:12363",
+                "overriddenFields": [
+                  "fillStyleId",
+                  "fills"
+                ]
+              }
+            ],
+            "devStatus": null,
+            "children": [
+              {
+                "id": "I42:1052;58008:12381;58008:12363",
+                "name": "Dot",
+                "type": "ELLIPSE",
+                "visible": true,
+                "locked": false,
+                "width": 4,
+                "height": 4,
+                "x": 0,
+                "y": 0,
+                "rotation": 0,
+                "minWidth": null,
+                "maxWidth": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "layoutSizingHorizontal": "FIXED",
+                "layoutSizingVertical": "FIXED",
+                "relativeTransform": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ]
+                ],
+                "absoluteTransform": [
+                  [
+                    1,
+                    0,
+                    424.0000305175781
+                  ],
+                  [
+                    0,
+                    1,
+                    707
+                  ]
+                ],
+                "absoluteBoundingBox": {
+                  "x": 424.0000305175781,
+                  "y": 707,
+                  "width": 4,
+                  "height": 4
+                },
+                "absoluteRenderBounds": null,
+                "targetAspectRatio": null,
+                "constraints": {
+                  "horizontal": "SCALE",
+                  "vertical": "SCALE"
+                },
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "r": 0.29019609093666077,
+                    "g": 0.2666666805744171,
+                    "b": 0.3490196168422699,
+                    "a": 1,
+                    "opacity": 1,
+                    "blendMode": "NORMAL",
+                    "boundVariables": {
+                      "color": {
+                        "type": "VARIABLE_ALIAS",
+                        "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                      }
+                    }
+                  }
+                ],
+                "fillStyleId": "S:096f97a28047464f9ae9093037838744a1ff1eb8,57299:22643",
+                "strokes": [],
+                "strokeWeight": 1,
+                "strokeAlign": "INSIDE",
+                "strokeJoin": "MITER",
+                "strokeCap": "NONE",
+                "strokeMiterLimit": 4,
+                "dashPattern": [],
+                "fillGeometry": [
+                  {
+                    "windingRule": "NONZERO",
+                    "data": "M4 2 C4 3.10457 3.10457 4 2 4 C0.895431 4 0 3.10457 0 2 C0 0.895431 0.895431 0 2 0 C3.10457 0 4 0.895431 4 2 Z"
+                  }
+                ],
+                "cornerRadius": 0,
+                "cornerSmoothing": 0,
+                "layoutGrow": 0,
+                "layoutAlign": "INHERIT",
+                "layoutPositioning": "AUTO",
+                "opacity": 1,
+                "blendMode": "PASS_THROUGH",
+                "isMask": false,
+                "maskType": "ALPHA",
+                "effects": [],
+                "boundVariables": {
+                  "fills": [
+                    {
+                      "type": "VARIABLE_ALIAS",
+                      "id": "VariableID:ef0a1bd6499959dda47dde7449042f0ca0e34ac8/57299:22420"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "descriptionMarkdown": "Continuous slider\n\n[GDP / GM3 Design System] 🔍",
+  "remote": true,
+  "key": "8bbd2d17422c6a695f1641e2e3d1a862568c0226",
+  "publishStatus": "UNPUBLISHED"
+}

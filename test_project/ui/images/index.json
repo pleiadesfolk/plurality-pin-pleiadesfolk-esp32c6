@@ -1,0 +1,22 @@
+[
+  {
+    "hash": "02c5506b30088dc35842556dfe2f49a66be2cfd2",
+    "name": "image_img_02c5506b",
+    "path": "images/img_02c5506b.png",
+    "format": "PNG",
+    "colorFormat": "rgb565a8",
+    "byteLength": 97690,
+    "width": 350,
+    "height": 350
+  },
+  {
+    "hash": "45c6bb3a51da7fee90523aebbab8b254788efd92",
+    "name": "image_img_45c6bb3a",
+    "path": "images/img_45c6bb3a.png",
+    "format": "PNG",
+    "colorFormat": "rgb565a8",
+    "byteLength": 37488,
+    "width": 280,
+    "height": 280
+  }
+]

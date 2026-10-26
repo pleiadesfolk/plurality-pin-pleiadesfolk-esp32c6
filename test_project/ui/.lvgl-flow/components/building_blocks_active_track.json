@@ -1,0 +1,249 @@
+{
+  "id": "42:888",
+  "name": ".Building Blocks/Active track",
+  "type": "COMPONENT",
+  "description": "",
+  "propertyDefinitions": {},
+  "componentSetId": null,
+  "isDefaultVariant": false,
+  "node": {
+    "id": "42:888",
+    "name": ".Building Blocks/Active track",
+    "type": "COMPONENT",
+    "visible": true,
+    "locked": false,
+    "width": 354,
+    "height": 16,
+    "x": 1270,
+    "y": 14,
+    "rotation": 0,
+    "minWidth": null,
+    "maxWidth": null,
+    "minHeight": null,
+    "maxHeight": null,
+    "layoutSizingHorizontal": "FIXED",
+    "layoutSizingVertical": "FIXED",
+    "relativeTransform": [
+      [
+        1,
+        0,
+        1270
+      ],
+      [
+        0,
+        1,
+        14
+      ]
+    ],
+    "absoluteTransform": [
+      [
+        1,
+        0,
+        1270
+      ],
+      [
+        0,
+        1,
+        14
+      ]
+    ],
+    "absoluteBoundingBox": {
+      "x": 1270,
+      "y": 14,
+      "width": 354,
+      "height": 16
+    },
+    "absoluteRenderBounds": {
+      "x": 1270,
+      "y": 14,
+      "width": 354,
+      "height": 16
+    },
+    "targetAspectRatio": null,
+    "constraints": {
+      "horizontal": "MIN",
+      "vertical": "MIN"
+    },
+    "fills": [],
+    "strokes": [],
+    "strokeWeight": 1,
+    "strokeAlign": "INSIDE",
+    "strokeJoin": "MITER",
+    "strokeCap": "NONE",
+    "strokeMiterLimit": 4,
+    "dashPattern": [],
+    "fillGeometry": [
+      {
+        "windingRule": "NONZERO",
+        "data": "M0 8 C0 3.58172 3.58172 0 8 0 L352 0 C353.105 0 354 0.895431 354 2 L354 14 C354 15.1046 353.105 16 352 16 L8 16 C3.58172 16 0 12.4183 0 8 L0 8 Z"
+      }
+    ],
+    "topLeftRadius": 16,
+    "topRightRadius": 2,
+    "bottomLeftRadius": 16,
+    "bottomRightRadius": 2,
+    "cornerSmoothing": 0,
+    "layoutMode": "VERTICAL",
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "primaryAxisAlignItems": "CENTER",
+    "counterAxisAlignItems": "CENTER",
+    "counterAxisAlignContent": "AUTO",
+    "itemSpacing": 0,
+    "counterAxisSpacing": 0,
+    "layoutWrap": "NO_WRAP",
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "itemReverseZIndex": false,
+    "strokesIncludedInLayout": false,
+    "clipsContent": true,
+    "inferredAutoLayout": {
+      "layoutMode": "VERTICAL",
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "primaryAxisAlignItems": "CENTER",
+      "counterAxisAlignItems": "CENTER",
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "FIXED",
+      "itemSpacing": 0
+    },
+    "layoutGrow": 0,
+    "layoutAlign": "INHERIT",
+    "layoutPositioning": "AUTO",
+    "opacity": 1,
+    "blendMode": "PASS_THROUGH",
+    "isMask": false,
+    "maskType": "ALPHA",
+    "effects": [],
+    "variantProperties": null,
+    "devStatus": null,
+    "children": [
+      {
+        "id": "42:889",
+        "name": "Track",
+        "type": "RECTANGLE",
+        "visible": true,
+        "locked": false,
+        "width": 354,
+        "height": 16,
+        "x": 0,
+        "y": 0,
+        "rotation": 0,
+        "minWidth": null,
+        "maxWidth": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "layoutSizingHorizontal": "FILL",
+        "layoutSizingVertical": "FILL",
+        "relativeTransform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "absoluteTransform": [
+          [
+            1,
+            0,
+            1270
+          ],
+          [
+            0,
+            1,
+            14
+          ]
+        ],
+        "absoluteBoundingBox": {
+          "x": 1270,
+          "y": 14,
+          "width": 354,
+          "height": 16
+        },
+        "absoluteRenderBounds": {
+          "x": 1270,
+          "y": 14,
+          "width": 354,
+          "height": 16
+        },
+        "targetAspectRatio": null,
+        "constraints": {
+          "horizontal": "MIN",
+          "vertical": "MIN"
+        },
+        "fills": [
+          {
+            "type": "SOLID",
+            "r": 0.40392157435417175,
+            "g": 0.3137255012989044,
+            "b": 0.6431372761726379,
+            "a": 1,
+            "opacity": 1,
+            "blendMode": "NORMAL",
+            "boundVariables": {
+              "color": {
+                "type": "VARIABLE_ALIAS",
+                "id": "VariableID:76bfbbf87c5f600256e614f12eaf0699927c5a35/57966:62"
+              }
+            }
+          }
+        ],
+        "fillStyleId": "S:b294a93f678911b63f49398e040365eb16cfba55,57966:63",
+        "strokes": [],
+        "strokeWeight": 1,
+        "strokeAlign": "INSIDE",
+        "strokeJoin": "MITER",
+        "strokeCap": "NONE",
+        "strokeMiterLimit": 4,
+        "dashPattern": [],
+        "fillGeometry": [
+          {
+            "windingRule": "NONZERO",
+            "data": "M0 8 C0 3.58172 3.58172 0 8 0 L352 0 C353.105 0 354 0.895431 354 2 L354 14 C354 15.1046 353.105 16 352 16 L8 16 C3.58172 16 0 12.4183 0 8 L0 8 Z"
+          }
+        ],
+        "topLeftRadius": 16,
+        "topRightRadius": 2,
+        "bottomLeftRadius": 16,
+        "bottomRightRadius": 2,
+        "cornerSmoothing": 0,
+        "layoutGrow": 1,
+        "layoutAlign": "STRETCH",
+        "layoutPositioning": "AUTO",
+        "opacity": 1,
+        "blendMode": "PASS_THROUGH",
+        "isMask": false,
+        "maskType": "ALPHA",
+        "effects": [],
+        "boundVariables": {
+          "topLeftRadius": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:a9a10aea3147aafd53eac1afe93005032b727d12/55067:102"
+          },
+          "bottomLeftRadius": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:a9a10aea3147aafd53eac1afe93005032b727d12/55067:102"
+          },
+          "fills": [
+            {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:76bfbbf87c5f600256e614f12eaf0699927c5a35/57966:62"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "remote": true,
+  "key": "462a4d29b15de6b93bcd27003383dfa60c782d81",
+  "publishStatus": "UNPUBLISHED"
+}
