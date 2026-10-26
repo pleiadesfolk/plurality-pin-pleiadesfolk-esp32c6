@@ -22,6 +22,8 @@
 #include "esp_heap_caps.h"
 #include "lvgl.h"
 #include "assets.h"
+#include "brightness.h"
+#include "status.h"
 #include "display.h"
 #include "nav.h"
 #include "ui/plurality_pin.h"
@@ -84,6 +86,10 @@ static void watch_deleted(lv_event_t *e)
 
 static void on_screen(const char *name, lv_obj_t *scr)
 {
+    if (strcmp(name, "settings") == 0) {
+        brightness_attach(scr);
+        return;
+    }
     if (strcmp(name, "watch") != 0) {
         return;
     }
@@ -115,6 +121,8 @@ static void memory_report(lv_timer_t *timer)
 static void lvgl_task(void *arg)
 {
     plurality_pin_init("");             /* asset path unused: fonts are built in, images mapped */
+    brightness_init();
+    status_init();
 #if RUN_BENCHMARK
     nav_benchmark();
 #endif
@@ -141,8 +149,7 @@ void app_main(void)
     lv_init();
     lv_tick_set_cb(tick_cb);
 
-    display_init();
-    display_set_brightness(100);
+    display_init();                     /* brightness is set by brightness_init() */
 
     /* All LVGL calls happen in this one task from here on (its stack is bigger
      * than app_main's, which drawing needs) */

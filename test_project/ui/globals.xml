@@ -520,4 +520,18 @@
 
     <!-- ─────────────────── <lvgl-figma-flow end="styles"/> ──────────────────── -->
   </styles>
+
+  <subjects>
+    <!-- Hand-added. Screen brightness in %, bound to the Settings slider and its label.
+         The firmware applies it to the panel and remembers it across restarts. -->
+    <int name="brightness_percent" value="50" />
+
+    <!-- Hand-added. Live device status, set by the firmware (firmware/pin/main/status.c). -->
+    <int name="battery_percent" value="82" />
+    <string name="time_text" value="9:41" />
+    <string name="ampm_text" value="AM" />
+    <string name="date_text" value="Wed Apr 1" />
+    <string name="wifi_status" value="Off" />
+    <string name="wifi_name" value="Not set up" />
+  </subjects>
 </globals>

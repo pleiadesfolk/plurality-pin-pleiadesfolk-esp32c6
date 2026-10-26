@@ -115,6 +115,7 @@ lv_obj_t * status_create(void)
         lv_obj_set_height(row_1, LV_SIZE_CONTENT);
         lv_obj_t * label_1 = label_create(row_1);
         lv_label_set_text(label_1, "82");
+        lv_label_bind_text(label_1, &battery_percent, "%d");
         lv_obj_set_style_text_font(label_1, font_inter_bold_28, 0);
         lv_obj_set_style_text_color(label_1, lv_color_hex(0xFFFFFF), 0);
 
@@ -125,6 +126,7 @@ lv_obj_t * status_create(void)
         lv_obj_set_style_text_opa(label_2, 126, 0);
 
         lv_obj_t * card_3 = card_create(column_1);
+        lv_obj_set_flag(card_3, LV_OBJ_FLAG_HIDDEN, true);
         lv_obj_set_flex_flow(card_3, LV_FLEX_FLOW_ROW);
         lv_obj_set_style_flex_cross_place(card_3, LV_FLEX_ALIGN_CENTER, 0);
         lv_obj_set_style_flex_track_place(card_3, LV_FLEX_ALIGN_CENTER, 0);
@@ -187,6 +189,7 @@ lv_obj_t * status_create(void)
         lv_obj_t * label_5 = label_create(row_2);
         lv_obj_set_height(label_5, lv_pct(100));
         lv_label_set_text(label_5, "Connected");
+        lv_label_bind_text(label_5, &wifi_status, NULL);
         lv_obj_set_style_text_font(label_5, font_inter_semi_bold_14, 0);
         lv_obj_set_style_text_color(label_5, lv_color_hex(0x34C759), 0);
         lv_obj_set_style_text_align(label_5, LV_TEXT_ALIGN_RIGHT, 0);
@@ -195,6 +198,7 @@ lv_obj_t * status_create(void)
         lv_obj_t * label_6 = label_create(column_2);
         lv_obj_set_height(label_6, 15);
         lv_label_set_text(label_6, "wifi network name");
+        lv_label_bind_text(label_6, &wifi_name, NULL);
         lv_obj_set_style_text_font(label_6, font_inter_semi_bold_14, 0);
         lv_obj_set_style_text_color(label_6, lv_color_hex(0xF3F3F3), 0);
         lv_obj_set_width(label_6, 124);

@@ -43,7 +43,7 @@ static const screen_t *const main_screens[] = {
     &namecard_screen,
     &image_full_screen,
     &image_text_screen,
-    &status_screen,
+    &front_history_screen,
     &connect_screen,
     &connect_wi_fi_screen,
 };
@@ -121,7 +121,7 @@ static void wire_menu(lv_obj_t *scr)
     /* Generated layout (see pull_down_menu_initial.xml):
      * screen > [background, column > [status bar, column > [row > tile] x 3]] */
     lv_obj_t *buttons = lv_obj_get_child(lv_obj_get_child(scr, 1), 1);
-    make_button(lv_obj_get_child(lv_obj_get_child(buttons, 0), 0), &front_history_screen); /* Status */
+    make_button(lv_obj_get_child(lv_obj_get_child(buttons, 0), 0), &status_screen);        /* Status */
     make_button(lv_obj_get_child(lv_obj_get_child(buttons, 1), 0), &settings_screen);      /* Settings */
     make_button(lv_obj_get_child(lv_obj_get_child(buttons, 2), 0), &connect_screen);       /* Connect to pin */
 }

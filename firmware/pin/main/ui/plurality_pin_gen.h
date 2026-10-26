@@ -488,6 +488,14 @@ extern const void * image_vec_23_214;
  * Subjects
  *----------------*/
 
+extern lv_subject_t brightness_percent;
+extern lv_subject_t battery_percent;
+extern lv_subject_t time_text;
+extern lv_subject_t ampm_text;
+extern lv_subject_t date_text;
+extern lv_subject_t wifi_status;
+extern lv_subject_t wifi_name;
+
 /**********************
  * GLOBAL PROTOTYPES
  **********************/

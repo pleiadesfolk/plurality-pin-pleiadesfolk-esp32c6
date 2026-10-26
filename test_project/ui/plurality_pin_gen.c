@@ -826,6 +826,14 @@ lv_style_t style_screen_base_global;
  * Subjects
  *----------------*/
 
+lv_subject_t brightness_percent;
+lv_subject_t battery_percent;
+lv_subject_t time_text;
+lv_subject_t ampm_text;
+lv_subject_t date_text;
+lv_subject_t wifi_status;
+lv_subject_t wifi_name;
+
 /**********************
  *      MACROS
  **********************/
@@ -2501,6 +2509,49 @@ void plurality_pin_init_gen(const char * asset_path)
     /*----------------
      * Subjects
      *----------------*/
+    lv_subject_init_int(&brightness_percent, 50);
+    lv_subject_init_int(&battery_percent, 82);
+    static char time_text_buf[UI_SUBJECT_STRING_LENGTH];
+    static char time_text_prev_buf[UI_SUBJECT_STRING_LENGTH];
+    lv_subject_init_string(&time_text,
+                           time_text_buf,
+                           time_text_prev_buf,
+                           UI_SUBJECT_STRING_LENGTH,
+                           "9:41"
+                          );
+    static char ampm_text_buf[UI_SUBJECT_STRING_LENGTH];
+    static char ampm_text_prev_buf[UI_SUBJECT_STRING_LENGTH];
+    lv_subject_init_string(&ampm_text,
+                           ampm_text_buf,
+                           ampm_text_prev_buf,
+                           UI_SUBJECT_STRING_LENGTH,
+                           "AM"
+                          );
+    static char date_text_buf[UI_SUBJECT_STRING_LENGTH];
+    static char date_text_prev_buf[UI_SUBJECT_STRING_LENGTH];
+    lv_subject_init_string(&date_text,
+                           date_text_buf,
+                           date_text_prev_buf,
+                           UI_SUBJECT_STRING_LENGTH,
+                           "Wed Apr 1"
+                          );
+    static char wifi_status_buf[UI_SUBJECT_STRING_LENGTH];
+    static char wifi_status_prev_buf[UI_SUBJECT_STRING_LENGTH];
+    lv_subject_init_string(&wifi_status,
+                           wifi_status_buf,
+                           wifi_status_prev_buf,
+                           UI_SUBJECT_STRING_LENGTH,
+                           "Off"
+                          );
+    static char wifi_name_buf[UI_SUBJECT_STRING_LENGTH];
+    static char wifi_name_prev_buf[UI_SUBJECT_STRING_LENGTH];
+    lv_subject_init_string(&wifi_name,
+                           wifi_name_buf,
+                           wifi_name_prev_buf,
+                           UI_SUBJECT_STRING_LENGTH,
+                           "Not set up"
+                          );
+
     /*----------------
      * Translations
      *----------------*/
@@ -2562,6 +2613,13 @@ void plurality_pin_init_gen(const char * asset_path)
     lv_xml_register_font(NULL, "font_inter_semi_bold_22_manual", font_inter_semi_bold_22_manual);
 
     /* Register subjects */
+    lv_xml_register_subject(NULL, "brightness_percent", &brightness_percent);
+    lv_xml_register_subject(NULL, "battery_percent", &battery_percent);
+    lv_xml_register_subject(NULL, "time_text", &time_text);
+    lv_xml_register_subject(NULL, "ampm_text", &ampm_text);
+    lv_xml_register_subject(NULL, "date_text", &date_text);
+    lv_xml_register_subject(NULL, "wifi_status", &wifi_status);
+    lv_xml_register_subject(NULL, "wifi_name", &wifi_name);
 
     /* Register callbacks */
 #endif

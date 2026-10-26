@@ -10,7 +10,7 @@ typedef void (*nav_screen_cb_t)(const char *name, lv_obj_t *screen);
  *   left / right   - next / previous main screen
  *   down           - pull-down menu (from the namecard screen only)
  *   up             - close the pull-down menu
- *   menu buttons   - Status -> front history, Settings -> settings,
+ *   menu buttons   - Status -> status, Settings -> settings,
  *                    Connect to pin -> connect
  *   right          - back to the menu from a page opened by a menu button
  */

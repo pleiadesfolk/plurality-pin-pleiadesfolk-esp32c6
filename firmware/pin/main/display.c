@@ -124,14 +124,17 @@ static void swipe_async(void *dir)
 static void detect_swipe(bool pressed, lv_point_t point)
 {
     static bool was_pressed;
+    static bool on_slider;              /* a drag on a slider moves the slider, it's not a swipe */
     static lv_point_t start, last;
 
     if (pressed) {
         if (!was_pressed) {
             start = point;
+            lv_obj_t *obj = lv_indev_search_obj(lv_screen_active(), &point);
+            on_slider = obj && lv_obj_check_type(obj, &lv_slider_class);
         }
         last = point;
-    } else if (was_pressed && swipe_cb) {
+    } else if (was_pressed && swipe_cb && !on_slider) {
         int dx = last.x - start.x;
         int dy = last.y - start.y;
         lv_dir_t dir = LV_DIR_NONE;

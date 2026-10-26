@@ -55,6 +55,7 @@ lv_obj_t * status_bar_create(lv_obj_t * parent)
 
         lv_obj_t * label_0 = label_create(row_1);
         lv_label_set_text(label_0, "100%");
+        lv_label_bind_text(label_0, &battery_percent, "%d%%");
         lv_obj_set_style_text_font(label_0, font_inter_medium_24_manual, 0);
         lv_obj_set_style_text_color(label_0, lv_color_hex(0xF2F2F7), 0);
         lv_obj_set_style_text_align(label_0, LV_TEXT_ALIGN_RIGHT, 0);
@@ -72,16 +73,19 @@ lv_obj_t * status_bar_create(lv_obj_t * parent)
         lv_obj_set_height(row_3, LV_SIZE_CONTENT);
         lv_obj_t * label_1 = label_create(row_3);
         lv_label_set_text(label_1, "9:41");
+        lv_label_bind_text(label_1, &time_text, NULL);
         lv_obj_set_style_text_font(label_1, font_inter_medium_24_manual, 0);
         lv_obj_set_style_text_color(label_1, lv_color_hex(0xE5E5EA), 0);
 
         lv_obj_t * label_2 = label_create(row_3);
         lv_label_set_text(label_2, "AM");
+        lv_label_bind_text(label_2, &ampm_text, NULL);
         lv_obj_set_style_text_font(label_2, font_inter_medium_24_manual, 0);
         lv_obj_set_style_text_color(label_2, lv_color_hex(0xE5E5EA), 0);
 
         lv_obj_t * label_3 = label_create(row_2);
         lv_label_set_text(label_3, "Wed Apr 1");
+        lv_label_bind_text(label_3, &date_text, NULL);
         lv_obj_set_style_text_font(label_3, font_inter_medium_24_manual, 0);
         lv_obj_set_style_text_color(label_3, lv_color_hex(0xF2F2F7), 0);
 

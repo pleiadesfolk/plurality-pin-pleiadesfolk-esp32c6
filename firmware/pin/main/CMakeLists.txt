@@ -1,7 +1,7 @@
 file(GLOB_RECURSE UI_SRCS ui/*.c)
 
 idf_component_register(
-    SRCS "main.c" "display.c" "nav.c" "assets.c" ${UI_SRCS}
+    SRCS "main.c" "display.c" "nav.c" "assets.c" "brightness.c" "status.c" ${UI_SRCS}
     INCLUDE_DIRS "."
 )
 
