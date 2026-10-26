@@ -8,7 +8,9 @@
  * Three places you can be:
  *   MAIN  - the main screens, swipe left/right between them
  *   MENU  - the pull-down menu, opened by swiping down on the namecard screen
- *   PAGE  - a screen opened by one of the menu's buttons
+ *   PAGE  - a screen opened by one of the menu's buttons. Connect to pin
+ *           opens a two-step sequence (pin Wi-Fi, then web dashboard),
+ *           swipe left/right between its steps.
  */
 
 #include <string.h>
@@ -44,8 +46,6 @@ static const screen_t *const main_screens[] = {
     &image_full_screen,
     &image_text_screen,
     &front_history_screen,
-    &connect_screen,
-    &connect_wi_fi_screen,
 };
 #define MAIN_COUNT (sizeof(main_screens) / sizeof(main_screens[0]))
 
@@ -54,6 +54,7 @@ typedef enum { AT_MAIN, AT_MENU, AT_PAGE } place_t;
 static nav_screen_cb_t screen_cb;
 static place_t place;
 static int main_index;                  /* which main screen, also where the menu closes to */
+static const screen_t *page;            /* which page, while AT_PAGE */
 static lv_obj_t *toast;
 
 static void show(const screen_t *screen);
@@ -91,10 +92,26 @@ static void show_toast(const char *text)
 
 /* ---------- menu buttons ---------- */
 
+/* Connect to pin: step 1 join the pin's Wi-Fi, step 2 open the web dashboard */
+static const screen_t *const connect_steps[] = { &connect_wi_fi_screen, &connect_screen };
+#define CONNECT_STEPS (sizeof(connect_steps) / sizeof(connect_steps[0]))
+
 static void open_page(lv_event_t *e)
 {
     place = AT_PAGE;
-    show(lv_event_get_user_data(e));
+    page = lv_event_get_user_data(e);
+    show(page);
+}
+
+/* Index of the current page in connect_steps, or -1 if it isn't one of them */
+static int connect_step(void)
+{
+    for (int i = 0; i < CONNECT_STEPS; i++) {
+        if (connect_steps[i] == page) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 static void make_unclickable(lv_obj_t *obj)
@@ -123,7 +140,7 @@ static void wire_menu(lv_obj_t *scr)
     lv_obj_t *buttons = lv_obj_get_child(lv_obj_get_child(scr, 1), 1);
     make_button(lv_obj_get_child(lv_obj_get_child(buttons, 0), 0), &status_screen);        /* Status */
     make_button(lv_obj_get_child(lv_obj_get_child(buttons, 1), 0), &settings_screen);      /* Settings */
-    make_button(lv_obj_get_child(lv_obj_get_child(buttons, 2), 0), &connect_screen);       /* Connect to pin */
+    make_button(lv_obj_get_child(lv_obj_get_child(buttons, 2), 0), &connect_wi_fi_screen); /* Connect to pin */
 }
 
 /* ---------- switching ---------- */
@@ -167,12 +184,20 @@ static void on_swipe(lv_dir_t dir)
             show(main_screens[main_index]);
         }
         break;
-    case AT_PAGE:
-        if (dir == LV_DIR_RIGHT) {
+    case AT_PAGE: {
+        int step = connect_step();
+        if (dir == LV_DIR_LEFT && step >= 0 && step + 1 < CONNECT_STEPS) {
+            page = connect_steps[step + 1];
+            show(page);
+        } else if (dir == LV_DIR_RIGHT && step > 0) {
+            page = connect_steps[step - 1];
+            show(page);
+        } else if (dir == LV_DIR_RIGHT) {
             place = AT_MENU;
             show(&menu_screen);
         }
         break;
+    }
     }
 }
 

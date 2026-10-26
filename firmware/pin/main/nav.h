@@ -11,8 +11,9 @@ typedef void (*nav_screen_cb_t)(const char *name, lv_obj_t *screen);
  *   down           - pull-down menu (from the namecard screen only)
  *   up             - close the pull-down menu
  *   menu buttons   - Status -> status, Settings -> settings,
- *                    Connect to pin -> connect
- *   right          - back to the menu from a page opened by a menu button
+ *                    Connect to pin -> connect Wi-Fi, then swipe left to
+ *                    connect (web dashboard)
+ *   right          - back a step, or to the menu from a page opened by a menu button
  */
 void nav_init(nav_screen_cb_t on_screen);
 
