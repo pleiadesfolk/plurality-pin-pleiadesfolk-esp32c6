@@ -2,14 +2,16 @@
  * Plurality Pin firmware.
  *
  * Current state: all screens from the LVGL Editor (see main/ui and
- * tools/sync_ui.py), swipe navigation between them (nav.c), and a running
- * clock on the Watch screen.
+ * tools/sync_ui.py), swipe navigation between them (nav.c), a running clock
+ * on the Watch screen, and the web dashboard (web.c, dashboard/index.html):
+ * members and front history in flash (store.c), the current fronter on the
+ * namecard (namecard.c).
  *
  * Images live in the "assets" flash partition, mapped into memory (assets.c).
  * Fonts are pre-rendered bitmaps in main/ui/fonts.
  *
- * There is no time source yet (no Wi-Fi/NTP, no RTC found on the board), so the
- * clock starts at the time this firmware was built.
+ * Time: the board has no clock chip, so it starts at the time this firmware
+ * was built and is corrected from the internet (NTP) once Wi-Fi connects (wifi.c).
  */
 
 #include <string.h>
@@ -20,15 +22,23 @@
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "esp_heap_caps.h"
+#include "nvs_flash.h"
 #include "lvgl.h"
 #include "assets.h"
 #include "brightness.h"
 #include "status.h"
 #include "display.h"
+#include "namecard.h"
 #include "nav.h"
+#include "store.h"
+#include "web.h"
+#include "wifi.h"
 #include "ui/plurality_pin.h"
 
 static const char *TAG = "pin";
+
+/* Local time zone, POSIX format: Hong Kong, UTC+8, no daylight saving */
+#define TIME_ZONE "HKT-8"
 
 /* 1: time every screen at startup and log the results (see nav_benchmark) */
 #define RUN_BENCHMARK 0
@@ -90,6 +100,10 @@ static void on_screen(const char *name, lv_obj_t *scr)
         brightness_attach(scr);
         return;
     }
+    if (strcmp(name, "namecard_mode") == 0) {
+        namecard_attach(scr);
+        return;
+    }
     if (strcmp(name, "watch") != 0) {
         return;
     }
@@ -113,7 +127,12 @@ static uint32_t tick_cb(void)
 
 static void memory_report(lv_timer_t *timer)
 {
-    ESP_LOGI(TAG, "free heap %u bytes, lowest so far %u bytes",
+    time_t now = time(NULL);
+    struct tm tm;
+    localtime_r(&now, &tm);
+    char clock[24];
+    strftime(clock, sizeof(clock), "%Y-%m-%d %H:%M:%S", &tm);
+    ESP_LOGI(TAG, "%s, free heap %u bytes, lowest so far %u bytes", clock,
              (unsigned)heap_caps_get_free_size(MALLOC_CAP_DEFAULT),
              (unsigned)heap_caps_get_minimum_free_size(MALLOC_CAP_DEFAULT));
 }
@@ -128,6 +147,7 @@ static void lvgl_task(void *arg)
 #endif
     nav_init(on_screen);
     lv_timer_create(clock_update, 1000, NULL);
+    lv_timer_create((lv_timer_cb_t)namecard_poll, 250, NULL);
     lv_timer_create(memory_report, 10000, NULL);
 
     while (1) {
@@ -141,15 +161,32 @@ static void lvgl_task(void *arg)
     }
 }
 
+static void nvs_init(void)
+{
+    /* Flash key-value storage, used by Wi-Fi and brightness.c */
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(err);
+}
+
 void app_main(void)
 {
-    set_time_from_build();
+    setenv("TZ", TIME_ZONE, 1);
+    tzset();
+    set_time_from_build();              /* the build time is local time */
+    nvs_init();
     assets_init();
+    store_init();
 
     lv_init();
     lv_tick_set_cb(tick_cb);
 
     display_init();                     /* brightness is set by brightness_init() */
+    wifi_start();
+    web_start();
 
     /* All LVGL calls happen in this one task from here on (its stack is bigger
      * than app_main's, which drawing needs) */

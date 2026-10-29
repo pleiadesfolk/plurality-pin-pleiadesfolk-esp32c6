@@ -17,3 +17,6 @@ preview-bin/
 
 # Waveshare vendor package (re-downloadable; the parts we use are copied into firmware/)
 ESP32-C6-Touch-AMOLED-1.64-main/
+
+# Wi-Fi password (template: firmware/pin/main/wifi_credentials.example.h)
+firmware/pin/main/wifi_credentials.h

@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pin Dashboard</title>
+<!--
+  Plurality Pin dashboard, served by the pin itself (firmware/pin/main/web.c).
+  Plain HTML/JS, no build step. Talks to the pin's /api/... endpoints.
+
+  Namecard text is drawn here, in the browser, and sent to the pin as a picture
+  (renderCard), so any script and colour emoji work. Fonts: Playwrite (served
+  by the pin), then Noto Sans HK for CJK (Google Fonts, if reachable), then the
+  phone's own fonts and emoji.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400&display=swap">
+<style>
+  @font-face { font-family: "PlaywritePin"; src: url("/playwrite.ttf") format("truetype"); }
+
+  :root {
+    --bg: #1c1c1e; --card: #2c2c2e; --line: #3a3a3c; --text: #f2f2f7; --dim: #9a9aa0;
+    --accent: #ffcc00; --ok: #34c759; --bad: #ff453a;
+  }
+  :root[data-theme="light"] {
+    --bg: #f2f2f7; --card: #ffffff; --line: #d8d8dc; --text: #1c1c1e; --dim: #6c6c70;
+    --accent: #b38f00; --ok: #248a3d; --bad: #d70015;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    padding: env(safe-area-inset-top) 0 calc(72px + env(safe-area-inset-bottom));
+  }
+  header { padding: 16px 16px 4px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header .sub { color: var(--dim); font-size: 14px; }
+  main { padding: 8px 16px; max-width: 720px; margin: 0 auto; }
+  section { display: none; }
+  section.active { display: block; }
+  h2 { font-size: 17px; margin: 20px 0 8px; }
+  .box { background: var(--card); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+  .dim { color: var(--dim); font-size: 14px; }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .grow { flex: 1; min-width: 0; }
+  button, .button {
+    font: inherit; border: 0; border-radius: 10px; padding: 10px 14px; cursor: pointer;
+    background: var(--line); color: var(--text);
+  }
+  button.primary { background: var(--accent); color: #000; font-weight: 600; }
+  button.danger { background: none; color: var(--bad); padding-left: 0; }
+  button:disabled { opacity: .5; cursor: default; }
+  input[type=text], input[type=search], textarea {
+    font: inherit; width: 100%; padding: 10px 12px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--text);
+  }
+  textarea { resize: vertical; min-height: 64px; }
+  label.field { display: block; margin: 12px 0 4px; font-size: 14px; color: var(--dim); }
+  .dot { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+  .warn { color: var(--accent); font-size: 14px; }
+  .error { color: var(--bad); }
+
+  nav {
+    position: fixed; left: 0; right: 0; bottom: 0; display: flex; background: var(--card);
+    border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom);
+  }
+  nav button {
+    flex: 1; background: none; border-radius: 0; padding: 14px 4px; color: var(--dim); font-size: 14px;
+  }
+  nav button.active { color: var(--accent); font-weight: 600; }
+
+  .preview { width: 100%; aspect-ratio: 456 / 280; border-radius: 12px; display: block; }
+  .members { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .member {
+    display: flex; gap: 8px; align-items: center; text-align: left; padding: 10px;
+    background: var(--card); border-radius: 10px; overflow: hidden;
+  }
+  .member .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .member.current { outline: 2px solid var(--accent); }
+  .list .item { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .list .item:last-child { border-bottom: 0; }
+  .bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+  .bar > div { height: 100%; border-radius: 4px; }
+  .seg { display: inline-flex; background: var(--line); border-radius: 10px; padding: 2px; }
+  .seg button { background: none; padding: 6px 12px; }
+  .seg button.active { background: var(--card); }
+  progress { width: 100%; height: 8px; accent-color: var(--accent); }
+  dialog {
+    border: 0; border-radius: 16px; padding: 16px; background: var(--card); color: var(--text);
+    width: min(560px, calc(100vw - 32px));
+  }
+  dialog::backdrop { background: rgba(0,0,0,.5); }
+  #toast {
+    position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+    background: var(--text); color: var(--bg); padding: 8px 14px; border-radius: 10px; font-size: 14px;
+    opacity: 0; transition: opacity .2s; pointer-events: none;
+  }
+  #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">Pin Dashboard</h1>
+  <div class="sub" id="subtitle">Connecting to the pin…</div>
+</header>
+
+<main>
+  <!-- Front: who's fronting, switch -->
+  <section id="tab-front" class="active">
+    <canvas class="preview" id="front-preview" width="456" height="280"></canvas>
+    <p class="dim" id="front-since"></p>
+    <div class="row">
+      <input type="search" id="front-search" placeholder="Search members" class="grow">
+      <button id="front-out">Nobody</button>
+    </div>
+    <h2>Switch to</h2>
+    <div class="members" id="front-members"></div>
+  </section>
+
+  <!-- Members: edit namecard text, pronouns, colour -->
+  <section id="tab-members">
+    <div class="row">
+      <input type="search" id="member-search" placeholder="Search members" class="grow">
+      <button class="primary" id="member-add">Add member</button>
+    </div>
+    <div class="box list" id="member-list" style="margin-top:12px"></div>
+  </section>
+
+  <!-- History: time fronting per member -->
+  <section id="tab-history">
+    <div class="seg" id="history-range">
+      <button data-days="1">24 h</button>
+      <button data-days="7" class="active">7 days</button>
+      <button data-days="30">30 days</button>
+      <button data-days="0">All</button>
+    </div>
+    <div class="box list" id="history-list" style="margin-top:12px"></div>
+    <h2>Recent switches</h2>
+    <div class="box list" id="history-recent"></div>
+  </section>
+
+  <!-- Import a pk;export file -->
+  <section id="tab-import">
+    <div class="box">
+      <p style="margin-top:0">In Discord, send <b>pk;export</b> to PluralKit, save the file it sends you, then pick it here.</p>
+      <input type="file" id="import-file" accept=".json,application/json">
+    </div>
+    <div id="import-preview"></div>
+  </section>
+</main>
+
+<nav>
+  <button data-tab="front" class="active">Front</button>
+  <button data-tab="members">Members</button>
+  <button data-tab="history">History</button>
+  <button data-tab="import">Import</button>
+</nav>
+
+<dialog id="editor">
+  <h2 style="margin-top:0" id="editor-title"></h2>
+  <canvas class="preview" id="editor-preview" width="456" height="280"></canvas>
+  <p class="warn" id="editor-warn"></p>
+  <label class="field" for="editor-name">Name</label>
+  <input type="text" id="editor-name" maxlength="40">
+  <label class="field" for="editor-card">Namecard text</label>
+  <textarea id="editor-card"></textarea>
+  <label class="field" for="editor-pronouns">Pronouns</label>
+  <input type="text" id="editor-pronouns">
+  <label class="field" for="editor-color">Colour</label>
+  <input type="color" id="editor-color">
+  <div class="row" style="margin-top:16px">
+    <button id="editor-delete" class="danger">Delete</button>
+    <span class="grow"></span>
+    <button id="editor-cancel">Cancel</button>
+    <button class="primary" id="editor-save">Save</button>
+  </div>
+</dialog>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+
+/* ---------- pin API ---------- */
+
+let state = { system: "", members: [], front: [], front_since: 0, switches: 0, now: 0 };
+let clockOffset = 0;                    // pin time - phone time, seconds
+
+async function api(method, path, body) {
+  const options = { method };
+  if (body instanceof ArrayBuffer || body instanceof Uint8Array) {
+    options.body = body;
+    options.headers = { "Content-Type": "application/octet-stream" };
+  } else if (body !== undefined) {
+    options.body = JSON.stringify(body);
+    options.headers = { "Content-Type": "application/json" };
+  }
+  const res = await fetch(path, options);
+  if (!res.ok) throw new Error(`${method} ${path}: ${res.status} ${await res.text()}`);
+  return res;
+}
+
+async function loadState() {
+  state = await (await api("GET", "/api/state")).json();
+  clockOffset = state.now - Date.now() / 1000;
+  document.getElementById("title").textContent = state.system || "Pin Dashboard";
+  document.getElementById("subtitle").textContent =
+    `${state.members.length} members · ${state.switches} switches`;
+  renderFront();
+  renderMembers();
+}
+
+function membersPayload() {
+  return { system: state.system, members: state.members };
+}
+
+/* ---------- small helpers ---------- */
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const hex = c => "#" + (c || "468DC3").replace(/^#/, "").padStart(6, "0").slice(0, 6);
+const memberName = m => m.card || m.name;
+
+function toast(text) {
+  const t = $("toast");
+  t.textContent = text;
+  t.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+function duration(seconds) {
+  seconds = Math.max(0, Math.round(seconds));
+  const d = Math.floor(seconds / 86400), h = Math.floor(seconds % 86400 / 3600), m = Math.floor(seconds % 3600 / 60);
+  if (d) return `${d} d ${h} h`;
+  if (h) return `${h} h ${m} min`;
+  return `${m} min`;
+}
+
+function darken(color, percent) {
+  const n = parseInt(color.replace("#", ""), 16);
+  const f = (100 - percent) / 100;
+  return `rgb(${(n >> 16 & 255) * f},${(n >> 8 & 255) * f},${(n & 255) * f})`;
+}
+
+/* ---------- namecard drawing (must match firmware/pin/main/namecard.c) ---------- */
+
+// The pin's namecard text box (namecard_mode.xml): 416 x 260 at (20, 11) on a 456 x 280 screen.
+const BOX = { x: 20, y: 11, w: 416, h: 260 };
+const MAX_SIZE = 52, MIN_SIZE = 26;     // Playwrite size, shrunk until the text fits
+const PITCH = 70 / 52;                  // line spacing per px of font size, as on the pin
+const FONTS = (size) => `${size}px PlaywritePin, "Noto Sans HK", "PingFang HK", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+
+let fontsReady = null;
+function loadFonts() {
+  fontsReady ??= Promise.all([
+    document.fonts.load(FONTS(MAX_SIZE), "Aa"),
+    document.fonts.load(FONTS(MAX_SIZE), "系").catch(() => {}),
+  ]);
+  return fontsReady;
+}
+
+// Break text into lines no wider than BOX.w, after spaces and hyphens. A word wider
+// than the box is split by character; `split` says whether that happened.
+function wrap(ctx, text) {
+  const tokens = text.match(/[^\s-]*-+|[^\s-]+\s*|\s+/gu) || [];
+  const lines = [];
+  let line = "", split = false;
+  for (const token of tokens) {
+    if (ctx.measureText((line + token).trimEnd()).width <= BOX.w) { line += token; continue; }
+    if (line.trim()) { lines.push(line.trimEnd()); line = ""; }
+    if (ctx.measureText(token.trimEnd()).width <= BOX.w) { line = token; continue; }
+    // A single word wider than the box: split it by character
+    split = true;
+    let part = "";
+    for (const ch of token) {
+      if (ctx.measureText((part + ch).trimEnd()).width > BOX.w && part) { lines.push(part); part = ""; }
+      part += ch;
+    }
+    line = part;
+  }
+  if (line.trim()) lines.push(line.trimEnd());
+  return { lines, split };
+}
+
+// Lay the text out at the biggest size that fits without splitting words
+// (CJK text has no spaces, so it may always break between characters).
+// Returns { size, lines, fits }.
+function layout(ctx, text) {
+  for (let size = MAX_SIZE; size >= MIN_SIZE; size -= 2) {
+    ctx.font = FONTS(size);
+    const { lines, split } = wrap(ctx, text);
+    const height = (lines.length - 1) * Math.round(size * PITCH) + size * 1.3;
+    if (height <= BOX.h && (!split || size === MIN_SIZE)) return { size, lines, fits: true };
+  }
+  ctx.font = FONTS(MIN_SIZE);
+  return { size: MIN_SIZE, lines: wrap(ctx, text).lines, fits: false };
+}
+
+// Draw `text` white on a transparent canvas the size of the text box; crop to the ink.
+function drawText(text) {
+  const canvas = document.createElement("canvas");
+  canvas.width = BOX.w; canvas.height = BOX.h;
+  const ctx = canvas.getContext("2d");
+  const { size, lines, fits } = layout(ctx, text);
+  const pitch = Math.round(size * PITCH);
+  ctx.font = FONTS(size);
+  ctx.fillStyle = "#fff";
+  ctx.textBaseline = "alphabetic";
+  lines.forEach((line, i) => ctx.fillText(line, 0, size * 1.05 + i * pitch));
+
+  // Crop to the drawn pixels
+  const img = ctx.getImageData(0, 0, BOX.w, BOX.h);
+  let x0 = BOX.w, y0 = BOX.h, x1 = -1, y1 = -1;
+  for (let y = 0; y < BOX.h; y++) for (let x = 0; x < BOX.w; x++) {
+    if (img.data[(y * BOX.w + x) * 4 + 3]) {
+      if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+    }
+  }
+  if (x1 < 0) return { w: 0, h: 0, data: null, fits, size };
+  const w = x1 - x0 + 1, h = y1 - y0 + 1;
+  return { w, h, data: ctx.getImageData(x0, y0, w, h).data, fits, size, lines: lines.length };
+}
+
+/*
+ * Encode for the pin (store_card_header_t in store.h): white pixels become 4-bit
+ * alpha; coloured pixels (emoji) go into a small RGB565A8 patch instead.
+ */
+function encodeCard(t) {
+  const isColour = (i) => t.data[i + 3] && !(t.data[i] > 235 && t.data[i + 1] > 235 && t.data[i + 2] > 235);
+  let px0 = t.w, py0 = t.h, px1 = -1, py1 = -1;
+  for (let y = 0; y < t.h; y++) for (let x = 0; x < t.w; x++) {
+    if (isColour((y * t.w + x) * 4)) {
+      if (x < px0) px0 = x; if (x > px1) px1 = x; if (y < py0) py0 = y; if (y > py1) py1 = y;
+    }
+  }
+  const pw = px1 < 0 ? 0 : px1 - px0 + 1, ph = px1 < 0 ? 0 : py1 - py0 + 1;
+  const a4Stride = Math.ceil(t.w / 2);
+  const out = new Uint8Array(16 + a4Stride * t.h + pw * ph * 3);
+  const view = new DataView(out.buffer);
+  out.set([0x50, 0x43, 0x31, 0], 0);    // "PC1"
+  [t.w, t.h, px1 < 0 ? 0 : px0, px1 < 0 ? 0 : py0, pw, ph].forEach((v, i) => view.setUint16(4 + i * 2, v, true));
+
+  for (let y = 0; y < t.h; y++) for (let x = 0; x < t.w; x++) {
+    const i = (y * t.w + x) * 4;
+    const a = isColour(i) ? 0 : Math.round(t.data[i + 3] / 17);
+    out[16 + y * a4Stride + (x >> 1)] |= x & 1 ? a : a << 4;
+  }
+  const colour = 16 + a4Stride * t.h, alpha = colour + pw * ph * 2;
+  for (let y = 0; y < ph; y++) for (let x = 0; x < pw; x++) {
+    const i = ((y + py0) * t.w + (x + px0)) * 4, j = y * pw + x;
+    const coloured = isColour(i);
+    const r = t.data[i], g = t.data[i + 1], b = t.data[i + 2];
+    view.setUint16(colour + j * 2, (r >> 3) << 11 | (g >> 2) << 5 | b >> 3, true);
+    out[alpha + j] = coloured ? t.data[i + 3] : 0;
+  }
+  return out;
+}
+
+// Show what the pin will show: gradient background + the text, placed as on the pin.
+function drawPreview(canvas, text, color) {
+  const ctx = canvas.getContext("2d");
+  const grad = ctx.createLinearGradient(0, 0, 456, 0);
+  grad.addColorStop(0, darken(hex(color), 60));
+  grad.addColorStop(1, hex(color));
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 456, 280);
+  const t = drawText(text);
+  if (t.w) {
+    const img = new ImageData(new Uint8ClampedArray(t.data), t.w, t.h);
+    const tmp = document.createElement("canvas");
+    tmp.width = t.w; tmp.height = t.h;
+    tmp.getContext("2d").putImageData(img, 0, 0);
+    ctx.drawImage(tmp, BOX.x, BOX.y + Math.round((BOX.h - t.h) / 2));   // LEFT_MID, as on the pin
+  }
+  return t;
+}
+
+// Characters the phone couldn't draw in any font show up as empty boxes; we can't
+// detect that reliably, so only warn about text that doesn't fit.
+function cardWarning(t) {
+  if (!t.fits) return "Too long to fit even at the smallest size - some text is cut off.";
+  if (t.size < MAX_SIZE) return `Shrunk to ${t.size} px to fit.`;
+  return "";
+}
+
+async function uploadCard(member) {
+  await loadFonts();
+  const t = drawText(member.card || member.name);
+  if (!t.w) return;
+  await api("PUT", `/api/card?id=${encodeURIComponent(member.id)}`, encodeCard(t));
+}
+
+/* ---------- Front tab ---------- */
+
+function renderFront() {
+  const current = state.members[state.front[0]];
+  loadFonts().then(() => drawPreview($("front-preview"),
+    current ? memberName(current) : state.system, current ? current.color : "468DC3"));
+  $("front-since").textContent = state.front_since
+    ? `${current ? (current.name) : "Nobody"} fronting for ${duration(Date.now() / 1000 + clockOffset - state.front_since)}`
+    : "No front history yet - import a PluralKit export or pick a member.";
+
+  const query = $("front-search").value.trim().toLowerCase();
+  $("front-members").innerHTML = state.members
+    .map((m, i) => ({ m, i }))
+    .filter(({ m }) => !query || (m.name + " " + m.card).toLowerCase().includes(query))
+    .map(({ m, i }) => `
+      <button class="member ${state.front.includes(i) ? "current" : ""}" data-index="${i}">
+        <span class="dot" style="background:${hex(m.color)}"></span>
+        <span class="name">${esc(m.name)}</span>
+      </button>`).join("");
+}
+
+async function switchTo(indexes) {
+  try {
+    await api("POST", "/api/front", { members: indexes });
+    await loadState();
+    toast(indexes.length ? `Switched to ${state.members[indexes[0]].name}` : "Nobody fronting");
+  } catch (e) { toast("Couldn't switch: " + e.message); }
+}
+
+$("front-members").addEventListener("click", e => {
+  const b = e.target.closest("[data-index]");
+  if (b) switchTo([+b.dataset.index]);
+});
+$("front-out").addEventListener("click", () => switchTo([]));
+$("front-search").addEventListener("input", renderFront);
+
+/* ---------- Members tab ---------- */
+
+function renderMembers() {
+  const query = $("member-search").value.trim().toLowerCase();
+  const rows = state.members
+    .map((m, i) => ({ m, i }))
+    .sort((a, b) => a.m.name.localeCompare(b.m.name))
+    .filter(({ m }) => !query || (m.name + " " + m.card + " " + m.pronouns).toLowerCase().includes(query))
+    .map(({ m, i }) => `
+      <div class="item" data-index="${i}" style="cursor:pointer">
+        <span class="dot" style="background:${hex(m.color)}"></span>
+        <div class="grow">
+          <div>${esc(m.name)} <span class="dim">${esc(m.pronouns)}</span></div>
+          <div class="dim">${esc(m.card)}</div>
+        </div>
+        <span class="dim">Edit</span>
+      </div>`);
+  $("member-list").innerHTML = rows.join("") || `<p class="dim">No members yet - use Import.</p>`;
+}
+
+let editing = -1;                       // member index, or -1 for a new member
+let cardFollowsName = false;            // new member: card text tracks the name until edited
+
+const defaultCard = name => `${name}${state.system ? " of " + state.system : ""}`;
+
+function openEditor(index) {
+  editing = index;
+  const m = index >= 0 ? state.members[index]
+    : { name: "", card: "", pronouns: "", color: "468DC3" };
+  cardFollowsName = index < 0;
+  $("editor-title").textContent = index >= 0 ? m.name : "New member";
+  $("editor-name").value = m.name;
+  $("editor-card").value = m.card;
+  $("editor-pronouns").value = m.pronouns;
+  $("editor-color").value = hex(m.color);
+  $("editor-delete").hidden = index < 0;
+  updateEditorPreview();
+  $("editor").showModal();
+  if (index < 0) $("editor-name").focus();
+}
+
+async function updateEditorPreview() {
+  await loadFonts();
+  const t = drawPreview($("editor-preview"), $("editor-card").value || $("editor-name").value || " ", $("editor-color").value);
+  $("editor-warn").textContent = cardWarning(t);
+}
+
+// A new id that doesn't clash: 5 lowercase letters, like PluralKit's
+function newId() {
+  const taken = new Set(state.members.map(m => m.id));
+  let id;
+  do id = Array.from({ length: 5 }, () => String.fromCharCode(97 + Math.floor(Math.random() * 26))).join("");
+  while (taken.has(id));
+  return id;
+}
+
+// How many switches mention member `index` (for the delete warning)
+async function switchesWith(index) {
+  const view = new DataView(await (await api("GET", "/api/switches")).arrayBuffer());
+  let n = 0;
+  for (let i = 0; i < view.byteLength; i += 12)
+    for (let k = 0; k < 4; k++) if (view.getUint16(i + 4 + k * 2, true) === index) { n++; break; }
+  return n;
+}
+
+$("member-list").addEventListener("click", e => {
+  const row = e.target.closest("[data-index]");
+  if (row) openEditor(+row.dataset.index);
+});
+$("member-search").addEventListener("input", renderMembers);
+$("member-add").addEventListener("click", () => openEditor(-1));
+$("editor-name").addEventListener("input", () => {
+  if (cardFollowsName) $("editor-card").value = defaultCard($("editor-name").value.trim());
+  updateEditorPreview();
+});
+$("editor-card").addEventListener("input", () => { cardFollowsName = false; updateEditorPreview(); });
+$("editor-color").addEventListener("input", updateEditorPreview);
+$("editor-cancel").addEventListener("click", () => $("editor").close());
+$("editor-save").addEventListener("click", async () => {
+  const name = $("editor-name").value.trim();
+  if (!name) { toast("A member needs a name"); $("editor-name").focus(); return; }
+  if (state.members.some((m, i) => i !== editing && m.name.toLowerCase() === name.toLowerCase())) {
+    toast(`There's already a member called ${name}`);
+    return;
+  }
+  // The pin stores names in 48 bytes and namecard text in 128 (store.c); CJK and emoji take 3-4 each
+  const bytes = s => new TextEncoder().encode(s).length;
+  const card = $("editor-card").value.trim() || defaultCard(name);
+  if (bytes(name) > 47) { toast("That name is too long for the pin"); return; }
+  if (bytes(card) > 127) { toast("That namecard text is too long for the pin"); return; }
+
+  // Work on a copy, so a failed save doesn't leave half-changed members behind
+  const members = state.members.map(m => ({ ...m }));
+  const m = editing >= 0 ? members[editing] : { id: newId() };
+  m.name = name;
+  m.card = card;
+  m.pronouns = $("editor-pronouns").value.trim();
+  m.color = $("editor-color").value.replace("#", "").toUpperCase();
+  if (editing < 0) members.push(m);
+
+  $("editor-save").disabled = true;
+  try {
+    await api("PUT", "/api/members", { system: state.system, members });
+    await uploadCard(m);
+    $("editor").close();
+    toast(editing >= 0 ? "Saved" : `Added ${name}`);
+    await loadState();
+  } catch (e) { toast("Couldn't save: " + e.message); }
+  $("editor-save").disabled = false;
+});
+
+$("editor-delete").addEventListener("click", async () => {
+  const m = state.members[editing];
+  const count = await switchesWith(editing).catch(() => 0);
+  const history = count
+    ? `\n\n${m.name} is in ${count} switch${count === 1 ? "" : "es"} of the front history. They'll be taken out; where they fronted alone, it becomes "nobody fronting".`
+    : "";
+  if (!confirm(`Delete ${m.name}?${history}\n\nThis can't be undone (except by importing again).`)) return;
+  const button = $("editor-delete");
+  button.disabled = true;
+  button.textContent = "Deleting…";
+  try {
+    await api("DELETE", `/api/member?index=${editing}`);
+    $("editor").close();
+    toast(`Deleted ${m.name}`);
+    await loadState();
+  } catch (e) { toast("Couldn't delete: " + e.message); }
+  button.disabled = false;
+  button.textContent = "Delete";
+});
+
+/* ---------- History tab ---------- */
+
+let historyDays = 7;
+
+async function renderHistory() {
+  const buf = await (await api("GET", "/api/switches")).arrayBuffer();
+  const view = new DataView(buf);
+  const count = buf.byteLength / 12;
+  const now = Date.now() / 1000 + clockOffset;
+  const from = historyDays ? now - historyDays * 86400 : 0;
+  const totals = new Map();
+  const recent = [];
+
+  for (let i = 0; i < count; i++) {
+    const start = view.getUint32(i * 12, true);
+    const end = i + 1 < count ? view.getUint32((i + 1) * 12, true) : now;
+    const members = [0, 1, 2, 3].map(k => view.getUint16(i * 12 + 4 + k * 2, true)).filter(x => x !== 0xFFFF);
+    const seconds = Math.max(0, end - Math.max(start, from));
+    if (end > from) for (const idx of members) totals.set(idx, (totals.get(idx) || 0) + seconds);
+    if (i >= count - 15) recent.unshift({ start, members });
+  }
+
+  const sorted = [...totals].filter(([idx]) => state.members[idx]).sort((a, b) => b[1] - a[1]);
+  const max = sorted.length ? sorted[0][1] : 1;
+  $("history-list").innerHTML = sorted.map(([idx, s]) => {
+    const m = state.members[idx];
+    return `<div class="item">
+      <span class="dot" style="background:${hex(m.color)}"></span>
+      <div class="grow">
+        <div class="row"><span class="grow">${esc(m.name)}</span><span class="dim">${duration(s)}</span></div>
+        <div class="bar"><div style="width:${(s / max * 100).toFixed(1)}%; background:${hex(m.color)}"></div></div>
+      </div></div>`;
+  }).join("") || `<p class="dim">No fronting in this period.</p>`;
+
+  $("history-recent").innerHTML = recent.map(({ start, members }) => {
+    const names = members.map(i => state.members[i]?.name || "?").join(", ") || "Nobody";
+    const when = new Date((start - clockOffset) * 1000).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+    return `<div class="item"><span class="grow">${esc(names)}</span><span class="dim">${when}</span></div>`;
+  }).join("") || `<p class="dim">No switches yet.</p>`;
+}
+
+$("history-range").addEventListener("click", e => {
+  const b = e.target.closest("[data-days]");
+  if (!b) return;
+  historyDays = +b.dataset.days;
+  $("history-range").querySelectorAll("button").forEach(x => x.classList.toggle("active", x === b));
+  renderHistory();
+});
+
+/* ---------- Import tab ---------- */
+
+let pending = null;
+
+// Turn a PluralKit export (version 2) into what the pin stores.
+function convertExport(pk) {
+  if (!Array.isArray(pk.members) || !Array.isArray(pk.switches)) {
+    throw new Error("This doesn't look like a PluralKit export (no members or switches).");
+  }
+  const system = pk.name || "";
+  const list = [...pk.members].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+  const members = list.map(m => ({
+    id: m.id,
+    name: m.name || m.id,
+    card: `${m.display_name || m.name}${system ? " of " + system : ""}`,
+    pronouns: m.pronouns || "",
+    color: (m.color || "468DC3").toUpperCase(),
+  }));
+  const index = new Map(members.map((m, i) => [m.id, i]));
+
+  const warnings = [];
+  let unknown = 0, tooMany = 0;
+  const switches = [...pk.switches]
+    .map(s => ({ time: Math.floor(Date.parse(s.timestamp) / 1000), ids: s.members || [] }))
+    .filter(s => s.time > 0)
+    .sort((a, b) => a.time - b.time);
+  const bytes = new Uint8Array(switches.length * 12);
+  const view = new DataView(bytes.buffer);
+  switches.forEach((s, i) => {
+    view.setUint32(i * 12, s.time, true);
+    const idx = s.ids.map(id => index.get(id)).filter(x => x !== undefined);
+    unknown += s.ids.length - idx.length;
+    if (idx.length > 4) tooMany++;
+    for (let k = 0; k < 4; k++) view.setUint16(i * 12 + 4 + k * 2, k < idx.length ? idx[k] : 0xFFFF, true);
+  });
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  if (unknown) warnings.push(`${plural(unknown, "switch entry names a member", "switch entries name members")} not in the export; left out.`);
+  if (tooMany) warnings.push(`${plural(tooMany, "switch has", "switches have")} more than 4 fronters; only the first 4 are kept.`);
+  const noColour = pk.members.filter(m => !m.color).length;
+  if (noColour) warnings.push(`${plural(noColour, "member has", "members have")} no colour; they get the default blue.`);
+
+  return { system, members, switches, bytes, warnings };
+}
+
+function previewImport(p) {
+  const first = p.switches[0], last = p.switches[p.switches.length - 1];
+  const fmt = t => new Date(t * 1000).toLocaleDateString([], { dateStyle: "medium" });
+  const current = last && p.members[[0, 1, 2, 3].map(k => new DataView(p.bytes.buffer).getUint16((p.switches.length - 1) * 12 + 4 + k * 2, true)).find(x => x !== 0xFFFF)];
+  $("import-preview").innerHTML = `
+    <div class="box">
+      <h2 style="margin-top:0">${esc(p.system || "Unnamed system")}</h2>
+      <p>${p.members.length} members · ${p.switches.length} switches${first ? ` · ${fmt(first.time)} – ${fmt(last.time)}` : ""}</p>
+      <p class="dim">Fronting now, per the export: ${current ? esc(current.name) : "nobody"}</p>
+      ${p.warnings.map(w => `<p class="warn">${esc(w)}</p>`).join("")}
+      <p class="warn">This replaces all members and front history on the pin${state.members.length ? ` (now ${state.members.length} members, ${state.switches} switches)` : ""}.</p>
+      <button class="primary" id="import-go">Send to the pin</button>
+      <div id="import-progress" style="margin-top:12px"></div>
+    </div>
+    <div class="box list">${p.members.map(m => `
+      <div class="item"><span class="dot" style="background:${hex(m.color)}"></span>
+        <div class="grow"><div>${esc(m.name)} <span class="dim">${esc(m.pronouns)}</span></div><div class="dim">${esc(m.card)}</div></div>
+      </div>`).join("")}
+    </div>`;
+  $("import-go").addEventListener("click", runImport);
+}
+
+async function runImport() {
+  const p = pending;
+  const progress = $("import-progress");
+  const step = (text, value, max) => progress.innerHTML = `<p class="dim">${esc(text)}</p>` + (max ? `<progress value="${value}" max="${max}"></progress>` : "");
+  $("import-go").disabled = true;
+  try {
+    step("Sending members…");
+    await api("PUT", "/api/members", { system: p.system, members: p.members });
+    step("Sending front history…");
+    await api("PUT", "/api/switches", p.bytes);
+    for (let i = 0; i < p.members.length; i++) {
+      step(`Drawing namecards… ${i + 1} / ${p.members.length}`, i, p.members.length);
+      await uploadCard(p.members[i]);
+    }
+    step("Done.");
+    toast("Imported");
+    await loadState();
+  } catch (e) {
+    progress.innerHTML = `<p class="error">${esc(e.message)}</p>`;
+  }
+  $("import-go").disabled = false;
+}
+
+$("import-file").addEventListener("change", async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    pending = convertExport(JSON.parse(await file.text()));
+    previewImport(pending);
+  } catch (err) {
+    $("import-preview").innerHTML = `<div class="box error">${esc(err.message)}</div>`;
+  }
+});
+
+/* ---------- tabs ---------- */
+
+document.querySelector("nav").addEventListener("click", e => {
+  const b = e.target.closest("[data-tab]");
+  if (!b) return;
+  document.querySelectorAll("nav button").forEach(x => x.classList.toggle("active", x === b));
+  document.querySelectorAll("main section").forEach(s => s.classList.toggle("active", s.id === "tab-" + b.dataset.tab));
+  if (b.dataset.tab === "history") renderHistory().catch(err => toast(err.message));
+});
+
+loadState().catch(e => { $("subtitle").textContent = "Can't reach the pin: " + e.message; });
+setInterval(() => loadState().catch(() => {}), 30000);
+</script>
+</body>
+</html>

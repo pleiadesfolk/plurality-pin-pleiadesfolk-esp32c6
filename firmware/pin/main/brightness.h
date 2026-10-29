@@ -4,7 +4,8 @@
 
 /**
  * Apply the saved brightness and follow the brightness_percent subject (set by
- * the Settings slider from now on). Call after plurality_pin_init().
+ * the Settings slider from now on). Call after plurality_pin_init() and
+ * after NVS has been initialised (main.c).
  */
 void brightness_init(void);
 

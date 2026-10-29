@@ -4,8 +4,8 @@
  * - Battery: measured through the board's 200k/100k divider on GPIO0 (vendor
  *   BSP's bat_adc_read()) and turned into a rough percentage. The board has no
  *   charge-status signal, so charging isn't shown.
- * - Time and date: from the system clock (set from the build time for now).
- * - Wi-Fi: not implemented yet, so it always reads "Off" / "Not set up".
+ * - Time and date: from the system clock (build time until NTP sets it, wifi.c).
+ * - Wi-Fi: polled from wifi.c every second.
  */
 
 #include <string.h>
@@ -13,6 +13,7 @@
 #include "esp_log.h"
 #include "bsp/esp-bsp.h"
 #include "status.h"
+#include "wifi.h"
 #include "ui/plurality_pin.h"
 
 static const char *TAG = "status";
@@ -73,8 +74,31 @@ static void set_string(lv_subject_t *subject, const char *text)
     }
 }
 
+static void wifi_update(void)
+{
+    switch (wifi_get_state()) {
+    case WIFI_OFF:
+        set_string(&wifi_status, "Off");
+        set_string(&wifi_name, "Not set up");
+        return;
+    case WIFI_CONNECTING:
+        set_string(&wifi_status, "Connecting");
+        break;
+    case WIFI_CONNECTED:
+        set_string(&wifi_status, "Connected");
+        break;
+    case WIFI_FAILED:
+        set_string(&wifi_status, "Failed");
+        break;
+    }
+    set_string(&wifi_name, wifi_get_ssid());
+}
+
+/* Every second: clock text and Wi-Fi state */
 static void clock_update(lv_timer_t *timer)
 {
+    wifi_update();
+
     time_t now = time(NULL);
     struct tm tm;
     localtime_r(&now, &tm);
@@ -105,6 +129,4 @@ void status_init(void)
     clock_update(NULL);
     lv_timer_create(clock_update, 1000, NULL);
 
-    set_string(&wifi_status, "Off");
-    set_string(&wifi_name, "Not set up");
 }

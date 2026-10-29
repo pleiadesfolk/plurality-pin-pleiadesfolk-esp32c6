@@ -9,7 +9,6 @@
 
 #include "brightness.h"
 #include "esp_log.h"
-#include "nvs_flash.h"
 #include "nvs.h"
 #include "display.h"
 #include "ui/plurality_pin.h"
@@ -43,13 +42,6 @@ static void on_change(lv_observer_t *observer, lv_subject_t *subject)
 
 void brightness_init(void)
 {
-    esp_err_t err = nvs_flash_init();
-    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        err = nvs_flash_init();
-    }
-    ESP_ERROR_CHECK(err);
-
     nvs_handle_t nvs;
     uint8_t saved;
     if (nvs_open(NVS_NAMESPACE, NVS_READONLY, &nvs) == ESP_OK) {
