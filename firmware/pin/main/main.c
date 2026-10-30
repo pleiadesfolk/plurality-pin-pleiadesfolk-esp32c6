@@ -26,6 +26,7 @@
 #include "lvgl.h"
 #include "assets.h"
 #include "brightness.h"
+#include "button.h"
 #include "settings.h"
 #include "storage_info.h"
 #include "status.h"
@@ -148,6 +149,7 @@ static void lvgl_task(void *arg)
     nav_benchmark();
 #endif
     nav_init(on_screen);
+    button_init();
     lv_timer_create(clock_update, 1000, NULL);
     lv_timer_create((lv_timer_cb_t)namecard_poll, 250, NULL);
     lv_timer_create(memory_report, 10000, NULL);

@@ -56,6 +56,9 @@
   }
   textarea { resize: vertical; min-height: 64px; }
   label.field { display: block; margin: 12px 0 4px; font-size: 14px; color: var(--dim); }
+  label.check { display: flex; gap: 8px; align-items: center; margin-top: 16px; }
+  label.check input { width: 20px; height: 20px; accent-color: var(--accent); }
+  .tag { font-size: 12px; color: var(--accent); }
   .dot { width: 14px; height: 14px; border-radius: 50%; flex: none; }
   .warn { color: var(--accent); font-size: 14px; }
   .error { color: var(--bad); }
@@ -119,6 +122,7 @@
 
   <!-- Members: edit namecard text, pronouns, colour -->
   <section id="tab-members">
+    <p class="dim" style="margin-top:0">The pin's side button switches to the next member marked <span class="tag">● button</span>, most PluralKit messages first (or to anyone, if nobody is marked).</p>
     <div class="row">
       <input type="search" id="member-search" placeholder="Search members" class="grow">
       <button class="primary" id="member-add">Add member</button>
@@ -168,6 +172,7 @@
   <input type="text" id="editor-pronouns">
   <label class="field" for="editor-color">Colour</label>
   <input type="color" id="editor-color">
+  <label class="check"><input type="checkbox" id="editor-button"> Include when pressing the pin's side button</label>
   <div class="row" style="margin-top:16px">
     <button id="editor-delete" class="danger">Delete</button>
     <span class="grow"></span>
@@ -404,6 +409,7 @@ function renderFront() {
   const query = $("front-search").value.trim().toLowerCase();
   $("front-members").innerHTML = state.members
     .map((m, i) => ({ m, i }))
+    .sort((a, b) => (b.m.messages || 0) - (a.m.messages || 0) || a.m.name.localeCompare(b.m.name))
     .filter(({ m }) => !query || (m.name + " " + m.card).toLowerCase().includes(query))
     .map(({ m, i }) => `
       <button class="member ${state.front.includes(i) ? "current" : ""}" data-index="${i}">
@@ -439,7 +445,7 @@ function renderMembers() {
       <div class="item" data-index="${i}" style="cursor:pointer">
         <span class="dot" style="background:${hex(m.color)}"></span>
         <div class="grow">
-          <div>${esc(m.name)} <span class="dim">${esc(m.pronouns)}</span></div>
+          <div>${esc(m.name)} <span class="dim">${esc(m.pronouns)}</span>${m.button ? ' <span class="tag">● button</span>' : ""}</div>
           <div class="dim">${esc(m.card)}</div>
         </div>
         <span class="dim">Edit</span>
@@ -462,6 +468,7 @@ function openEditor(index) {
   $("editor-card").value = m.card;
   $("editor-pronouns").value = m.pronouns;
   $("editor-color").value = hex(m.color);
+  $("editor-button").checked = !!m.button;
   $("editor-delete").hidden = index < 0;
   updateEditorPreview();
   $("editor").showModal();
@@ -525,6 +532,7 @@ $("editor-save").addEventListener("click", async () => {
   m.card = card;
   m.pronouns = $("editor-pronouns").value.trim();
   m.color = $("editor-color").value.replace("#", "").toUpperCase();
+  m.button = $("editor-button").checked;
   if (editing < 0) members.push(m);
 
   $("editor-save").disabled = true;
@@ -618,12 +626,16 @@ function convertExport(pk) {
   }
   const system = pk.name || "";
   const list = [...pk.members].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+  // Keep button ticks made on the dashboard for members that are already on the pin
+  const ticked = new Set(state.members.filter(m => m.button).map(m => m.id));
   const members = list.map(m => ({
     id: m.id,
     name: m.name || m.id,
     card: `${m.display_name || m.name}${system ? " of " + system : ""}`,
     pronouns: m.pronouns || "",
     color: (m.color || "468DC3").toUpperCase(),
+    messages: m.message_count || 0,
+    button: ticked.has(m.id),
   }));
   const index = new Map(members.map((m, i) => [m.id, i]));
 

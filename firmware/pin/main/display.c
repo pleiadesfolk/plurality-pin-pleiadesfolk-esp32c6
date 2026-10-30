@@ -111,40 +111,70 @@ static void rounder_cb(lv_event_t *e)
 /* ---------- touch ---------- */
 
 #define SWIPE_MIN_DISTANCE  60          /* px the finger must travel to count as a swipe */
+#define HOLD_MS             600         /* finger kept down this long, without moving: a hold */
+#define HOLD_MAX_MOVE       20          /* px the finger may wander during a hold (or tap) */
+#define TAP_MAX_MS          400
 
 static display_swipe_cb_t swipe_cb;
+static display_hold_cb_t hold_cb;
+static display_hold_cb_t tap_cb;
 
 static void swipe_async(void *dir)
 {
     swipe_cb((lv_dir_t)(uintptr_t)dir);
 }
 
-/* Swipes are detected here from raw touch data rather than with LVGL gestures,
- * which are swallowed whenever a screen contains something scrollable. */
+static void hold_async(void *arg)
+{
+    hold_cb();
+}
+
+static void tap_async(void *arg)
+{
+    tap_cb();
+}
+
+/* Swipes, holds and taps are detected here from raw touch data rather than with
+ * LVGL gestures, which are swallowed whenever a screen contains something
+ * scrollable. The callbacks run later via lv_async_call, outside of input
+ * processing, so they may change screens. */
 static void detect_swipe(bool pressed, lv_point_t point)
 {
     static bool was_pressed;
     static bool on_slider;              /* a drag on a slider moves the slider, it's not a swipe */
+    static bool held;                   /* this touch already counted as a hold */
+    static uint32_t since;
     static lv_point_t start, last;
 
     if (pressed) {
         if (!was_pressed) {
             start = point;
+            since = lv_tick_get();
+            held = false;
             lv_obj_t *obj = lv_indev_search_obj(lv_screen_active(), &point);
             on_slider = obj && lv_obj_check_type(obj, &lv_slider_class);
         }
         last = point;
-    } else if (was_pressed && swipe_cb && !on_slider) {
+        bool still = LV_ABS(last.x - start.x) < HOLD_MAX_MOVE && LV_ABS(last.y - start.y) < HOLD_MAX_MOVE;
+        if (!held && hold_cb && !on_slider && still && lv_tick_elaps(since) >= HOLD_MS) {
+            held = true;
+            lv_async_call(hold_async, NULL);
+        }
+    } else if (was_pressed && !on_slider) {
+        /* A hold may go on into a swipe: hold, then slide and let go */
         int dx = last.x - start.x;
         int dy = last.y - start.y;
+        bool still = LV_ABS(dx) < HOLD_MAX_MOVE && LV_ABS(dy) < HOLD_MAX_MOVE;
+        if (still && !held && tap_cb && lv_tick_elaps(since) < TAP_MAX_MS) {
+            lv_async_call(tap_async, NULL);
+        }
         lv_dir_t dir = LV_DIR_NONE;
         if (LV_ABS(dx) > SWIPE_MIN_DISTANCE && LV_ABS(dx) > 2 * LV_ABS(dy)) {
             dir = dx > 0 ? LV_DIR_RIGHT : LV_DIR_LEFT;
         } else if (LV_ABS(dy) > SWIPE_MIN_DISTANCE && LV_ABS(dy) > 2 * LV_ABS(dx)) {
             dir = dy > 0 ? LV_DIR_BOTTOM : LV_DIR_TOP;
         }
-        /* Called later, outside of input processing, so the callback may change screens */
-        if (dir != LV_DIR_NONE) {
+        if (dir != LV_DIR_NONE && swipe_cb) {
             lv_async_call(swipe_async, (void *)(uintptr_t)dir);
         }
     }
@@ -181,6 +211,16 @@ static void touch_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
 void display_set_swipe_cb(display_swipe_cb_t cb)
 {
     swipe_cb = cb;
+}
+
+void display_set_hold_cb(display_hold_cb_t cb)
+{
+    hold_cb = cb;
+}
+
+void display_set_tap_cb(display_hold_cb_t cb)
+{
+    tap_cb = cb;
 }
 
 void display_set_brightness(uint8_t percent)

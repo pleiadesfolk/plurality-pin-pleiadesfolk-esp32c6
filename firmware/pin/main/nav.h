@@ -6,16 +6,23 @@
 typedef void (*nav_screen_cb_t)(const char *name, lv_obj_t *screen);
 
 /**
- * Show the first screen and start reacting to swipes and taps:
- *   left / right   - next / previous main screen
- *   down           - pull-down menu (from the namecard screen only)
- *   up             - close the pull-down menu
+ * Show the first screen (the fronter) and start reacting to swipes and taps:
+ *   press and hold - switch mode: page dots appear, then swipe left/right
+ *                    slides between fronter, Clock and Front history; tap (or
+ *                    wait 3 s) to finish
+ *   left / right   - on the fronter screen: next / previous fronter (like the
+ *                    side button); on the other main screens: next / previous screen
+ *   down           - pull-down menu (from the fronter screen only)
+ *   up (in menu)   - close the pull-down menu
  *   menu buttons   - Status -> status, Settings -> settings,
  *                    Connect to pin -> connect Wi-Fi, then swipe left to
  *                    connect (web dashboard)
  *   right          - back a step, or to the menu from a page opened by a menu button
  */
 void nav_init(nav_screen_cb_t on_screen);
+
+/** Go to the screen showing the current fronter. */
+void nav_show_fronter(void);
 
 /** Show a short message at the bottom of the screen for a moment. */
 void nav_toast(const char *text);

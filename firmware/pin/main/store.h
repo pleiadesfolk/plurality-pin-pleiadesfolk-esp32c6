@@ -42,6 +42,15 @@ esp_err_t store_switches_end(bool ok);
 esp_err_t store_add_switch(const uint16_t *members, int count);
 
 /**
+ * The member the BOOT button switches to next: the one after the current
+ * fronter among members marked "button" on the dashboard (or all members if
+ * none are), ordered by PluralKit message count (most first), then name.
+ * direction < 0 steps backwards instead.
+ * Returns its index and copies its name, or -1.
+ */
+int store_step_button_member(int direction, char *name, size_t name_size);
+
+/**
  * Delete member `index`, take them out of the front history (later members'
  * indexes move down by one) and delete their card picture.
  * Adding and editing members goes through store_set_members_json().

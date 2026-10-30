@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
+#include <strings.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "esp_log.h"
@@ -39,6 +40,8 @@ typedef struct {
     char card[128];                     /* namecard text */
     char pronouns[48];
     uint32_t color;                     /* 0xRRGGBB */
+    bool on_button;                     /* in the BOOT button's shortlist */
+    uint32_t messages;                  /* PluralKit message count: the button's order */
 } member_t;
 
 static SemaphoreHandle_t lock;
@@ -88,6 +91,9 @@ static int members_from_json(const char *json, char *system, size_t system_size,
         copy_string(m->name, sizeof(m->name), cJSON_GetObjectItem(item, "name"));
         copy_string(m->card, sizeof(m->card), cJSON_GetObjectItem(item, "card"));
         copy_string(m->pronouns, sizeof(m->pronouns), cJSON_GetObjectItem(item, "pronouns"));
+        m->on_button = cJSON_IsTrue(cJSON_GetObjectItem(item, "button"));
+        const cJSON *messages = cJSON_GetObjectItem(item, "messages");
+        m->messages = cJSON_IsNumber(messages) && messages->valuedouble > 0 ? (uint32_t)messages->valuedouble : 0;
         const cJSON *color = cJSON_GetObjectItem(item, "color");
         m->color = cJSON_IsString(color) ? strtoul(color->valuestring, NULL, 16) : 0x468DC3;
     }
@@ -109,6 +115,8 @@ static char *members_to_json(void)
         cJSON_AddStringToObject(item, "name", m->name);
         cJSON_AddStringToObject(item, "card", m->card);
         cJSON_AddStringToObject(item, "pronouns", m->pronouns);
+        cJSON_AddBoolToObject(item, "button", m->on_button);
+        cJSON_AddNumberToObject(item, "messages", m->messages);
         cJSON_AddStringToObject(item, "color", color);
         cJSON_AddItemToArray(list, item);
     }
@@ -385,6 +393,52 @@ esp_err_t store_delete_member(int index)
     free(json);
     ESP_LOGI(TAG, "deleted member %d, %d left", index, member_count);
     return err;
+}
+
+/* Button order: most messages first, then by name. True if a comes before b. */
+static bool button_before(const member_t *a, const member_t *b)
+{
+    if (a->messages != b->messages) {
+        return a->messages > b->messages;
+    }
+    return strcasecmp(a->name, b->name) < 0;
+}
+
+int store_step_button_member(int direction, char *name, size_t name_size)
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    bool any = false;
+    for (int i = 0; i < member_count; i++) {
+        any |= members[i].on_button;
+    }
+    /* Candidates: the shortlist, or everyone if it's empty, in button order.
+     * Forward: the closest candidate after the current fronter; backward: the
+     * closest before it. "before(a, b)" flips with the direction. */
+    bool back = direction < 0;
+    #define BEFORE(a, b) (back ? button_before(b, a) : button_before(a, b))
+    uint16_t cur = front.time ? front.members[0] : STORE_NO_MEMBER;
+    int next = -1, first = -1;
+    for (int i = 0; i < member_count; i++) {
+        if (any && !members[i].on_button) {
+            continue;
+        }
+        if (first < 0 || BEFORE(&members[i], &members[first])) {
+            first = i;
+        }
+        bool after_current = cur >= member_count || BEFORE(&members[cur], &members[i]);
+        if (after_current && i != cur && (next < 0 || BEFORE(&members[i], &members[next]))) {
+            next = i;
+        }
+    }
+    #undef BEFORE
+    if (next < 0) {
+        next = first;                   /* past the end: wrap around */
+    }
+    if (next >= 0) {
+        strlcpy(name, members[next].name, name_size);
+    }
+    xSemaphoreGive(lock);
+    return next;
 }
 
 /* PluralKit ids are short and alphanumeric; anything else could escape the folder */

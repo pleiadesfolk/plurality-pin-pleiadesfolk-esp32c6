@@ -18,6 +18,15 @@ typedef void (*display_swipe_cb_t)(lv_dir_t dir);
 /** Call cb with LV_DIR_LEFT/RIGHT/TOP/BOTTOM when the user swipes across the screen. */
 void display_set_swipe_cb(display_swipe_cb_t cb);
 
+typedef void (*display_hold_cb_t)(void);
+
+/** Call cb when the user presses and holds (~0.6 s without moving) anywhere.
+ *  Sliding after the hold, before letting go, still counts as a swipe. */
+void display_set_hold_cb(display_hold_cb_t cb);
+
+/** Call cb on a quick tap (also delivered to whatever LVGL object was tapped). */
+void display_set_tap_cb(display_hold_cb_t cb);
+
 typedef struct {
     int64_t rotate_us;                  /* time spent rotating strips in software */
     uint32_t flushes;                   /* strips sent to the panel */
