@@ -27,6 +27,7 @@
 #include "lvgl.h"
 #include "assets.h"
 #include "brightness.h"
+#include "connect.h"
 #include "button.h"
 #include "settings.h"
 #include "storage_info.h"
@@ -107,6 +108,10 @@ static void on_screen(const char *name, lv_obj_t *scr)
     }
     if (strcmp(name, "namecard_mode") == 0) {
         fronter_attach(scr, STORE_MODE_CARD);
+        return;
+    }
+    if (strcmp(name, "connect") == 0) {
+        connect_attach(scr);
         return;
     }
     if (strcmp(name, "image_mode_full") == 0) {

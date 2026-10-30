@@ -12,6 +12,9 @@
  *                          label, full or side (see store_picture_t)
  *   GET  /api/card?id=ID&kind=K  the same picture back (for the dashboard's previews)
  *   DELETE /api/member?index=N  delete member N (also from front history)
+ *   GET  /api/wifi         saved Wi-Fi networks (no passwords) and the pin's address
+ *   PUT  /api/wifi         replace the saved networks (see wifi_set_networks_json)
+ *   GET  /api/wifi/scan    networks in range (see wifi_scan_json)
  *
  * There's no login: anyone on the same Wi-Fi network can use it.
  */
@@ -24,6 +27,7 @@
 #include "status.h"
 #include "photos.h"
 #include "store.h"
+#include "wifi.h"
 #include "web.h"
 
 static const char *TAG = "web";
@@ -277,13 +281,51 @@ static esp_err_t delete_member(httpd_req_t *req)
            : send_error(req, "400 Bad Request", "could not delete member");
 }
 
+static esp_err_t get_wifi(httpd_req_t *req)
+{
+    char *json = wifi_networks_json();
+    if (!json) {
+        return send_error(req, "500 Internal Server Error", "out of memory");
+    }
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_set_hdr(req, "Cache-Control", "no-store");
+    esp_err_t err = httpd_resp_sendstr(req, json);
+    free(json);
+    return err;
+}
+
+static esp_err_t get_wifi_scan(httpd_req_t *req)
+{
+    char *json = wifi_scan_json();
+    if (!json) {
+        return send_error(req, "503 Service Unavailable", "the pin can't scan right now - try again in a moment");
+    }
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_set_hdr(req, "Cache-Control", "no-store");
+    esp_err_t err = httpd_resp_sendstr(req, json);
+    free(json);
+    return err;
+}
+
+static esp_err_t put_wifi(httpd_req_t *req)
+{
+    char *body = read_body(req);
+    if (!body) {
+        return send_error(req, "400 Bad Request", "body missing or too big");
+    }
+    esp_err_t err = wifi_set_networks_json(body);
+    free(body);
+    return err == ESP_OK ? send_ok(req)
+           : send_error(req, "400 Bad Request", "invalid network list (names up to 32 bytes, passwords 8-63 characters or none)");
+}
+
 /* ---------- start ---------- */
 
 void web_start(void)
 {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.stack_size = 8192;           /* JSON handling needs more than the default */
-    config.max_uri_handlers = 12;
+    config.max_uri_handlers = 16;
     config.lru_purge_enable = true;     /* phones keep connections open; recycle them */
     config.recv_wait_timeout = 10;
 
@@ -304,6 +346,9 @@ void web_start(void)
         { .uri = "/api/card",      .method = HTTP_PUT,  .handler = put_card },
         { .uri = "/api/card",      .method = HTTP_GET,  .handler = get_card },
         { .uri = "/api/member",    .method = HTTP_DELETE, .handler = delete_member },
+        { .uri = "/api/wifi",      .method = HTTP_GET,  .handler = get_wifi },
+        { .uri = "/api/wifi",      .method = HTTP_PUT,  .handler = put_wifi },
+        { .uri = "/api/wifi/scan", .method = HTTP_GET,  .handler = get_wifi_scan },
     };
     for (int i = 0; i < sizeof(routes) / sizeof(routes[0]); i++) {
         httpd_register_uri_handler(server, &routes[i]);

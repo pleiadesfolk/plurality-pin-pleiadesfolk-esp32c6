@@ -43,10 +43,14 @@ UI_DST = FIRMWARE / "main" / "ui"
 ASSETS = FIRMWARE / "assets"
 FONT_CONV = FIRMWARE / "tools" / "node_modules" / ".bin" / "lv_font_conv"
 
-# Fonts up to this size get all printable ASCII characters. Bigger ones (the
+# Fonts up to this size get all of FONT_RANGES. Bigger ones (the
 # 150 px clock) would take hundreds of KB that way, so they only get BIG_FONT_CHARS.
 FULL_FONT_MAX_SIZE = 60
 BIG_FONT_CHARS = " 0123456789:/-"
+# What "all" means for the other fonts: printable ASCII, accented Latin letters
+# (Latin-1: é, ñ, ü ...) and typographic punctuation (‘ ’ “ ” – — … •), e.g. for
+# iPhone hotspot names like "Ellis’ phone". Characters a font lacks are skipped.
+FONT_RANGES = "0x20-0x7E,0xA0-0xFF,0x2010-0x2027"
 
 LV_IMAGE_HEADER_MAGIC = 0x19
 COLOR_FORMATS = {"LV_COLOR_FORMAT_RGB565": 0x12, "LV_COLOR_FORMAT_RGB565A8": 0x14}
@@ -139,7 +143,7 @@ def make_fonts(gen_c):
             symbols[(ttf, size)] = None
             continue
         symbol = "bitmap_" + re.sub(r"\W", "_", Path(ttf).stem).lower() + f"_{size}"
-        chars = ["--range", "0x20-0x7E"] if size <= FULL_FONT_MAX_SIZE else ["--symbols", BIG_FONT_CHARS]
+        chars = ["--range", FONT_RANGES] if size <= FULL_FONT_MAX_SIZE else ["--symbols", BIG_FONT_CHARS]
         subprocess.run([str(FONT_CONV), "--font", str(src), *chars, "--size", str(size),
                         "--bpp", "4", "--format", "lvgl", "--no-compress",
                         "--lv-font-name", symbol, "-o", str(out_dir / f"{symbol}.c")],

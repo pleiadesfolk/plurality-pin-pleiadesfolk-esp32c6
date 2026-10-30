@@ -15,8 +15,7 @@ typedef void (*nav_screen_cb_t)(const char *name, lv_obj_t *screen);
  *   down           - pull-down menu (from the fronter screen only)
  *   up (in menu)   - close the pull-down menu
  *   menu buttons   - Status -> status, Settings -> settings,
- *                    Connect to pin -> connect Wi-Fi, then swipe left to
- *                    connect (web dashboard)
+ *                    Connect to pin -> the dashboard's QR code
  *   right          - back a step, or to the menu from a page opened by a menu button
  */
 void nav_init(nav_screen_cb_t on_screen);

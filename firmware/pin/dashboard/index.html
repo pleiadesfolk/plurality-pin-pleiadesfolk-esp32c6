@@ -146,6 +146,30 @@
     <div class="box list" id="history-recent"></div>
   </section>
 
+  <!-- Wi-Fi networks the pin joins -->
+  <section id="tab-wifi">
+    <div class="box">
+      <p style="margin-top:0" id="wifi-now">…</p>
+      <p class="dim" style="margin-bottom:0">The pin tries these networks in this order and joins the first one in range
+        (untick "Use this network" to have it ignore one for a while - e.g. home Wi-Fi, to test your hotspot).
+        If the pin ends up on no network at all, turn Wi-Fi off and on again on the pin's Settings screen: that switches every network back on.
+        A phone's hotspot works too: on an iPhone, turn on <b>Settings → Personal Hotspot → Maximize Compatibility</b>
+        (the pin only does 2.4 GHz) and keep that screen open until the pin has joined.</p>
+    </div>
+    <div class="box list" id="wifi-list"></div>
+    <h2>Add a network</h2>
+    <div class="box">
+      <button id="wifi-scan">Find networks nearby</button>
+      <div class="list" id="wifi-found"></div>
+      <label class="field" for="wifi-ssid">Network name (exactly as your phone shows it)</label>
+      <input type="text" id="wifi-ssid" autocapitalize="off" autocorrect="off">
+      <label class="field" for="wifi-password">Password</label>
+      <input type="text" id="wifi-password" autocapitalize="off" autocorrect="off">
+      <button id="wifi-add">Add</button>
+    </div>
+    <button class="primary" id="wifi-save" disabled>Save to the pin</button>
+  </section>
+
   <!-- Import a pk;export file -->
   <section id="tab-import">
     <div class="box">
@@ -160,6 +184,7 @@
   <button data-tab="front" class="active">Front</button>
   <button data-tab="members">Members</button>
   <button data-tab="history">History</button>
+  <button data-tab="wifi">Wi-Fi</button>
   <button data-tab="import">Import</button>
 </nav>
 
@@ -986,6 +1011,107 @@ $("import-file").addEventListener("change", async e => {
   }
 });
 
+/* ---------- Wi-Fi tab ---------- */
+
+let wifi = { networks: [], ip: "" };    // as on the pin, plus local edits until saved
+let wifiDirty = false;
+
+async function loadWifi() {
+  wifi = await (await api("GET", "/api/wifi")).json();
+  wifiDirty = false;
+  renderWifi();
+}
+
+function renderWifi() {
+  const now = wifi.networks.find(n => n.current);
+  $("wifi-now").textContent = now ? `The pin is on ${now.ssid}, at ${wifi.ip}.` : "The pin isn't connected right now.";
+  $("wifi-list").innerHTML = wifi.networks.map((n, i) => `
+    <div class="item">
+      <div class="grow">
+        <div${n.skip ? ' class="dim"' : ""}>${i + 1}. ${esc(n.ssid)}${n.current ? ' <span class="tag">● connected</span>' : ""}${n.skip ? " (switched off)" : ""}${n.password ? ' <span class="dim">(new)</span>' : ""}</div>
+        <label class="dim"><input type="checkbox" data-use="${i}" ${n.skip ? "" : "checked"}> Use this network</label>
+      </div>
+      <button data-up="${i}" ${i === 0 ? "disabled" : ""} aria-label="Try earlier">↑</button>
+      <button data-down="${i}" ${i === wifi.networks.length - 1 ? "disabled" : ""} aria-label="Try later">↓</button>
+      <button class="danger" data-remove="${i}">Remove</button>
+    </div>`).join("") || `<p class="dim">No saved networks.</p>`;
+  $("wifi-save").disabled = !wifiDirty;
+}
+
+function wifiChanged() { wifiDirty = true; renderWifi(); }
+
+$("wifi-list").addEventListener("click", e => {
+  const t = e.target, list = wifi.networks;
+  if (t.dataset.up) { const i = +t.dataset.up; [list[i - 1], list[i]] = [list[i], list[i - 1]]; wifiChanged(); }
+  if (t.dataset.down) { const i = +t.dataset.down; [list[i + 1], list[i]] = [list[i], list[i + 1]]; wifiChanged(); }
+  if (t.dataset.remove) {
+    const n = list[+t.dataset.remove];
+    if (n.current && !confirm(`The pin is on ${n.ssid} right now. Without it the pin moves to another saved network, and this page may stop working until you join that network too. Remove it?`)) return;
+    list.splice(+t.dataset.remove, 1); wifiChanged();
+  }
+});
+$("wifi-list").addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.use !== undefined) {
+    const n = wifi.networks[+t.dataset.use];
+    if (!t.checked && n.current && !confirm(`The pin is on ${n.ssid} right now. Switched off, it moves to another saved network once you save, and this page may stop working until you join that network too. Switch it off?`)) {
+      t.checked = true;
+      return;
+    }
+    n.skip = !t.checked;
+    wifiChanged();
+  }
+});
+
+// Ask the pin which networks it can see (2.4 GHz only - that's all it can join)
+$("wifi-scan").addEventListener("click", async () => {
+  const button = $("wifi-scan");
+  button.disabled = true;
+  button.textContent = "Looking…";
+  try {
+    const { found } = await (await api("GET", "/api/wifi/scan")).json();
+    const bars = rssi => rssi >= -55 ? "▂▄▆█" : rssi >= -67 ? "▂▄▆" : rssi >= -78 ? "▂▄" : "▂";
+    $("wifi-found").innerHTML = found.map(n => `
+      <div class="item" data-ssid="${esc(n.ssid)}" style="cursor:pointer">
+        <span class="grow">${esc(n.ssid)}${n.saved ? ' <span class="tag">saved</span>' : ""}</span>
+        <span class="dim">${n.open ? "open" : "🔒"} ${bars(n.rssi)}</span>
+      </div>`).join("") || `<p class="dim">No networks found. A phone's hotspot only shows up while its settings screen is open.</p>`;
+  } catch (e) { toast("Couldn't look for networks: " + e.message); }
+  button.disabled = false;
+  button.textContent = "Find networks nearby";
+});
+$("wifi-found").addEventListener("click", e => {
+  const row = e.target.closest("[data-ssid]");
+  if (!row) return;
+  $("wifi-ssid").value = row.dataset.ssid;
+  $("wifi-password").focus();
+});
+
+$("wifi-add").addEventListener("click", () => {
+  const ssid = $("wifi-ssid").value.trim(), password = $("wifi-password").value;
+  const bytes = new TextEncoder().encode(ssid).length;
+  if (!ssid || bytes > 32) { toast("Enter the network's name (up to 32 characters)"); return; }
+  if (password && (password.length < 8 || password.length > 63)) { toast("Wi-Fi passwords are 8 to 63 characters"); return; }
+  if (wifi.networks.length >= 6) { toast("The pin keeps up to 6 networks"); return; }
+  const existing = wifi.networks.find(n => n.ssid === ssid);
+  if (existing) existing.password = password;
+  else wifi.networks.push({ ssid, password });
+  $("wifi-ssid").value = ""; $("wifi-password").value = "";
+  wifiChanged();
+});
+
+$("wifi-save").addEventListener("click", async () => {
+  // Passwords are only sent for networks added or changed here; the pin keeps the others
+  const networks = wifi.networks.map(n => n.password !== undefined
+    ? { ssid: n.ssid, password: n.password, skip: !!n.skip }
+    : { ssid: n.ssid, skip: !!n.skip });
+  try {
+    await api("PUT", "/api/wifi", { networks });
+    toast("Saved");
+    await loadWifi();
+  } catch (e) { toast("Couldn't save: " + e.message); }
+});
+
 /* ---------- tabs ---------- */
 
 document.querySelector("nav").addEventListener("click", e => {
@@ -994,6 +1120,7 @@ document.querySelector("nav").addEventListener("click", e => {
   document.querySelectorAll("nav button").forEach(x => x.classList.toggle("active", x === b));
   document.querySelectorAll("main section").forEach(s => s.classList.toggle("active", s.id === "tab-" + b.dataset.tab));
   if (b.dataset.tab === "history") renderHistory().catch(err => toast(err.message));
+  if (b.dataset.tab === "wifi") loadWifi().catch(err => toast(err.message));
 });
 
 loadState().catch(e => { $("subtitle").textContent = "Can't reach the pin: " + e.message; });
