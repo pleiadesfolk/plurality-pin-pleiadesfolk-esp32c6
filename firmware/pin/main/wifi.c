@@ -1,6 +1,7 @@
 /*
  * Wi-Fi: join the network from wifi_credentials.h (station mode), reconnect
  * forever if it drops, and set the clock from the internet once connected.
+ * It can be turned off on the Settings screen; that choice is kept in NVS.
  *
  * Runs in ESP-IDF's own Wi-Fi/event tasks. The UI only polls wifi_get_state()
  * from the LVGL task (status.c), so no LVGL calls happen here.
@@ -18,6 +19,7 @@
 #include "esp_event.h"
 #include "esp_netif.h"
 #include "esp_netif_sntp.h"
+#include "nvs.h"
 #include "wifi.h"
 
 #if __has_include("wifi_credentials.h")
@@ -36,6 +38,11 @@ static volatile wifi_state_t state = WIFI_OFF;
 static int fails;
 static TimerHandle_t retry_timer;
 static bool sntp_started;
+static bool configured;                 /* a network is set and the driver is initialised */
+static volatile bool enabled = true;
+
+#define NVS_NAMESPACE   "pin"
+#define NVS_KEY         "wifi_on"
 
 static void time_synced(struct timeval *tv)
 {
@@ -49,7 +56,9 @@ static void time_synced(struct timeval *tv)
 
 static void retry(TimerHandle_t timer)
 {
-    esp_wifi_connect();
+    if (enabled) {
+        esp_wifi_connect();
+    }
 }
 
 static void on_event(void *arg, esp_event_base_t base, int32_t id, void *data)
@@ -58,6 +67,10 @@ static void on_event(void *arg, esp_event_base_t base, int32_t id, void *data)
         esp_wifi_connect();
     } else if (base == WIFI_EVENT && id == WIFI_EVENT_STA_DISCONNECTED) {
         const wifi_event_sta_disconnected_t *event = data;
+        if (!enabled) {
+            state = WIFI_DISABLED;          /* turned off on purpose: don't retry */
+            return;
+        }
         fails++;
         ESP_LOGW(TAG, "not connected (reason %d), retrying in %d s", event->reason, RETRY_DELAY_MS / 1000);
         state = fails >= FAILS_BEFORE_FAILED ? WIFI_FAILED : WIFI_CONNECTING;
@@ -102,6 +115,20 @@ void wifi_start(void)
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &config));
 
+    configured = true;
+    nvs_handle_t nvs;
+    uint8_t on = 1;
+    if (nvs_open(NVS_NAMESPACE, NVS_READONLY, &nvs) == ESP_OK) {
+        nvs_get_u8(nvs, NVS_KEY, &on);
+        nvs_close(nvs);
+    }
+    enabled = on;
+    if (!enabled) {
+        state = WIFI_DISABLED;
+        ESP_LOGI(TAG, "turned off in Settings");
+        return;
+    }
+
     state = WIFI_CONNECTING;
     ESP_ERROR_CHECK(esp_wifi_start());
     /* Power saving makes the radio nap between beacons: ~100 ms per round trip,
@@ -109,6 +136,37 @@ void wifi_start(void)
      * could be switched back on while nobody uses the dashboard. */
     esp_wifi_set_ps(WIFI_PS_NONE);
     ESP_LOGI(TAG, "connecting to %s", WIFI_SSID);
+}
+
+void wifi_set_enabled(bool on)
+{
+    if (!configured || on == enabled) {
+        return;
+    }
+    enabled = on;
+    nvs_handle_t nvs;
+    if (nvs_open(NVS_NAMESPACE, NVS_READWRITE, &nvs) == ESP_OK) {
+        nvs_set_u8(nvs, NVS_KEY, on);
+        nvs_commit(nvs);
+        nvs_close(nvs);
+    }
+    if (on) {
+        fails = 0;
+        state = WIFI_CONNECTING;
+        esp_wifi_start();               /* STA_START then connects */
+        esp_wifi_set_ps(WIFI_PS_NONE);
+        ESP_LOGI(TAG, "turned on, connecting to %s", WIFI_SSID);
+    } else {
+        xTimerStop(retry_timer, 0);
+        esp_wifi_stop();
+        state = WIFI_DISABLED;
+        ESP_LOGI(TAG, "turned off");
+    }
+}
+
+bool wifi_is_enabled(void)
+{
+    return enabled;
 }
 
 wifi_state_t wifi_get_state(void)

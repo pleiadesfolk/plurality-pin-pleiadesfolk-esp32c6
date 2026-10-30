@@ -519,6 +519,16 @@
       shadow_opa="0" />
 
     <!-- ─────────────────── <lvgl-figma-flow end="styles"/> ──────────────────── -->
+
+    <!-- Hand-added: looks for state indicators, switched on by bind_style in the screens -->
+    <!-- Colour objects only through these (not their own style_*_color): an object's
+         own colour always wins over bound styles. -->
+    <style name="style_state_on" text_color="0x34C759" />
+    <style name="style_state_good" text_color="0x59D173" />
+    <style name="style_state_off" text_color="0x8E8E93" />
+    <style name="style_state_warn" text_color="0xFF9F0A" />
+    <style name="style_dot_on" bg_color="0x59D173" />
+    <style name="style_dot_off" bg_color="0x5A5A5A" />
   </styles>
 
   <subjects>
@@ -533,5 +543,19 @@
     <string name="date_text" value="Wed Apr 1" />
     <string name="wifi_status" value="Off" />
     <string name="wifi_name" value="Not set up" />
+    <!-- 0 off, 1 connecting, 2 connected, 3 failed -->
+    <int name="wifi_state" value="2" />
+    <!-- 0 off, 1 on -->
+    <int name="bluetooth_on" value="0" />
+    <!-- 1 while USB power is plugged in -->
+    <int name="usb_power" value="1" />
+    <!-- 0 active, 1 low battery, 2 power saving; power_mode_text is its text -->
+    <int name="power_state" value="0" />
+    <string name="power_mode_text" value="Active" />
+    <!-- Storage: microSD card and the pin's own storage partition -->
+    <string name="sd_text" value="19.8 / 32 GB" />
+    <int name="sd_percent" value="62" />
+    <string name="pin_storage_text" value="0.3 / 4.4 MB" />
+    <int name="pin_storage_percent" value="7" />
   </subjects>
 </globals>

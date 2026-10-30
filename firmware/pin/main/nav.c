@@ -59,14 +59,14 @@ static lv_obj_t *toast;
 
 static void show(const screen_t *screen);
 
-/* ---------- screen name toast (for testing) ---------- */
+/* ---------- toast: short message at the bottom (screen names, for testing) ---------- */
 
 static void hide_toast(lv_timer_t *timer)
 {
     lv_obj_add_flag(toast, LV_OBJ_FLAG_HIDDEN);
 }
 
-static void show_toast(const char *text)
+void nav_toast(const char *text)
 {
     static lv_timer_t *timer;
 
@@ -158,7 +158,7 @@ static void show(const screen_t *screen)
     if (screen_cb) {
         screen_cb(screen->name, scr);
     }
-    show_toast(screen->name);
+    nav_toast(screen->name);
     ESP_LOGI(TAG, "%s (created in %u ms), free heap %u bytes", screen->name,
              (unsigned)lv_tick_elaps(t0), (unsigned)heap_caps_get_free_size(MALLOC_CAP_DEFAULT));
 }

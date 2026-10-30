@@ -17,5 +17,8 @@ typedef void (*nav_screen_cb_t)(const char *name, lv_obj_t *screen);
  */
 void nav_init(nav_screen_cb_t on_screen);
 
+/** Show a short message at the bottom of the screen for a moment. */
+void nav_toast(const char *text);
+
 /** Open every screen once and log how long creating and drawing it takes. */
 void nav_benchmark(void);

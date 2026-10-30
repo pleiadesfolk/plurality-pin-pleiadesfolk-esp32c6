@@ -7,3 +7,6 @@
  * Call after plurality_pin_init(), from the LVGL task.
  */
 void status_init(void);
+
+/** Last measured battery-pin voltage (for the dashboard); safe from any task. */
+float status_battery_volts(void);

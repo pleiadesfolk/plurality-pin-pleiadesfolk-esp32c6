@@ -851,6 +851,12 @@ extern const void * image_vec_23_214_data;
  *----------------*/
 
 lv_style_t style_screen_base_global;
+lv_style_t style_state_on;
+lv_style_t style_state_good;
+lv_style_t style_state_off;
+lv_style_t style_state_warn;
+lv_style_t style_dot_on;
+lv_style_t style_dot_off;
 
 /*----------------
  * Subjects
@@ -863,6 +869,15 @@ lv_subject_t ampm_text;
 lv_subject_t date_text;
 lv_subject_t wifi_status;
 lv_subject_t wifi_name;
+lv_subject_t wifi_state;
+lv_subject_t bluetooth_on;
+lv_subject_t usb_power;
+lv_subject_t power_state;
+lv_subject_t power_mode_text;
+lv_subject_t sd_text;
+lv_subject_t sd_percent;
+lv_subject_t pin_storage_text;
+lv_subject_t pin_storage_percent;
 
 /**********************
  *      MACROS
@@ -2503,11 +2518,23 @@ void plurality_pin_init_gen(const char * asset_path)
     if (!style_inited) {
         /*Init all styles*/
         lv_style_init(&style_screen_base_global);
+        lv_style_init(&style_state_on);
+        lv_style_init(&style_state_good);
+        lv_style_init(&style_state_off);
+        lv_style_init(&style_state_warn);
+        lv_style_init(&style_dot_on);
+        lv_style_init(&style_dot_off);
 
         lv_style_set_border_width(&style_screen_base_global, 0);
         lv_style_set_radius(&style_screen_base_global, 0);
         lv_style_set_shadow_width(&style_screen_base_global, 0);
         lv_style_set_shadow_opa(&style_screen_base_global, 0);
+        lv_style_set_text_color(&style_state_on, lv_color_hex(0x34C759));
+        lv_style_set_text_color(&style_state_good, lv_color_hex(0x59D173));
+        lv_style_set_text_color(&style_state_off, lv_color_hex(0x8E8E93));
+        lv_style_set_text_color(&style_state_warn, lv_color_hex(0xFF9F0A));
+        lv_style_set_bg_color(&style_dot_on, lv_color_hex(0x59D173));
+        lv_style_set_bg_color(&style_dot_off, lv_color_hex(0x5A5A5A));
 
         style_inited = true;
     }
@@ -2557,6 +2584,36 @@ void plurality_pin_init_gen(const char * asset_path)
                            UI_SUBJECT_STRING_LENGTH,
                            "Not set up"
                           );
+    lv_subject_init_int(&wifi_state, 2);
+    lv_subject_init_int(&bluetooth_on, 0);
+    lv_subject_init_int(&usb_power, 1);
+    lv_subject_init_int(&power_state, 0);
+    static char power_mode_text_buf[UI_SUBJECT_STRING_LENGTH];
+    static char power_mode_text_prev_buf[UI_SUBJECT_STRING_LENGTH];
+    lv_subject_init_string(&power_mode_text,
+                           power_mode_text_buf,
+                           power_mode_text_prev_buf,
+                           UI_SUBJECT_STRING_LENGTH,
+                           "Active"
+                          );
+    static char sd_text_buf[UI_SUBJECT_STRING_LENGTH];
+    static char sd_text_prev_buf[UI_SUBJECT_STRING_LENGTH];
+    lv_subject_init_string(&sd_text,
+                           sd_text_buf,
+                           sd_text_prev_buf,
+                           UI_SUBJECT_STRING_LENGTH,
+                           "19.8 / 32 GB"
+                          );
+    lv_subject_init_int(&sd_percent, 62);
+    static char pin_storage_text_buf[UI_SUBJECT_STRING_LENGTH];
+    static char pin_storage_text_prev_buf[UI_SUBJECT_STRING_LENGTH];
+    lv_subject_init_string(&pin_storage_text,
+                           pin_storage_text_buf,
+                           pin_storage_text_prev_buf,
+                           UI_SUBJECT_STRING_LENGTH,
+                           "0.3 / 4.4 MB"
+                          );
+    lv_subject_init_int(&pin_storage_percent, 7);
 
     /*----------------
      * Translations
@@ -2626,6 +2683,15 @@ void plurality_pin_init_gen(const char * asset_path)
     lv_xml_register_subject(NULL, "date_text", &date_text);
     lv_xml_register_subject(NULL, "wifi_status", &wifi_status);
     lv_xml_register_subject(NULL, "wifi_name", &wifi_name);
+    lv_xml_register_subject(NULL, "wifi_state", &wifi_state);
+    lv_xml_register_subject(NULL, "bluetooth_on", &bluetooth_on);
+    lv_xml_register_subject(NULL, "usb_power", &usb_power);
+    lv_xml_register_subject(NULL, "power_state", &power_state);
+    lv_xml_register_subject(NULL, "power_mode_text", &power_mode_text);
+    lv_xml_register_subject(NULL, "sd_text", &sd_text);
+    lv_xml_register_subject(NULL, "sd_percent", &sd_percent);
+    lv_xml_register_subject(NULL, "pin_storage_text", &pin_storage_text);
+    lv_xml_register_subject(NULL, "pin_storage_percent", &pin_storage_percent);
 
     /* Register callbacks */
 #endif

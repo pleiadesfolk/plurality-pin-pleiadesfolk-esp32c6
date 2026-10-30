@@ -26,6 +26,8 @@
 #include "lvgl.h"
 #include "assets.h"
 #include "brightness.h"
+#include "settings.h"
+#include "storage_info.h"
 #include "status.h"
 #include "display.h"
 #include "namecard.h"
@@ -97,7 +99,7 @@ static void watch_deleted(lv_event_t *e)
 static void on_screen(const char *name, lv_obj_t *scr)
 {
     if (strcmp(name, "settings") == 0) {
-        brightness_attach(scr);
+        settings_attach(scr);
         return;
     }
     if (strcmp(name, "namecard_mode") == 0) {
@@ -187,6 +189,7 @@ void app_main(void)
     display_init();                     /* brightness is set by brightness_init() */
     wifi_start();
     web_start();
+    storage_info_start();               /* after the display: the SD card shares its SPI bus */
 
     /* All LVGL calls happen in this one task from here on (its stack is bigger
      * than app_main's, which drawing needs) */

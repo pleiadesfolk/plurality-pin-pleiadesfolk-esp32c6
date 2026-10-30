@@ -148,9 +148,12 @@ lv_obj_t * settings_create(void)
         lv_label_set_text(label_6, "Connected");
         lv_label_bind_text(label_6, &wifi_status, NULL);
         lv_obj_set_style_text_font(label_6, font_inter_semi_bold_14, 0);
-        lv_obj_set_style_text_color(label_6, lv_color_hex(0x34C759), 0);
         lv_obj_set_style_text_align(label_6, LV_TEXT_ALIGN_RIGHT, 0);
         lv_label_set_long_mode(label_6, LV_LABEL_LONG_MODE_DOTS);
+        lv_obj_bind_style(label_6, &style_state_off, 0, &wifi_state, 0);
+        lv_obj_bind_style(label_6, &style_state_off, 0, &wifi_state, 1);
+        lv_obj_bind_style(label_6, &style_state_on, 0, &wifi_state, 2);
+        lv_obj_bind_style(label_6, &style_state_warn, 0, &wifi_state, 3);
 
         lv_obj_t * card_2 = card_create(row_4);
         lv_obj_set_flex_flow(card_2, LV_FLEX_FLOW_ROW);
@@ -179,8 +182,9 @@ lv_obj_t * settings_create(void)
         lv_obj_t * card_3 = card_create(card_2);
         lv_obj_set_width(card_3, 6);
         lv_obj_set_height(card_3, 6);
-        lv_obj_set_style_bg_color(card_3, lv_color_hex(0x59D173), 0);
         lv_obj_set_style_radius(card_3, 32767, 0);
+        lv_obj_bind_style(card_3, &style_dot_off, 0, &bluetooth_on, 0);
+        lv_obj_bind_style(card_3, &style_dot_on, 0, &bluetooth_on, 1);
 
         lv_obj_t * card_4 = card_create(row_4);
         lv_obj_set_flex_flow(card_4, LV_FLEX_FLOW_ROW);

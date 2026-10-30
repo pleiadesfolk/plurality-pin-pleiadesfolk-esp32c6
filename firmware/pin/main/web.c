@@ -19,6 +19,7 @@
 #include "esp_log.h"
 #include "esp_http_server.h"
 #include "cJSON.h"
+#include "status.h"
 #include "store.h"
 #include "web.h"
 
@@ -111,7 +112,16 @@ static esp_err_t get_font(httpd_req_t *req)
 
 static esp_err_t get_state(httpd_req_t *req)
 {
-    char *json = store_get_state_json();
+    char *state = store_get_state_json();
+    if (!state) {
+        return send_error(req, "500 Internal Server Error", "out of memory");
+    }
+    /* Add device readings (battery voltage, for checking the battery reading) */
+    cJSON *root = cJSON_Parse(state);
+    free(state);
+    cJSON_AddNumberToObject(root, "battery_volts", (int)(status_battery_volts() * 1000) / 1000.0);
+    char *json = cJSON_PrintUnformatted(root);
+    cJSON_Delete(root);
     if (!json) {
         return send_error(req, "500 Internal Server Error", "out of memory");
     }

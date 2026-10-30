@@ -77,6 +77,12 @@ bool plurality_pin_check_target(uint32_t target);
  *----------------*/
 
 extern lv_style_t style_screen_base_global;
+extern lv_style_t style_state_on;
+extern lv_style_t style_state_good;
+extern lv_style_t style_state_off;
+extern lv_style_t style_state_warn;
+extern lv_style_t style_dot_on;
+extern lv_style_t style_dot_off;
 
 /*----------------
  * Fonts
@@ -495,6 +501,15 @@ extern lv_subject_t ampm_text;
 extern lv_subject_t date_text;
 extern lv_subject_t wifi_status;
 extern lv_subject_t wifi_name;
+extern lv_subject_t wifi_state;
+extern lv_subject_t bluetooth_on;
+extern lv_subject_t usb_power;
+extern lv_subject_t power_state;
+extern lv_subject_t power_mode_text;
+extern lv_subject_t sd_text;
+extern lv_subject_t sd_percent;
+extern lv_subject_t pin_storage_text;
+extern lv_subject_t pin_storage_percent;
 
 /**********************
  * GLOBAL PROTOTYPES

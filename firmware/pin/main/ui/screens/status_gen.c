@@ -126,7 +126,6 @@ lv_obj_t * status_create(void)
         lv_obj_set_style_text_opa(label_2, 126, 0);
 
         lv_obj_t * card_3 = card_create(column_1);
-        lv_obj_set_flag(card_3, LV_OBJ_FLAG_HIDDEN, true);
         lv_obj_set_flex_flow(card_3, LV_FLEX_FLOW_ROW);
         lv_obj_set_style_flex_cross_place(card_3, LV_FLEX_ALIGN_CENTER, 0);
         lv_obj_set_style_flex_track_place(card_3, LV_FLEX_ALIGN_CENTER, 0);
@@ -138,6 +137,7 @@ lv_obj_t * status_create(void)
         lv_obj_set_style_bg_color(card_3, lv_color_hex(0xFFFFFF), 0);
         lv_obj_set_style_bg_opa(card_3, 2, 0);
         lv_obj_set_style_radius(card_3, 999, 0);
+        lv_obj_bind_flag_if_eq(card_3, &usb_power, LV_OBJ_FLAG_HIDDEN, 0);
         lv_obj_t * image_1 = image_create(card_3);
         lv_obj_set_width(image_1, 14);
         lv_obj_set_height(image_1, 14);
@@ -191,9 +191,12 @@ lv_obj_t * status_create(void)
         lv_label_set_text(label_5, "Connected");
         lv_label_bind_text(label_5, &wifi_status, NULL);
         lv_obj_set_style_text_font(label_5, font_inter_semi_bold_14, 0);
-        lv_obj_set_style_text_color(label_5, lv_color_hex(0x34C759), 0);
         lv_obj_set_style_text_align(label_5, LV_TEXT_ALIGN_RIGHT, 0);
         lv_label_set_long_mode(label_5, LV_LABEL_LONG_MODE_DOTS);
+        lv_obj_bind_style(label_5, &style_state_off, 0, &wifi_state, 0);
+        lv_obj_bind_style(label_5, &style_state_off, 0, &wifi_state, 1);
+        lv_obj_bind_style(label_5, &style_state_on, 0, &wifi_state, 2);
+        lv_obj_bind_style(label_5, &style_state_warn, 0, &wifi_state, 3);
 
         lv_obj_t * label_6 = label_create(column_2);
         lv_obj_set_height(label_6, 15);
@@ -217,55 +220,93 @@ lv_obj_t * status_create(void)
         lv_obj_set_style_bg_color(card_5, lv_color_hex(0x787880), 0);
         lv_obj_set_style_bg_opa(card_5, 7, 0);
         lv_obj_set_style_radius(card_5, 10, 0);
-        lv_obj_t * column_4 = column_create(card_5, 0, 0, 0, 0, 4, 0, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+        lv_obj_t * column_4 = column_create(card_5, 0, 0, 0, 0, 10, 0, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
         lv_obj_set_width(column_4, lv_pct(100));
         lv_obj_set_height(column_4, 75);
-        lv_obj_t * label_7 = label_create(column_4);
-        lv_label_set_text(label_7, "Card storage");
+        lv_obj_t * column_5 = column_create(column_4, 0, 0, 0, 0, 4, 0, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+        lv_obj_set_width(column_5, lv_pct(100));
+        lv_obj_set_height(column_5, LV_SIZE_CONTENT);
+        lv_obj_t * row_4 = row_create(column_5, 0, 0, 0, 0, 0, 0, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER);
+        lv_obj_set_width(row_4, lv_pct(100));
+        lv_obj_set_height(row_4, LV_SIZE_CONTENT);
+        lv_obj_t * label_7 = label_create(row_4);
+        lv_label_set_text(label_7, "SD card");
         lv_obj_set_style_text_font(label_7, font_inter_medium_11, 0);
         lv_obj_set_style_text_color(label_7, lv_color_hex(0x757575), 0);
 
-        lv_obj_t * card_6 = card_create(column_4);
-        lv_obj_set_width(card_6, lv_pct(100));
-        lv_obj_set_height(card_6, 6);
-        lv_obj_set_style_bg_color(card_6, lv_color_hex(0x404045), 0);
-        lv_obj_set_style_radius(card_6, 3, 0);
-        lv_obj_t * card_7 = card_create(card_6);
-        lv_obj_set_x(card_7, 0);
-        lv_obj_set_y(card_7, 0);
-        lv_obj_set_width(card_7, 74);
-        lv_obj_set_height(card_7, 6);
-        lv_obj_set_style_bg_color(card_7, lv_color_hex(0x668FFF), 0);
-        lv_obj_set_style_radius(card_7, 3, 0);
-
-        lv_obj_t * label_8 = label_create(column_4);
+        lv_obj_t * label_8 = label_create(row_4);
         lv_label_set_text(label_8, "19.8 / 32 GB");
-        lv_obj_set_style_text_font(label_8, font_inter_semi_bold_14, 0);
+        lv_label_bind_text(label_8, &sd_text, NULL);
+        lv_obj_set_style_text_font(label_8, font_inter_semi_bold_13, 0);
         lv_obj_set_style_text_color(label_8, lv_color_hex(0xF3F3F3), 0);
 
-        lv_obj_t * card_8 = card_create(row_3);
-        lv_obj_set_flex_flow(card_8, LV_FLEX_FLOW_COLUMN);
-        lv_obj_set_style_flex_main_place(card_8, LV_FLEX_ALIGN_CENTER, 0);
-        lv_obj_set_style_flex_cross_place(card_8, LV_FLEX_ALIGN_CENTER, 0);
-        lv_obj_set_style_flex_track_place(card_8, LV_FLEX_ALIGN_CENTER, 0);
-        lv_obj_set_style_pad_hor(card_8, 14, 0);
-        lv_obj_set_style_pad_ver(card_8, 8, 0);
-        lv_obj_set_style_pad_row(card_8, 3, 0);
-        lv_obj_set_width(card_8, 121);
-        lv_obj_set_height(card_8, 95);
-        lv_obj_set_style_bg_color(card_8, lv_color_hex(0x787878), 0);
-        lv_obj_set_style_bg_opa(card_8, 10, 0);
-        lv_obj_set_style_radius(card_8, 10, 0);
-        lv_obj_t * label_9 = label_create(card_8);
-        lv_label_set_text(label_9, "Mode");
+        lv_obj_t * lv_bar_0 = lv_bar_create(column_5);
+        lv_obj_set_width(lv_bar_0, lv_pct(100));
+        lv_obj_set_height(lv_bar_0, 6);
+        lv_bar_set_min_value(lv_bar_0, 0);
+        lv_bar_set_max_value(lv_bar_0, 100);
+        lv_bar_bind_value(lv_bar_0, &sd_percent);
+        lv_obj_set_style_bg_color(lv_bar_0, lv_color_hex(0x404045), 0);
+        lv_obj_set_style_bg_opa(lv_bar_0, 255, 0);
+        lv_obj_set_style_radius(lv_bar_0, 3, 0);
+        lv_obj_set_style_bg_color(lv_bar_0, lv_color_hex(0x668FFF), LV_PART_INDICATOR);
+        lv_obj_set_style_radius(lv_bar_0, 3, LV_PART_INDICATOR);
+
+        lv_obj_t * column_6 = column_create(column_4, 0, 0, 0, 0, 4, 0, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+        lv_obj_set_width(column_6, lv_pct(100));
+        lv_obj_set_height(column_6, LV_SIZE_CONTENT);
+        lv_obj_t * row_5 = row_create(column_6, 0, 0, 0, 0, 0, 0, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER);
+        lv_obj_set_width(row_5, lv_pct(100));
+        lv_obj_set_height(row_5, LV_SIZE_CONTENT);
+        lv_obj_t * label_9 = label_create(row_5);
+        lv_label_set_text(label_9, "Pin storage");
         lv_obj_set_style_text_font(label_9, font_inter_medium_11, 0);
-        lv_obj_set_style_text_letter_space(label_9, 1, 0);
         lv_obj_set_style_text_color(label_9, lv_color_hex(0x757575), 0);
 
-        lv_obj_t * label_10 = label_create(card_8);
-        lv_label_set_text(label_10, "Active");
-        lv_obj_set_style_text_font(label_10, font_inter_bold_14, 0);
-        lv_obj_set_style_text_color(label_10, lv_color_hex(0x59D173), 0);
+        lv_obj_t * label_10 = label_create(row_5);
+        lv_label_set_text(label_10, "0.3 / 4.4 MB");
+        lv_label_bind_text(label_10, &pin_storage_text, NULL);
+        lv_obj_set_style_text_font(label_10, font_inter_semi_bold_13, 0);
+        lv_obj_set_style_text_color(label_10, lv_color_hex(0xF3F3F3), 0);
+
+        lv_obj_t * lv_bar_1 = lv_bar_create(column_6);
+        lv_obj_set_width(lv_bar_1, lv_pct(100));
+        lv_obj_set_height(lv_bar_1, 6);
+        lv_bar_set_min_value(lv_bar_1, 0);
+        lv_bar_set_max_value(lv_bar_1, 100);
+        lv_bar_bind_value(lv_bar_1, &pin_storage_percent);
+        lv_obj_set_style_bg_color(lv_bar_1, lv_color_hex(0x404045), 0);
+        lv_obj_set_style_bg_opa(lv_bar_1, 255, 0);
+        lv_obj_set_style_radius(lv_bar_1, 3, 0);
+        lv_obj_set_style_bg_color(lv_bar_1, lv_color_hex(0xFFCC00), LV_PART_INDICATOR);
+        lv_obj_set_style_radius(lv_bar_1, 3, LV_PART_INDICATOR);
+
+        lv_obj_t * card_6 = card_create(row_3);
+        lv_obj_set_flex_flow(card_6, LV_FLEX_FLOW_COLUMN);
+        lv_obj_set_style_flex_main_place(card_6, LV_FLEX_ALIGN_CENTER, 0);
+        lv_obj_set_style_flex_cross_place(card_6, LV_FLEX_ALIGN_CENTER, 0);
+        lv_obj_set_style_flex_track_place(card_6, LV_FLEX_ALIGN_CENTER, 0);
+        lv_obj_set_style_pad_hor(card_6, 14, 0);
+        lv_obj_set_style_pad_ver(card_6, 8, 0);
+        lv_obj_set_style_pad_row(card_6, 3, 0);
+        lv_obj_set_width(card_6, 121);
+        lv_obj_set_height(card_6, 95);
+        lv_obj_set_style_bg_color(card_6, lv_color_hex(0x787878), 0);
+        lv_obj_set_style_bg_opa(card_6, 10, 0);
+        lv_obj_set_style_radius(card_6, 10, 0);
+        lv_obj_t * label_11 = label_create(card_6);
+        lv_label_set_text(label_11, "Mode");
+        lv_obj_set_style_text_font(label_11, font_inter_medium_11, 0);
+        lv_obj_set_style_text_letter_space(label_11, 1, 0);
+        lv_obj_set_style_text_color(label_11, lv_color_hex(0x757575), 0);
+
+        lv_obj_t * label_12 = label_create(card_6);
+        lv_label_set_text(label_12, "Active");
+        lv_label_bind_text(label_12, &power_mode_text, NULL);
+        lv_obj_set_style_text_font(label_12, font_inter_bold_14, 0);
+        lv_obj_bind_style(label_12, &style_state_good, 0, &power_state, 0);
+        lv_obj_bind_style(label_12, &style_state_warn, 0, &power_state, 1);
+        lv_obj_bind_style(label_12, &style_state_off, 0, &power_state, 2);
 
         the_root = lv_obj_0;
     }
