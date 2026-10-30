@@ -50,6 +50,9 @@
   button.primary { background: var(--accent); color: #000; font-weight: 600; }
   button.danger { background: none; color: var(--bad); padding-left: 0; }
   button:disabled { opacity: .5; cursor: default; }
+  select { font: inherit; padding: 10px 12px; border-radius: 10px; width: 100%;
+    border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+  #editor-preview { touch-action: none; }
   input[type=text], input[type=search], textarea {
     font: inherit; width: 100%; padding: 10px 12px; border-radius: 10px;
     border: 1px solid var(--line); background: var(--bg); color: var(--text);
@@ -166,6 +169,25 @@
   <p class="warn" id="editor-warn"></p>
   <label class="field" for="editor-name">Name</label>
   <input type="text" id="editor-name" maxlength="40">
+  <label class="field" for="editor-mode">Shown on the pin as</label>
+  <select id="editor-mode">
+    <option value="card">Namecard</option>
+    <option value="image">Image</option>
+    <option value="image_text">Image with name</option>
+  </select>
+  <div id="editor-photo-box" hidden>
+    <label class="field">Photo</label>
+    <div class="row">
+      <button id="editor-avatar">Use PluralKit avatar</button>
+      <label class="button">Upload a photo<input type="file" id="editor-upload" accept="image/*" hidden></label>
+    </div>
+    <label class="field" for="editor-zoom">Zoom <span class="dim">(drag the preview to move the photo)</span></label>
+    <input type="range" id="editor-zoom" min="1" max="4" step="0.01" value="1" style="width:100%">
+  </div>
+  <div id="editor-label-box" hidden>
+    <label class="field" for="editor-label">Name beside the photo</label>
+    <input type="text" id="editor-label">
+  </div>
   <label class="field" for="editor-card">Namecard text</label>
   <textarea id="editor-card"></textarea>
   <label class="field" for="editor-pronouns">Pronouns</label>
@@ -224,7 +246,6 @@ function membersPayload() {
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const hex = c => "#" + (c || "468DC3").replace(/^#/, "").padStart(6, "0").slice(0, 6);
-const memberName = m => m.card || m.name;
 
 function toast(text) {
   const t = $("toast");
@@ -248,38 +269,43 @@ function darken(color, percent) {
   return `rgb(${(n >> 16 & 255) * f},${(n >> 8 & 255) * f},${(n & 255) * f})`;
 }
 
-/* ---------- namecard drawing (must match firmware/pin/main/namecard.c) ---------- */
+/* ---------- drawing for the pin (must match firmware/pin/main/fronter.c) ---------- */
 
-// The pin's namecard text box (namecard_mode.xml): 416 x 260 at (20, 11) on a 456 x 280 screen.
-const BOX = { x: 20, y: 11, w: 416, h: 260 };
-const MAX_SIZE = 52, MIN_SIZE = 26;     // Playwrite size, shrunk until the text fits
-const PITCH = 70 / 52;                  // line spacing per px of font size, as on the pin
+// Text boxes on the pin's 456 x 280 screens, with the Playwrite size range that fits them:
+//  CARD:  namecard_mode.xml text box, 416 x 260 at (20, 11), left-aligned, placed LEFT_MID
+//  LABEL: image_mode_with_text.xml column, 202 x 256 centred at (119, 140), lines centred
+const CARD = { x: 20, y: 11, w: 416, h: 260, max: 52, min: 26, pitch: 70 / 52, align: "left" };
+const LABEL = { x: 18, y: 12, w: 202, h: 256, max: 40, min: 22, pitch: 59 / 40, align: "center" };
+// Photos: "image" is 280 x 280 centred; "image with name" is a 350 px circle centred at
+// (403, 140), of which only x >= 228 is on screen, so only that 228 x 280 part is stored.
+const FULL = { x: 88, y: 0, size: 280 };
+const SIDE = { x: 228, w: 228, h: 280, cx: 175, cy: 140, r: 175 };
 const FONTS = (size) => `${size}px PlaywritePin, "Noto Sans HK", "PingFang HK", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
 
 let fontsReady = null;
 function loadFonts() {
   fontsReady ??= Promise.all([
-    document.fonts.load(FONTS(MAX_SIZE), "Aa"),
-    document.fonts.load(FONTS(MAX_SIZE), "系").catch(() => {}),
+    document.fonts.load(FONTS(52), "Aa"),
+    document.fonts.load(FONTS(52), "系").catch(() => {}),
   ]);
   return fontsReady;
 }
 
-// Break text into lines no wider than BOX.w, after spaces and hyphens. A word wider
+// Break text into lines no wider than box.w, after spaces and hyphens. A word wider
 // than the box is split by character; `split` says whether that happened.
-function wrap(ctx, text) {
+function wrap(ctx, text, box) {
   const tokens = text.match(/[^\s-]*-+|[^\s-]+\s*|\s+/gu) || [];
   const lines = [];
   let line = "", split = false;
   for (const token of tokens) {
-    if (ctx.measureText((line + token).trimEnd()).width <= BOX.w) { line += token; continue; }
+    if (ctx.measureText((line + token).trimEnd()).width <= box.w) { line += token; continue; }
     if (line.trim()) { lines.push(line.trimEnd()); line = ""; }
-    if (ctx.measureText(token.trimEnd()).width <= BOX.w) { line = token; continue; }
+    if (ctx.measureText(token.trimEnd()).width <= box.w) { line = token; continue; }
     // A single word wider than the box: split it by character
     split = true;
     let part = "";
     for (const ch of token) {
-      if (ctx.measureText((part + ch).trimEnd()).width > BOX.w && part) { lines.push(part); part = ""; }
+      if (ctx.measureText((part + ch).trimEnd()).width > box.w && part) { lines.push(part); part = ""; }
       part += ch;
     }
     line = part;
@@ -291,45 +317,47 @@ function wrap(ctx, text) {
 // Lay the text out at the biggest size that fits without splitting words
 // (CJK text has no spaces, so it may always break between characters).
 // Returns { size, lines, fits }.
-function layout(ctx, text) {
-  for (let size = MAX_SIZE; size >= MIN_SIZE; size -= 2) {
+function layout(ctx, text, box) {
+  for (let size = box.max; size >= box.min; size -= 2) {
     ctx.font = FONTS(size);
-    const { lines, split } = wrap(ctx, text);
-    const height = (lines.length - 1) * Math.round(size * PITCH) + size * 1.3;
-    if (height <= BOX.h && (!split || size === MIN_SIZE)) return { size, lines, fits: true };
+    const { lines, split } = wrap(ctx, text, box);
+    const height = (lines.length - 1) * Math.round(size * box.pitch) + size * 1.3;
+    if (height <= box.h && (!split || size === box.min)) return { size, lines, fits: true };
   }
-  ctx.font = FONTS(MIN_SIZE);
-  return { size: MIN_SIZE, lines: wrap(ctx, text).lines, fits: false };
+  ctx.font = FONTS(box.min);
+  return { size: box.min, lines: wrap(ctx, text, box).lines, fits: false };
 }
 
-// Draw `text` white on a transparent canvas the size of the text box; crop to the ink.
-function drawText(text) {
+// Draw `text` white on a transparent canvas the size of `box`; crop to the ink.
+function drawText(text, box) {
   const canvas = document.createElement("canvas");
-  canvas.width = BOX.w; canvas.height = BOX.h;
+  canvas.width = box.w; canvas.height = box.h;
   const ctx = canvas.getContext("2d");
-  const { size, lines, fits } = layout(ctx, text);
-  const pitch = Math.round(size * PITCH);
+  const { size, lines, fits } = layout(ctx, text, box);
+  const pitch = Math.round(size * box.pitch);
   ctx.font = FONTS(size);
   ctx.fillStyle = "#fff";
   ctx.textBaseline = "alphabetic";
-  lines.forEach((line, i) => ctx.fillText(line, 0, size * 1.05 + i * pitch));
+  ctx.textAlign = box.align;
+  const x = box.align === "center" ? box.w / 2 : 0;
+  lines.forEach((line, i) => ctx.fillText(line, x, size * 1.05 + i * pitch));
 
   // Crop to the drawn pixels
-  const img = ctx.getImageData(0, 0, BOX.w, BOX.h);
-  let x0 = BOX.w, y0 = BOX.h, x1 = -1, y1 = -1;
-  for (let y = 0; y < BOX.h; y++) for (let x = 0; x < BOX.w; x++) {
-    if (img.data[(y * BOX.w + x) * 4 + 3]) {
+  const img = ctx.getImageData(0, 0, box.w, box.h);
+  let x0 = box.w, y0 = box.h, x1 = -1, y1 = -1;
+  for (let y = 0; y < box.h; y++) for (let x = 0; x < box.w; x++) {
+    if (img.data[(y * box.w + x) * 4 + 3]) {
       if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
     }
   }
-  if (x1 < 0) return { w: 0, h: 0, data: null, fits, size };
+  if (x1 < 0) return { w: 0, h: 0, data: null, fits, size, box };
   const w = x1 - x0 + 1, h = y1 - y0 + 1;
-  return { w, h, data: ctx.getImageData(x0, y0, w, h).data, fits, size, lines: lines.length };
+  return { w, h, data: ctx.getImageData(x0, y0, w, h).data, fits, size, box };
 }
 
 /*
- * Encode for the pin (store_card_header_t in store.h): white pixels become 4-bit
- * alpha; coloured pixels (emoji) go into a small RGB565A8 patch instead.
+ * Encode a text picture for the pin (store_card_header_t in store.h): white pixels
+ * become 4-bit alpha; coloured pixels (emoji) go into a small RGB565A8 patch instead.
  */
 function encodeCard(t) {
   const isColour = (i) => t.data[i + 3] && !(t.data[i] > 235 && t.data[i + 1] > 235 && t.data[i + 2] > 235);
@@ -362,46 +390,184 @@ function encodeCard(t) {
   return out;
 }
 
-// Show what the pin will show: gradient background + the text, placed as on the pin.
-function drawPreview(canvas, text, color) {
+/* ---------- photos ---------- */
+
+// A photo to crop: a square of side `side` (source pixels) centred on (cx, cy)
+function makePhoto(source) {
+  const w = source.naturalWidth || source.width, h = source.naturalHeight || source.height;
+  return { source, w, h, zoom: 1, cx: w / 2, cy: h / 2 };
+}
+
+function cropOf(photo) {
+  const side = Math.min(photo.w, photo.h) / photo.zoom;
+  const cx = Math.min(Math.max(photo.cx, side / 2), photo.w - side / 2);
+  const cy = Math.min(Math.max(photo.cy, side / 2), photo.h - side / 2);
+  return { sx: cx - side / 2, sy: cy - side / 2, side };
+}
+
+// Draw the photo's square crop into ctx at (x, y), `size` px across
+function drawSquare(ctx, photo, x, y, size) {
+  const c = cropOf(photo);
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(photo.source, c.sx, c.sy, c.side, c.side, x, y, size, size);
+}
+
+// The "image" photo: 280 x 280
+function renderFull(photo) {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = FULL.size;
+  drawSquare(canvas.getContext("2d"), photo, 0, 0, FULL.size);
+  return canvas;
+}
+
+// The visible part of the "image with name" circle: 228 x 280, transparent outside the circle
+function renderSide(photo) {
+  const canvas = document.createElement("canvas");
+  canvas.width = SIDE.w; canvas.height = SIDE.h;
   const ctx = canvas.getContext("2d");
+  ctx.beginPath();
+  ctx.arc(SIDE.cx, SIDE.cy, SIDE.r, 0, Math.PI * 2);
+  ctx.clip();
+  drawSquare(ctx, photo, SIDE.cx - SIDE.r, SIDE.cy - SIDE.r, SIDE.r * 2);
+  return canvas;
+}
+
+// A canvas as an LVGL .bin image: 12-byte header, RGB565 pixels (+ 8-bit alpha plane)
+function encodeLvgl(canvas, withAlpha) {
+  const { width: w, height: h } = canvas;
+  const px = canvas.getContext("2d").getImageData(0, 0, w, h).data;
+  const out = new Uint8Array(12 + w * h * (withAlpha ? 3 : 2));
+  const view = new DataView(out.buffer);
+  out[0] = 0x19;                        // LV_IMAGE_HEADER_MAGIC
+  out[1] = withAlpha ? 0x14 : 0x12;     // LV_COLOR_FORMAT_RGB565A8 / RGB565
+  view.setUint16(4, w, true); view.setUint16(6, h, true); view.setUint16(8, w * 2, true);
+  for (let i = 0; i < w * h; i++) {
+    const r = px[i * 4], g = px[i * 4 + 1], b = px[i * 4 + 2];
+    view.setUint16(12 + i * 2, (r >> 3) << 11 | (g >> 2) << 5 | b >> 3, true);
+    if (withAlpha) out[12 + w * h * 2 + i] = px[i * 4 + 3];
+  }
+  return out;
+}
+
+// Load a photo from a URL (e.g. the PluralKit avatar). The image host has to allow
+// browsers to read it; otherwise drawing it would make the canvas unreadable.
+async function photoFromUrl(url) {
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = url;
+  await img.decode();
+  const test = document.createElement("canvas").getContext("2d");
+  test.drawImage(img, 0, 0, 1, 1);
+  test.getImageData(0, 0, 1, 1);        // throws if the host doesn't allow it
+  return makePhoto(img);
+}
+
+async function photoFromFile(file) {
+  return makePhoto(await createImageBitmap(file));
+}
+
+/* ---------- previews ---------- */
+
+function textCanvas(t) {
+  const tmp = document.createElement("canvas");
+  tmp.width = t.w; tmp.height = t.h;
+  tmp.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(t.data), t.w, t.h), 0, 0);
+  return tmp;
+}
+
+/*
+ * Show what the pin will show for `m` ({mode, name, card, label, color}). `photo` is
+ * a photo to crop, or `stored` = {full, side} canvases already on the pin, or neither.
+ * Returns the text picture (for warnings).
+ */
+function drawPreview(canvas, m, photo, stored) {
+  const ctx = canvas.getContext("2d");
+  const color = hex(m.color);
+  ctx.clearRect(0, 0, 456, 280);
+  const placeholder = (text, x, y) => {
+    ctx.fillStyle = "rgba(128,128,128,.25)"; ctx.font = "16px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText(text, x, y); ctx.textAlign = "left";
+  };
+
+  if (m.mode === "image") {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, 456, 280);
+    if (photo) drawSquare(ctx, photo, FULL.x, FULL.y, FULL.size);
+    else if (stored?.full) ctx.drawImage(stored.full, FULL.x, FULL.y);
+    else placeholder("Add a photo", 228, 145);
+    return null;
+  }
+
+  if (m.mode === "image_text") {
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, 456, 280);
+    const t = drawText(m.label || m.name, LABEL);
+    if (t.w) ctx.drawImage(textCanvas(t), LABEL.x + Math.round((LABEL.w - t.w) / 2), LABEL.y + Math.round((LABEL.h - t.h) / 2));
+    if (photo) ctx.drawImage(renderSide(photo), SIDE.x, 0);
+    else if (stored?.side) ctx.drawImage(stored.side, SIDE.x, 0);
+    else placeholder("Add a photo", 342, 145);
+    return t;
+  }
+
   const grad = ctx.createLinearGradient(0, 0, 456, 0);
-  grad.addColorStop(0, darken(hex(color), 60));
-  grad.addColorStop(1, hex(color));
+  grad.addColorStop(0, darken(color, 60));
+  grad.addColorStop(1, color);
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 456, 280);
-  const t = drawText(text);
-  if (t.w) {
-    const img = new ImageData(new Uint8ClampedArray(t.data), t.w, t.h);
-    const tmp = document.createElement("canvas");
-    tmp.width = t.w; tmp.height = t.h;
-    tmp.getContext("2d").putImageData(img, 0, 0);
-    ctx.drawImage(tmp, BOX.x, BOX.y + Math.round((BOX.h - t.h) / 2));   // LEFT_MID, as on the pin
-  }
+  const t = drawText(m.card || m.name, CARD);
+  if (t.w) ctx.drawImage(textCanvas(t), CARD.x, CARD.y + Math.round((CARD.h - t.h) / 2));   // LEFT_MID, as on the pin
   return t;
 }
 
 // Characters the phone couldn't draw in any font show up as empty boxes; we can't
 // detect that reliably, so only warn about text that doesn't fit.
-function cardWarning(t) {
+function textWarning(t) {
+  if (!t) return "";
   if (!t.fits) return "Too long to fit even at the smallest size - some text is cut off.";
-  if (t.size < MAX_SIZE) return `Shrunk to ${t.size} px to fit.`;
+  if (t.size < t.box.max) return `Shrunk to ${t.size} px to fit.`;
   return "";
 }
 
-async function uploadCard(member) {
+// Fetch a photo the pin already has (LVGL .bin, RGB565 or RGB565A8) as a canvas, or null
+async function storedPhoto(id, kind) {
+  const res = await fetch(`/api/card?id=${encodeURIComponent(id)}&kind=${kind}`);
+  if (!res.ok) return null;
+  const buf = await res.arrayBuffer();
+  const view = new DataView(buf);
+  if (buf.byteLength < 12 || view.getUint8(0) !== 0x19) return null;
+  const cf = view.getUint8(1), w = view.getUint16(4, true), h = view.getUint16(6, true);
+  const img = new ImageData(w, h);
+  for (let i = 0; i < w * h; i++) {
+    const c = view.getUint16(12 + i * 2, true);
+    img.data[i * 4] = (c >> 11) << 3; img.data[i * 4 + 1] = (c >> 5 & 63) << 2; img.data[i * 4 + 2] = (c & 31) << 3;
+    img.data[i * 4 + 3] = cf === 0x14 ? view.getUint8(12 + w * h * 2 + i) : 255;
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  canvas.getContext("2d").putImageData(img, 0, 0);
+  return canvas;
+}
+
+const picturePath = (m, kind) => `/api/card?id=${encodeURIComponent(m.id)}&kind=${kind}`;
+
+// Send a member's pictures: always the text ones; the photos too when `photo` is given
+async function uploadPictures(member, photo) {
   await loadFonts();
-  const t = drawText(member.card || member.name);
-  if (!t.w) return;
-  await api("PUT", `/api/card?id=${encodeURIComponent(member.id)}`, encodeCard(t));
+  const card = drawText(member.card || member.name, CARD);
+  if (card.w) await api("PUT", picturePath(member, "card"), encodeCard(card));
+  const label = drawText(member.label || member.name, LABEL);
+  if (label.w) await api("PUT", picturePath(member, "label"), encodeCard(label));
+  if (photo) {
+    await api("PUT", picturePath(member, "full"), encodeLvgl(renderFull(photo), false));
+    await api("PUT", picturePath(member, "side"), encodeLvgl(renderSide(photo), true));
+  }
 }
 
 /* ---------- Front tab ---------- */
 
 function renderFront() {
   const current = state.members[state.front[0]];
-  loadFonts().then(() => drawPreview($("front-preview"),
-    current ? memberName(current) : state.system, current ? current.color : "468DC3"));
+  renderFrontPreview(current);
   $("front-since").textContent = state.front_since
     ? `${current ? (current.name) : "Nobody"} fronting for ${duration(Date.now() / 1000 + clockOffset - state.front_since)}`
     : "No front history yet - import a PluralKit export or pick a member.";
@@ -416,6 +582,18 @@ function renderFront() {
         <span class="dot" style="background:${hex(m.color)}"></span>
         <span class="name">${esc(m.name)}</span>
       </button>`).join("");
+}
+
+// The current fronter as the pin shows them (photos fetched back from the pin)
+async function renderFrontPreview(current) {
+  await loadFonts();
+  const m = current || { mode: "card", name: state.system, card: state.system, color: "468DC3" };
+  let stored = null;
+  if (current && (current.mode === "image" || current.mode === "image_text")) {
+    const kind = current.mode === "image" ? "full" : "side";
+    stored = { [kind]: await storedPhoto(current.id, kind).catch(() => null) };
+  }
+  drawPreview($("front-preview"), m, null, stored);
 }
 
 async function switchTo(indexes) {
@@ -445,7 +623,7 @@ function renderMembers() {
       <div class="item" data-index="${i}" style="cursor:pointer">
         <span class="dot" style="background:${hex(m.color)}"></span>
         <div class="grow">
-          <div>${esc(m.name)} <span class="dim">${esc(m.pronouns)}</span>${m.button ? ' <span class="tag">● button</span>' : ""}</div>
+          <div>${esc(m.name)} <span class="dim">${esc(m.pronouns)}</span>${m.button ? ' <span class="tag">● button</span>' : ""}${m.mode === "image" ? ' <span class="tag">▣ image</span>' : m.mode === "image_text" ? ' <span class="tag">◐ image + name</span>' : ""}</div>
           <div class="dim">${esc(m.card)}</div>
         </div>
         <span class="dim">Edit</span>
@@ -455,6 +633,8 @@ function renderMembers() {
 
 let editing = -1;                       // member index, or -1 for a new member
 let cardFollowsName = false;            // new member: card text tracks the name until edited
+let editorPhoto = null;                 // a new photo to crop and send (makePhoto), or null
+let editorStored = null;                // photos the pin already has for this member: {full, side}
 
 const defaultCard = name => `${name}${state.system ? " of " + state.system : ""}`;
 
@@ -469,17 +649,95 @@ function openEditor(index) {
   $("editor-pronouns").value = m.pronouns;
   $("editor-color").value = hex(m.color);
   $("editor-button").checked = !!m.button;
+  $("editor-mode").value = m.mode || "card";
+  $("editor-label").value = m.label || m.name;
+  $("editor-avatar").hidden = !m.avatar;
+  $("editor-zoom").value = 1;
   $("editor-delete").hidden = index < 0;
-  updateEditorPreview();
+  editorPhoto = null;
+  editorStored = null;
+  if (index >= 0) loadStoredPhotos(m);
+  updateEditorMode();
   $("editor").showModal();
   if (index < 0) $("editor-name").focus();
 }
 
+async function loadStoredPhotos(m) {
+  const [full, side] = await Promise.all(["full", "side"].map(k => storedPhoto(m.id, k).catch(() => null)));
+  if (state.members[editing]?.id !== m.id) return;   // the editor moved on meanwhile
+  editorStored = { full, side };
+  updateEditorPreview();
+}
+
+// The member as currently typed into the editor
+function editorMember() {
+  const name = $("editor-name").value.trim() || " ";
+  return {
+    mode: $("editor-mode").value,
+    name,
+    card: $("editor-card").value.trim() || name,
+    label: $("editor-label").value.trim() || name,
+    color: $("editor-color").value,
+  };
+}
+
+function updateEditorMode() {
+  const mode = $("editor-mode").value;
+  $("editor-photo-box").hidden = mode === "card";
+  $("editor-label-box").hidden = mode !== "image_text";
+  updateEditorPreview();
+}
+
 async function updateEditorPreview() {
   await loadFonts();
-  const t = drawPreview($("editor-preview"), $("editor-card").value || $("editor-name").value || " ", $("editor-color").value);
-  $("editor-warn").textContent = cardWarning(t);
+  const t = drawPreview($("editor-preview"), editorMember(), editorPhoto, editorStored);
+  let warn = textWarning(t);
+  if ($("editor-mode").value !== "card" && !editorPhoto && !(editorStored?.full || editorStored?.side))
+    warn = (warn ? warn + " " : "") + "No photo yet.";
+  $("editor-warn").textContent = warn;
 }
+
+async function setEditorPhoto(load) {
+  try {
+    editorPhoto = await load();
+    $("editor-zoom").value = 1;
+    updateEditorPreview();
+  } catch (e) {
+    toast("Couldn't use that image" + (e.name === "SecurityError" ? " - its website doesn't allow it; upload it instead" : ""));
+  }
+}
+
+// Drag on the preview to move the photo inside its crop
+let dragFrom = null;
+$("editor-preview").addEventListener("pointerdown", e => {
+  if (!editorPhoto || $("editor-mode").value === "card") return;
+  dragFrom = { x: e.clientX, y: e.clientY };
+  e.target.setPointerCapture(e.pointerId);
+});
+$("editor-preview").addEventListener("pointermove", e => {
+  if (!dragFrom) return;
+  const canvasPx = 456 / e.target.clientWidth;      // screen px -> preview px
+  const shown = $("editor-mode").value === "image" ? FULL.size : SIDE.r * 2;
+  const perPx = cropOf(editorPhoto).side / shown;   // preview px -> photo px
+  editorPhoto.cx -= (e.clientX - dragFrom.x) * canvasPx * perPx;
+  editorPhoto.cy -= (e.clientY - dragFrom.y) * canvasPx * perPx;
+  const c = cropOf(editorPhoto);                    // keep it within the photo
+  editorPhoto.cx = c.sx + c.side / 2; editorPhoto.cy = c.sy + c.side / 2;
+  dragFrom = { x: e.clientX, y: e.clientY };
+  updateEditorPreview();
+});
+$("editor-preview").addEventListener("pointerup", () => { dragFrom = null; });
+$("editor-mode").addEventListener("change", updateEditorMode);
+$("editor-label").addEventListener("input", updateEditorPreview);
+$("editor-zoom").addEventListener("input", () => {
+  if (editorPhoto) { editorPhoto.zoom = +$("editor-zoom").value; updateEditorPreview(); }
+});
+$("editor-avatar").addEventListener("click", () => setEditorPhoto(() => photoFromUrl(state.members[editing].avatar)));
+$("editor-upload").addEventListener("change", e => {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (file) setEditorPhoto(() => photoFromFile(file));
+});
 
 // A new id that doesn't clash: 5 lowercase letters, like PluralKit's
 function newId() {
@@ -524,6 +782,8 @@ $("editor-save").addEventListener("click", async () => {
   const card = $("editor-card").value.trim() || defaultCard(name);
   if (bytes(name) > 47) { toast("That name is too long for the pin"); return; }
   if (bytes(card) > 127) { toast("That namecard text is too long for the pin"); return; }
+  const label = $("editor-label").value.trim() || name;
+  if (bytes(label) > 63) { toast("The name beside the photo is too long for the pin"); return; }
 
   // Work on a copy, so a failed save doesn't leave half-changed members behind
   const members = state.members.map(m => ({ ...m }));
@@ -533,12 +793,15 @@ $("editor-save").addEventListener("click", async () => {
   m.pronouns = $("editor-pronouns").value.trim();
   m.color = $("editor-color").value.replace("#", "").toUpperCase();
   m.button = $("editor-button").checked;
+  m.mode = $("editor-mode").value;
+  m.label = label;
+  m.avatar ??= "";
   if (editing < 0) members.push(m);
 
   $("editor-save").disabled = true;
   try {
     await api("PUT", "/api/members", { system: state.system, members });
-    await uploadCard(m);
+    await uploadPictures(m, editorPhoto);
     $("editor").close();
     toast(editing >= 0 ? "Saved" : `Added ${name}`);
     await loadState();
@@ -626,8 +889,9 @@ function convertExport(pk) {
   }
   const system = pk.name || "";
   const list = [...pk.members].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-  // Keep button ticks made on the dashboard for members that are already on the pin
-  const ticked = new Set(state.members.filter(m => m.button).map(m => m.id));
+  // Keep what was set on the dashboard (button tick, display mode, image text)
+  // for members that are already on the pin; their photos stay on the pin too
+  const before = new Map(state.members.map(m => [m.id, m]));
   const members = list.map(m => ({
     id: m.id,
     name: m.name || m.id,
@@ -635,7 +899,10 @@ function convertExport(pk) {
     pronouns: m.pronouns || "",
     color: (m.color || "468DC3").toUpperCase(),
     messages: m.message_count || 0,
-    button: ticked.has(m.id),
+    button: !!before.get(m.id)?.button,
+    mode: before.get(m.id)?.mode || "card",
+    label: before.get(m.id)?.label || m.display_name || m.name || m.id,
+    avatar: (m.avatar_url || "").length < 128 ? m.avatar_url || "" : "",   // the pin keeps up to 127
   }));
   const index = new Map(members.map((m, i) => [m.id, i]));
 
@@ -697,7 +964,7 @@ async function runImport() {
     await api("PUT", "/api/switches", p.bytes);
     for (let i = 0; i < p.members.length; i++) {
       step(`Drawing namecards… ${i + 1} / ${p.members.length}`, i, p.members.length);
-      await uploadCard(p.members[i]);
+      await uploadPictures(p.members[i], null);
     }
     step("Done.");
     toast("Imported");

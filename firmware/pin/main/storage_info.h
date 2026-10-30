@@ -17,5 +17,8 @@ typedef struct {
  */
 void storage_info_start(void);
 
+/** True while an SD card is mounted at /sdcard. */
+bool storage_info_sd_ready(void);
+
 /** Latest measurements; safe from any task. */
 void storage_info_get(storage_usage_t *sd, storage_usage_t *pin);

@@ -1,7 +1,7 @@
 file(GLOB_RECURSE UI_SRCS ui/*.c)
 
 idf_component_register(
-    SRCS "main.c" "display.c" "nav.c" "assets.c" "brightness.c" "status.c" "wifi.c" "store.c" "web.c" "namecard.c" "settings.c" "storage_info.c" "button.c" ${UI_SRCS}
+    SRCS "main.c" "display.c" "nav.c" "assets.c" "brightness.c" "status.c" "wifi.c" "store.c" "web.c" "fronter.c" "textpic.c" "photos.c" "settings.c" "storage_info.c" "button.c" ${UI_SRCS}
     INCLUDE_DIRS "."
     EMBED_FILES "../dashboard/index.html" "../dashboard/PlaywriteUSTrad-Regular.ttf"
 )

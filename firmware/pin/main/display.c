@@ -30,7 +30,7 @@ _Static_assert(SCREEN_W == PANEL_H && SCREEN_H == PANEL_W, "screen is the panel 
 /* Set to 1 if the picture comes out upside down */
 #define FLIP_180        0
 
-#define BUF_LINES       20              /* height of one LVGL draw strip (3 buffers of this; RAM is tight with Wi-Fi) */
+#define BUF_LINES       30              /* height of one LVGL draw strip (3 buffers of this): speed vs RAM; 40 left too little RAM to save the member list, 20 drew ~2x slower */
 
 static esp_lcd_panel_handle_t panel;
 static esp_lcd_panel_io_handle_t panel_io;

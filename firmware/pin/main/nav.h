@@ -21,7 +21,8 @@ typedef void (*nav_screen_cb_t)(const char *name, lv_obj_t *screen);
  */
 void nav_init(nav_screen_cb_t on_screen);
 
-/** Go to the screen showing the current fronter. */
+/** Go to the screen showing the current fronter (in their display mode); also
+ *  called when the new fronter's mode needs a different screen. */
 void nav_show_fronter(void);
 
 /** Show a short message at the bottom of the screen for a moment. */

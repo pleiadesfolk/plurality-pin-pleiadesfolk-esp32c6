@@ -8,7 +8,9 @@
  *   PUT  /api/switches     replace front history (raw store_switch_t records)
  *   GET  /api/switches     front history, same format
  *   POST /api/front        record a switch now: {"members": [index, ...]}
- *   PUT  /api/card?id=ID   namecard picture for member ID (store_card_header_t ...)
+ *   PUT  /api/card?id=ID&kind=K  picture for member ID; K = card (default),
+ *                          label, full or side (see store_picture_t)
+ *   GET  /api/card?id=ID&kind=K  the same picture back (for the dashboard's previews)
  *   DELETE /api/member?index=N  delete member N (also from front history)
  *
  * There's no login: anyone on the same Wi-Fi network can use it.
@@ -20,6 +22,7 @@
 #include "esp_http_server.h"
 #include "cJSON.h"
 #include "status.h"
+#include "photos.h"
 #include "store.h"
 #include "web.h"
 
@@ -194,15 +197,73 @@ static esp_err_t post_front(httpd_req_t *req)
            : send_error(req, "400 Bad Request", "unknown member");
 }
 
+/* Parse ?id=...&kind=... (kind defaults to card); false if missing or unknown */
+static bool picture_query(httpd_req_t *req, char *id, size_t id_size, store_picture_t *kind)
+{
+    static const char *const kinds[] = { "card", "label", "full", "side" };
+    char query[48], kind_name[8] = "card";
+    if (httpd_req_get_url_query_str(req, query, sizeof(query)) != ESP_OK
+            || httpd_query_key_value(query, "id", id, id_size) != ESP_OK) {
+        return false;
+    }
+    httpd_query_key_value(query, "kind", kind_name, sizeof(kind_name));
+    for (int i = 0; i < 4; i++) {
+        if (strcmp(kind_name, kinds[i]) == 0) {
+            *kind = (store_picture_t)i;
+            return true;
+        }
+    }
+    return false;
+}
+
+static esp_err_t get_card(httpd_req_t *req)
+{
+    char id[16], path[64];
+    store_picture_t kind;
+    if (!picture_query(req, id, sizeof(id), &kind)) {
+        return send_error(req, "404 Not Found", "no such picture");
+    }
+    if (kind >= STORE_PICTURE_FULL) {       /* photos normally live in a flash slot */
+        size_t len;
+        esp_partition_mmap_handle_t map;
+        const void *p = photos_map(id, kind == STORE_PICTURE_SIDE ? PHOTO_SIDE : PHOTO_FULL, &len, &map);
+        if (p) {
+            httpd_resp_set_type(req, "application/octet-stream");
+            httpd_resp_set_hdr(req, "Cache-Control", "no-store");
+            esp_err_t err = httpd_resp_send(req, p, len);
+            photos_unmap(map);
+            return err;
+        }
+    }
+    if (!store_picture_file(id, kind, path, sizeof(path))) {
+        return send_error(req, "404 Not Found", "no such picture");
+    }
+    FILE *f = fopen(path, "rb");
+    if (!f) {
+        return send_error(req, "404 Not Found", "no such picture");
+    }
+    httpd_resp_set_type(req, "application/octet-stream");
+    httpd_resp_set_hdr(req, "Cache-Control", "no-store");
+    char *buf = malloc(CHUNK);
+    size_t n;
+    while (buf && (n = fread(buf, 1, CHUNK, f)) > 0) {
+        if (httpd_resp_send_chunk(req, buf, n) != ESP_OK) {
+            break;
+        }
+    }
+    free(buf);
+    fclose(f);
+    return httpd_resp_send_chunk(req, NULL, 0);
+}
+
 static esp_err_t put_card(httpd_req_t *req)
 {
-    char query[32], id[16];
-    if (httpd_req_get_url_query_str(req, query, sizeof(query)) != ESP_OK
-            || httpd_query_key_value(query, "id", id, sizeof(id)) != ESP_OK
-            || store_card_begin(id) != ESP_OK) {
-        return send_error(req, "400 Bad Request", "missing or invalid id");
+    char id[16];
+    store_picture_t kind;
+    if (!picture_query(req, id, sizeof(id), &kind) || store_picture_begin(id, kind) != ESP_OK) {
+        return send_error(req, "400 Bad Request", "invalid id or kind");
     }
-    return receive_stream(req, store_card_write, store_card_end);
+    return receive_stream(req, store_picture_write, store_picture_end);
 }
 
 static esp_err_t delete_member(httpd_req_t *req)
@@ -241,6 +302,7 @@ void web_start(void)
         { .uri = "/api/switches",  .method = HTTP_GET,  .handler = get_switches },
         { .uri = "/api/front",     .method = HTTP_POST, .handler = post_front },
         { .uri = "/api/card",      .method = HTTP_PUT,  .handler = put_card },
+        { .uri = "/api/card",      .method = HTTP_GET,  .handler = get_card },
         { .uri = "/api/member",    .method = HTTP_DELETE, .handler = delete_member },
     };
     for (int i = 0; i < sizeof(routes) / sizeof(routes[0]); i++) {

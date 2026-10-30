@@ -5,7 +5,7 @@
  * tools/sync_ui.py), swipe navigation between them (nav.c), a running clock
  * on the Watch screen, and the web dashboard (web.c, dashboard/index.html):
  * members and front history in flash (store.c), the current fronter on the
- * namecard (namecard.c).
+ * fronter screen in each member's display mode (fronter.c).
  *
  * Images live in the "assets" flash partition, mapped into memory (assets.c).
  * Fonts are pre-rendered bitmaps in main/ui/fonts.
@@ -23,6 +23,7 @@
 #include "esp_timer.h"
 #include "esp_heap_caps.h"
 #include "nvs_flash.h"
+#include "photos.h"
 #include "lvgl.h"
 #include "assets.h"
 #include "brightness.h"
@@ -31,7 +32,8 @@
 #include "storage_info.h"
 #include "status.h"
 #include "display.h"
-#include "namecard.h"
+#include "fronter.h"
+#include "textpic.h"
 #include "nav.h"
 #include "store.h"
 #include "web.h"
@@ -104,7 +106,15 @@ static void on_screen(const char *name, lv_obj_t *scr)
         return;
     }
     if (strcmp(name, "namecard_mode") == 0) {
-        namecard_attach(scr);
+        fronter_attach(scr, STORE_MODE_CARD);
+        return;
+    }
+    if (strcmp(name, "image_mode_full") == 0) {
+        fronter_attach(scr, STORE_MODE_IMAGE);
+        return;
+    }
+    if (strcmp(name, "image_mode_with_text") == 0) {
+        fronter_attach(scr, STORE_MODE_IMAGE_TEXT);
         return;
     }
     if (strcmp(name, "watch") != 0) {
@@ -145,13 +155,15 @@ static void lvgl_task(void *arg)
     plurality_pin_init("");             /* asset path unused: fonts are built in, images mapped */
     brightness_init();
     status_init();
-#if RUN_BENCHMARK
-    nav_benchmark();
-#endif
     nav_init(on_screen);
+#if RUN_BENCHMARK
+    /* After the SD card is mounted (photos live there) */
+    lv_timer_t *bench = lv_timer_create((lv_timer_cb_t)nav_benchmark, 6000, NULL);
+    lv_timer_set_repeat_count(bench, 1);
+#endif
     button_init();
     lv_timer_create(clock_update, 1000, NULL);
-    lv_timer_create((lv_timer_cb_t)namecard_poll, 250, NULL);
+    lv_timer_create((lv_timer_cb_t)fronter_poll, 250, NULL);
     lv_timer_create(memory_report, 10000, NULL);
 
     while (1) {
@@ -183,10 +195,12 @@ void app_main(void)
     set_time_from_build();              /* the build time is local time */
     nvs_init();
     assets_init();
+    photos_init();
     store_init();
 
     lv_init();
     lv_tick_set_cb(tick_cb);
+    textpic_init();                     /* draws text pictures straight from their files */
 
     display_init();                     /* brightness is set by brightness_init() */
     wifi_start();

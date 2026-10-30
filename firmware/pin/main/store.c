@@ -5,7 +5,14 @@
  *   /data/members.json   system name + members (written by the dashboard)
  *   /data/switches.bin   store_switch_t records, oldest first; the last one is
  *                        the current front
- *   /data/cards/<id>.bin namecard picture per member (store_card_header_t)
+ *   /data/cards/<id>.bin   namecard text picture per member (store_card_header_t)
+ *   /data/cards/<id>-l.bin text picture for the "image with name" screen
+ *   <images>/<id>-f.bin    "image" mode photo, an LVGL .bin image (RGB565)
+ *   <images>/<id>-s.bin    "image with name" circle, an LVGL .bin image (RGB565)
+ * Photos go to a slot in the "photos" flash partition (photos.c), which can
+ * be drawn straight from flash. Only when all slots are taken do they go to
+ * <images>: /sdcard/pin on the SD card when one is inserted, otherwise
+ * /data/img - slow to draw (0.5-5 s).
  *
  * The member list lives in RAM too (small: ~150 bytes per member). Front
  * history stays in flash; only its last record is kept in RAM.
@@ -23,6 +30,8 @@
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
 #include "cJSON.h"
+#include "photos.h"
+#include "storage_info.h"
 #include "store.h"
 
 static const char *TAG = "store";
@@ -32,7 +41,9 @@ static const char *TAG = "store";
 #define MAX_MEMBERS         128
 #define MAX_SWITCH_BYTES    (2 * 1024 * 1024)
 #define CARDS_DIR           "/data/cards"
-#define MAX_CARD_BYTES      (128 * 1024)
+#define SD_IMAGES_DIR       "/sdcard/pin"
+#define DATA_IMAGES_DIR     "/data/img"
+#define MAX_CARD_BYTES      (200 * 1024) /* largest picture upload (a 280x280 photo is 157 KB) */
 
 typedef struct {
     char id[12];                        /* PluralKit member id */
@@ -42,7 +53,12 @@ typedef struct {
     uint32_t color;                     /* 0xRRGGBB */
     bool on_button;                     /* in the BOOT button's shortlist */
     uint32_t messages;                  /* PluralKit message count: the button's order */
+    uint8_t mode;                       /* store_mode_t */
+    char label[64];                     /* text on the "image with name" screen */
+    char avatar[128];                   /* PluralKit avatar URL (the dashboard fetches it) */
 } member_t;
+
+static const char *const mode_names[] = { "card", "image", "image_text" };
 
 static SemaphoreHandle_t lock;
 static char system_name[64];
@@ -53,8 +69,9 @@ static uint32_t switch_count;
 static bool front_changed = true;       /* tell the UI on first poll */
 
 static FILE *upload;                    /* one upload at a time (the web server is single-threaded) */
+static bool upload_to_slot;             /* this upload goes to photos.c instead of a file */
 static size_t upload_bytes;
-static char card_path[48], card_tmp_path[48];
+static char card_path[64], card_tmp_path[64];
 
 /* ---------- helpers ---------- */
 
@@ -92,6 +109,15 @@ static int members_from_json(const char *json, char *system, size_t system_size,
         copy_string(m->card, sizeof(m->card), cJSON_GetObjectItem(item, "card"));
         copy_string(m->pronouns, sizeof(m->pronouns), cJSON_GetObjectItem(item, "pronouns"));
         m->on_button = cJSON_IsTrue(cJSON_GetObjectItem(item, "button"));
+        copy_string(m->label, sizeof(m->label), cJSON_GetObjectItem(item, "label"));
+        copy_string(m->avatar, sizeof(m->avatar), cJSON_GetObjectItem(item, "avatar"));
+        const cJSON *mode = cJSON_GetObjectItem(item, "mode");
+        m->mode = STORE_MODE_CARD;
+        for (int k = 0; k < 3 && cJSON_IsString(mode); k++) {
+            if (strcmp(mode->valuestring, mode_names[k]) == 0) {
+                m->mode = k;
+            }
+        }
         const cJSON *messages = cJSON_GetObjectItem(item, "messages");
         m->messages = cJSON_IsNumber(messages) && messages->valuedouble > 0 ? (uint32_t)messages->valuedouble : 0;
         const cJSON *color = cJSON_GetObjectItem(item, "color");
@@ -117,6 +143,9 @@ static char *members_to_json(void)
         cJSON_AddStringToObject(item, "pronouns", m->pronouns);
         cJSON_AddBoolToObject(item, "button", m->on_button);
         cJSON_AddNumberToObject(item, "messages", m->messages);
+        cJSON_AddStringToObject(item, "mode", mode_names[m->mode]);
+        cJSON_AddStringToObject(item, "label", m->label);
+        cJSON_AddStringToObject(item, "avatar", m->avatar);
         cJSON_AddStringToObject(item, "color", color);
         cJSON_AddItemToArray(list, item);
     }
@@ -308,6 +337,7 @@ esp_err_t store_add_switch(const uint16_t *list, int count)
 }
 
 static bool valid_id(const char *id);
+static void delete_pictures(const char *id);
 
 /*
  * Remove member `index`. Switches refer to members by index, so the history
@@ -369,9 +399,9 @@ esp_err_t store_delete_member(int index)
         return err;
     }
 
-    char card[48] = "";
+    char id[sizeof(members[index].id)] = "";
     if (valid_id(members[index].id)) {
-        snprintf(card, sizeof(card), CARDS_DIR "/%s.bin", members[index].id);
+        strlcpy(id, members[index].id, sizeof(id));
     }
     memmove(&members[index], &members[index + 1], sizeof(member_t) * (member_count - index - 1));
     member_count--;
@@ -380,8 +410,8 @@ esp_err_t store_delete_member(int index)
     char *json = members_to_json();
     xSemaphoreGive(lock);
 
-    if (card[0]) {
-        unlink(card);
+    if (id[0]) {
+        delete_pictures(id);
     }
     FILE *f = fopen(MEMBERS_FILE, "wb");
     if (!f || !json || fwrite(json, 1, strlen(json), f) != strlen(json)) {
@@ -457,20 +487,54 @@ static bool valid_id(const char *id)
     return true;
 }
 
-esp_err_t store_card_begin(const char *id)
+/* Where member `id`'s picture of `kind` lives. Photos go to the SD card when
+ * one is inserted. For reading, an existing file on the SD card wins. */
+static void picture_path(const char *id, store_picture_t kind, bool writing, char *out, size_t size)
 {
-    if (!valid_id(id)) {
+    static const char *const suffix[] = { ".bin", "-l.bin", "-f.bin", "-s.bin" };
+    if (kind == STORE_PICTURE_CARD || kind == STORE_PICTURE_LABEL) {
+        snprintf(out, size, CARDS_DIR "/%s%s", id, suffix[kind]);
+        return;
+    }
+    struct stat st;
+    snprintf(out, size, SD_IMAGES_DIR "/%s%s", id, suffix[kind]);
+    if (storage_info_sd_ready() && (writing || stat(out, &st) == 0)) {
+        if (writing) {
+            mkdir(SD_IMAGES_DIR, 0755);
+        }
+        return;
+    }
+    snprintf(out, size, DATA_IMAGES_DIR "/%s%s", id, suffix[kind]);
+    if (writing) {
+        mkdir(DATA_IMAGES_DIR, 0755);
+    }
+}
+
+esp_err_t store_picture_begin(const char *id, store_picture_t kind)
+{
+    if (!valid_id(id) || kind < 0 || kind > STORE_PICTURE_SIDE) {
         return ESP_ERR_INVALID_ARG;
     }
-    snprintf(card_path, sizeof(card_path), CARDS_DIR "/%s.bin", id);
-    snprintf(card_tmp_path, sizeof(card_tmp_path), CARDS_DIR "/%s.tmp", id);
+    upload_to_slot = kind >= STORE_PICTURE_FULL
+                     && photos_begin(id, kind == STORE_PICTURE_SIDE ? PHOTO_SIDE : PHOTO_FULL) == ESP_OK;
+    if (upload_to_slot) {
+        /* a copy left in a file from before would never be used again */
+        picture_path(id, kind, false, card_path, sizeof(card_path));
+        unlink(card_path);
+        return ESP_OK;
+    }
+    picture_path(id, kind, true, card_path, sizeof(card_path));
+    snprintf(card_tmp_path, sizeof(card_tmp_path), "%.*s.tmp", (int)strlen(card_path) - 4, card_path);
     upload = fopen(card_tmp_path, "wb");
     upload_bytes = 0;
     return upload ? ESP_OK : ESP_FAIL;
 }
 
-esp_err_t store_card_write(const void *data, size_t len)
+esp_err_t store_picture_write(const void *data, size_t len)
 {
+    if (upload_to_slot) {
+        return photos_write(data, len);
+    }
     upload_bytes += len;
     if (!upload || upload_bytes > MAX_CARD_BYTES) {
         return ESP_ERR_INVALID_SIZE;
@@ -478,8 +542,16 @@ esp_err_t store_card_write(const void *data, size_t len)
     return fwrite(data, 1, len, upload) == len ? ESP_OK : ESP_FAIL;
 }
 
-esp_err_t store_card_end(bool ok)
+esp_err_t store_picture_end(bool ok)
 {
+    if (upload_to_slot) {
+        upload_to_slot = false;
+        esp_err_t err = photos_end(ok);
+        xSemaphoreTake(lock, portMAX_DELAY);
+        front_changed = true;
+        xSemaphoreGive(lock);
+        return err;
+    }
     if (upload) {
         fclose(upload);
         upload = NULL;
@@ -491,39 +563,94 @@ esp_err_t store_card_end(bool ok)
     xSemaphoreTake(lock, portMAX_DELAY);
     unlink(card_path);
     int err = rename(card_tmp_path, card_path);
-    front_changed = true;               /* the current fronter's card may have changed */
+    front_changed = true;               /* the current fronter's pictures may have changed */
     xSemaphoreGive(lock);
     return err == 0 ? ESP_OK : ESP_FAIL;
 }
 
-void *store_load_front_card(size_t *size)
+/* Delete all of a member's pictures, wherever they are (caller passes a valid id) */
+static void delete_pictures(const char *id)
 {
-    char path[48] = "";
-    xSemaphoreTake(lock, portMAX_DELAY);
+    photos_delete(id);
+    char path[64];
+    for (store_picture_t kind = STORE_PICTURE_CARD; kind <= STORE_PICTURE_SIDE; kind++) {
+        picture_path(id, kind, false, path, sizeof(path));
+        unlink(path);
+        if (kind >= STORE_PICTURE_FULL) {   /* a copy may also be in the other place */
+            char other[64];
+            snprintf(other, sizeof(other), "%s%s", strncmp(path, SD_IMAGES_DIR, strlen(SD_IMAGES_DIR)) == 0
+                     ? DATA_IMAGES_DIR : SD_IMAGES_DIR, strrchr(path, '/'));
+            unlink(other);
+        }
+    }
+}
+
+/* Current fronter's id, or "" (caller holds the lock) */
+static const char *front_id(void)
+{
     uint16_t first = front.time ? front.members[0] : STORE_NO_MEMBER;
-    if (first < member_count && valid_id(members[first].id)) {
-        snprintf(path, sizeof(path), CARDS_DIR "/%s.bin", members[first].id);
+    return first < member_count && valid_id(members[first].id) ? members[first].id : "";
+}
+
+bool store_picture_file(const char *id, store_picture_t kind, char *path, size_t size)
+{
+    if (!valid_id(id) || kind < 0 || kind > STORE_PICTURE_SIDE) {
+        return false;
+    }
+    picture_path(id, kind, false, path, size);
+    struct stat st;
+    return stat(path, &st) == 0;
+}
+
+bool store_front_picture_file(store_picture_t kind, char *path, size_t size)
+{
+    char id[sizeof(((member_t *)0)->id)];
+    xSemaphoreTake(lock, portMAX_DELAY);
+    strlcpy(id, front_id(), sizeof(id));
+    xSemaphoreGive(lock);
+    return id[0] && store_picture_file(id, kind, path, size);
+}
+
+bool store_front_id(char *id, size_t size)
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    strlcpy(id, front_id(), size);
+    xSemaphoreGive(lock);
+    return id[0] != 0;
+}
+
+bool store_front_image_src(store_picture_t kind, char *src, size_t size)
+{
+    char path[64] = "";
+    xSemaphoreTake(lock, portMAX_DELAY);
+    if (front_id()[0]) {
+        picture_path(front_id(), kind, false, path, sizeof(path));
     }
     xSemaphoreGive(lock);
-    if (!path[0]) {
-        return NULL;
+    struct stat st;
+    if (!path[0] || stat(path, &st) != 0) {
+        return false;
     }
+    snprintf(src, size, "A:%s", path);  /* LVGL's file driver (drive A = the whole filesystem) */
+    return true;
+}
 
-    FILE *f = fopen(path, "rb");
-    if (!f) {
-        return NULL;
-    }
-    fseek(f, 0, SEEK_END);
-    long len = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    void *buf = len >= sizeof(store_card_header_t) && len <= MAX_CARD_BYTES ? malloc(len) : NULL;
-    if (buf && fread(buf, 1, len, f) != len) {
-        free(buf);
-        buf = NULL;
-    }
-    fclose(f);
-    *size = buf ? len : 0;
-    return buf;
+store_mode_t store_front_mode(void)
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    uint16_t first = front.time ? front.members[0] : STORE_NO_MEMBER;
+    store_mode_t mode = first < member_count ? members[first].mode : STORE_MODE_CARD;
+    xSemaphoreGive(lock);
+    return mode;
+}
+
+void store_front_label(char *text, size_t size)
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    uint16_t first = front.time ? front.members[0] : STORE_NO_MEMBER;
+    const member_t *m = first < member_count ? &members[first] : NULL;
+    strlcpy(text, !m ? system_name : m->label[0] ? m->label : m->name, size);
+    xSemaphoreGive(lock);
 }
 
 bool store_get_front_card(char *text, size_t text_size, uint32_t *color, bool *changed)

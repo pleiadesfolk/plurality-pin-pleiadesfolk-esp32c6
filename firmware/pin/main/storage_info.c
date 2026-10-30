@@ -21,7 +21,7 @@ static const char *TAG = "storage";
 
 static storage_usage_t sd, pin;
 static portMUX_TYPE lock = portMUX_INITIALIZER_UNLOCKED;
-static bool sd_mounted;
+static volatile bool sd_mounted;
 
 static void measure(const char *path, storage_usage_t *out)
 {
@@ -73,6 +73,11 @@ void storage_info_start(void)
     esp_log_level_set("vfs_fat_sdmmc", ESP_LOG_NONE);
     esp_log_level_set("ESP32-C6-Touch-AMOLED-1.64", ESP_LOG_NONE);   /* BSP; display setup is done by now */
     xTaskCreate(task, "storage", 4096, NULL, 2, NULL);
+}
+
+bool storage_info_sd_ready(void)
+{
+    return sd_mounted;
 }
 
 void storage_info_get(storage_usage_t *sd_out, storage_usage_t *pin_out)

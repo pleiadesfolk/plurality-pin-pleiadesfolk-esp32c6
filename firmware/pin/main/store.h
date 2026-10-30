@@ -70,16 +70,44 @@ typedef struct __attribute__((packed)) {
     uint16_t patch_x, patch_y, patch_w, patch_h;
 } store_card_header_t;
 
-/** Card upload for member `id` (PluralKit id): begin, write chunks, end. */
-esp_err_t store_card_begin(const char *id);
-esp_err_t store_card_write(const void *data, size_t len);
-esp_err_t store_card_end(bool ok);
+/* How a member is shown on the fronter screen (member JSON "mode") */
+typedef enum {
+    STORE_MODE_CARD,                    /* "card": namecard */
+    STORE_MODE_IMAGE,                   /* "image": photo */
+    STORE_MODE_IMAGE_TEXT,              /* "image_text": photo in a circle + name */
+} store_mode_t;
 
-/**
- * Read the current fronter's card picture. Returns a malloc'd buffer holding
- * the header followed by the data (free() it), or NULL if there is none.
- */
-void *store_load_front_card(size_t *size);
+/* A member's pictures, all drawn by the dashboard */
+typedef enum {
+    STORE_PICTURE_CARD,                 /* namecard text (store_card_header_t format) */
+    STORE_PICTURE_LABEL,                /* name text for "image with name" (same format) */
+    STORE_PICTURE_FULL,                 /* photo for "image": LVGL .bin, RGB565, 280x280 */
+    STORE_PICTURE_SIDE,                 /* visible part of the circle photo: LVGL .bin, RGB565, 228x280 */
+} store_picture_t;
+
+/** Path of member `id`'s picture of `kind`; false if there's none. */
+bool store_picture_file(const char *id, store_picture_t kind, char *path, size_t size);
+
+/** Picture upload for member `id` (PluralKit id): begin, write chunks, end. */
+esp_err_t store_picture_begin(const char *id, store_picture_t kind);
+esp_err_t store_picture_write(const void *data, size_t len);
+esp_err_t store_picture_end(bool ok);
+
+/** Path of the current fronter's picture of `kind`; false if there's none. */
+bool store_front_picture_file(store_picture_t kind, char *path, size_t size);
+
+/** The current fronter's member id; false if nobody fronts. */
+bool store_front_id(char *id, size_t size);
+
+/** LVGL file path ("A:/...") of the current fronter's FULL or SIDE photo when it's
+ *  in a file (photos normally live in photos.c's slots); false if there's none. */
+bool store_front_image_src(store_picture_t kind, char *src, size_t size);
+
+/** The current fronter's display mode (namecard when nobody fronts). */
+store_mode_t store_front_mode(void);
+
+/** The current fronter's "image with name" text (the system name when nobody fronts). */
+void store_front_label(char *text, size_t size);
 
 /**
  * For the namecard: the current fronter's card text and colour (0xRRGGBB).

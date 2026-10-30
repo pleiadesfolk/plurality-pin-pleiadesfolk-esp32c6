@@ -12,7 +12,8 @@
  *           without swiping ends it. Outside switch mode, swiping left/right
  *           on the fronter screen switches to the next/previous fronter (on
  *           Clock and Front history it still moves between screens).
- *           (The image screens join once members can use image mode.)
+ *           "The fronter" is the namecard, image or image-with-name screen,
+ *           whichever the current fronter's display mode is.
  *   MENU  - the pull-down menu, opened by swiping down on the fronter screen
  *   PAGE  - a screen opened by one of the menu's buttons. Connect to pin
  *           opens a two-step sequence (pin Wi-Fi, then web dashboard),
@@ -26,6 +27,7 @@
 #include "esp_heap_caps.h"
 #include "button.h"
 #include "display.h"
+#include "store.h"
 #include "ui/plurality_pin.h"
 
 static const char *TAG = "nav";
@@ -47,7 +49,8 @@ static const screen_t menu_screen           = { "pull_down_menu_initial", "Menu"
 static const screen_t front_history_screen  = { "front_history",          "Front history",      front_history_create };
 static const screen_t settings_screen       = { "settings",               "Settings",           settings_create };
 
-/* Press-and-hold (and left/right away from the fronter screen) moves through these */
+/* Switch mode (and left/right away from the fronter screen) moves through these.
+ * &namecard_screen stands for "the fronter screen", whatever its mode. */
 static const screen_t *const main_screens[] = {
     &namecard_screen,                   /* the fronter: first, shown at start */
     &watch_screen,
@@ -61,6 +64,7 @@ static nav_screen_cb_t screen_cb;
 static place_t place;
 static int main_index;                  /* which main screen, also where the menu closes to */
 static const screen_t *page;            /* which page, while AT_PAGE */
+static const screen_t *shown;           /* the screen actually on display */
 static lv_obj_t *toast;
 
 static void show(const screen_t *screen);
@@ -156,8 +160,25 @@ static void wire_menu(lv_obj_t *scr)
 
 /* Show `screen`; `anim` slides it in (LV_SCREEN_LOAD_ANIM_NONE: instant).
  * The old screen is deleted once the new one is in. */
+/* The screen for the current fronter's display mode */
+static const screen_t *fronter_screen(void)
+{
+    switch (store_front_mode()) {
+    case STORE_MODE_IMAGE:
+        return &image_full_screen;
+    case STORE_MODE_IMAGE_TEXT:
+        return &image_text_screen;
+    default:
+        return &namecard_screen;
+    }
+}
+
 static void show_anim(const screen_t *screen, lv_screen_load_anim_t anim)
 {
+    if (screen == &namecard_screen) {
+        screen = fronter_screen();
+    }
+    shown = screen;
     uint32_t t0 = lv_tick_get();
     lv_obj_t *scr = screen->create();
     if (screen == &menu_screen) {
@@ -315,8 +336,8 @@ static void on_swipe(lv_dir_t dir)
 
 void nav_show_fronter(void)
 {
-    if (place == AT_MAIN && main_screens[main_index] == &namecard_screen) {
-        return;                         /* already there; the namecard updates itself */
+    if (place == AT_MAIN && main_screens[main_index] == &namecard_screen && shown == fronter_screen()) {
+        return;                         /* already there; the screen updates itself */
     }
     for (int i = 0; i < MAIN_COUNT; i++) {
         if (main_screens[i] == &namecard_screen) {
@@ -341,6 +362,9 @@ void nav_benchmark(void)
             wire_menu(scr);
         }
         lv_screen_load_anim(scr, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
+        if (screen_cb) {
+            screen_cb(all[i]->name, scr);   /* fill in live content, as when shown normally */
+        }
         int64_t t1 = esp_timer_get_time();
         display_take_stats();
         lv_refr_now(NULL);
