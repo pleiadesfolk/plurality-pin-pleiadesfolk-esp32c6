@@ -17,11 +17,13 @@
  * Without a picture (e.g. before the first import) the generated label shows
  * plain text instead, in the screen's own font.
  *
- * Background (namecard, image with name): the member's gradient, 2-7 colours,
- * horizontal or vertical, set on the dashboard ("h|RRGGBB,...|1"). Without
- * one: dark -> member colour on the namecard, plain member colour beside a
- * photo, as in the designs. Animated gradients drift: the
- * colours are treated as a loop and slide along a little every DRIFT_MS.
+ * Gradient (namecard, image with name): the member's gradient, 2-7 colours,
+ * left to right or top to bottom, set on the dashboard ("h|RRGGBB,...|1"),
+ * fills the text, spread over where the text is, on a black background. The
+ * text decoder colours each column (or row) from a table (textpic_colors).
+ * Animated gradients drift: the colours are treated as a loop and slide along
+ * a little every DRIFT_MS. Without a gradient: white text on dark -> member
+ * colour (namecard) or plain member colour (beside a photo), as in the designs.
  */
 
 #include <string.h>
@@ -51,23 +53,27 @@ typedef struct {
     bool mapped;                        /* photo_dsc points into a mapped flash slot */
     esp_partition_mmap_handle_t map;
     lv_image_dsc_t photo_dsc;
-    /* background gradient */
+    /* gradient: the member's colours go in the text; the background is set too */
     lv_color_t grad_colors[7];
     int grad_n;
     bool grad_vertical;
-    lv_grad_dsc_t grad;                 /* referenced by the panel's style */
+    bool text_grad;                     /* the member has a gradient: colour the text */
+    lv_grad_dsc_t grad;                 /* background, referenced by the panel's style */
     lv_timer_t *drift;
     uint32_t phase;                     /* drift position, 0..65535 = one cycle */
     bool waiting;                       /* for the photo to be copied from the SD card */
     uint32_t stage_count;               /* photos_stage_count() when it was asked for */
 } fronter_t;
 
-#define DRIFT_MS        200             /* 5 updates/s; each redraws the screen (~90 ms) */
-#define DRIFT_CYCLE_MS  10000           /* one full trip through the colours */
+#define DRIFT_MS        200             /* 5 updates/s; each redraws the text */
+#define DRIFT_CYCLE_MS  20000           /* one full trip through the colours */
+#define DRIFT_SPREAD    2               /* a drifting loop is this many text widths long */
 
 static fronter_t fr;                    /* fr.shown is false while no fronter screen exists */
 
 /* ---------- text pictures ---------- */
+
+static void text_grad_fill(void);
 
 static void text_free(text_picture_t *t)
 {
@@ -95,6 +101,9 @@ static bool text_load(text_picture_t *t, store_picture_t kind)
     if (!store_front_picture_file(kind, path, sizeof(path)) || !textpic_open(&t->pic, path)) {
         return false;
     }
+    /* Gradient text is coloured by the decoder, so no white tint then */
+    bool grad = fr.text_grad && textpic_colors(&t->pic, fr.grad_vertical);
+    lv_obj_set_style_image_recolor_opa(t->img, grad ? LV_OPA_TRANSP : LV_OPA_COVER, 0);
     lv_image_set_src(t->img, &t->pic.dsc);
     if (t->pic.patch_pixels) {
         lv_image_set_src(t->patch, &t->pic.patch_dsc);
@@ -112,6 +121,7 @@ static void text_or_label(store_picture_t kind, const char *fallback)
     if (text_load(&fr.text, kind)) {
         lv_obj_add_flag(fr.label, LV_OBJ_FLAG_HIDDEN);
         lv_obj_remove_flag(fr.text.img, LV_OBJ_FLAG_HIDDEN);
+        text_grad_fill();
     } else {
         lv_label_set_text(fr.label, fallback);
         lv_obj_remove_flag(fr.label, LV_OBJ_FLAG_HIDDEN);
@@ -119,13 +129,13 @@ static void text_or_label(store_picture_t kind, const char *fallback)
     }
 }
 
-/* ---------- background gradient ---------- */
+/* ---------- gradients ---------- */
 
 static lv_color_t darken(uint32_t rgb, int percent);
 
-/* Read "dir|RRGGBB,RRGGBB,...|animate"; without one, dark -> member colour
- * (or just the member colour if `plain`). Returns whether it should drift. */
-static bool grad_parse(const char *text, uint32_t color, bool plain)
+/* Read the member's "dir|RRGGBB,RRGGBB,...|animate" into fr.grad_colors;
+ * false if they have none. Sets *animate when it should drift. */
+static bool grad_parse(const char *text, bool *animate)
 {
     fr.grad_n = 0;
     fr.grad_vertical = text[0] == 'v';
@@ -139,82 +149,81 @@ static bool grad_parse(const char *text, uint32_t color, bool plain)
         fr.grad_colors[fr.grad_n++] = lv_color_hex(rgb);
         p = *end == ',' ? end : NULL;
     }
-    if (fr.grad_n < 2) {
-        fr.grad_n = 2;
-        fr.grad_vertical = false;
-        fr.grad_colors[0] = plain ? lv_color_hex(color) : darken(color, 60);
-        fr.grad_colors[1] = lv_color_hex(color);
-        return false;
-    }
     const char *flag = strrchr(text, '|');
-    return flag && flag != strchr(text, '|') && flag[1] == '1';
+    *animate = flag && flag != strchr(text, '|') && flag[1] == '1';
+    return fr.grad_n >= 2;
 }
 
-/* Colour of the looped gradient at u (0..65535 along the loop c0 -> ... -> c(n-1) -> c0) */
-static lv_color_t loop_color(uint32_t u)
+/* The member's gradient at u (0..65535 across the text). Still: colours evenly
+ * spread from first to last. Drifting: the colours form a loop (last back to
+ * first) DRIFT_SPREAD text widths long, shifted along by fr.phase, so only
+ * part of it shows at a time. */
+static lv_color_t grad_color(uint32_t u)
 {
-    uint32_t pos = u * fr.grad_n;       /* 16.16: segment and fraction */
-    int k = (pos >> 16) % fr.grad_n;
+    int n = fr.grad_n;
+    uint32_t pos;                       /* 16.16: segment and fraction */
+    if (fr.drift) {
+        pos = ((u / DRIFT_SPREAD - fr.phase) & 0xFFFF) * n;
+    } else {
+        pos = u * (n - 1);
+    }
+    int k = (pos >> 16) % n;
     uint8_t t = (pos >> 8) & 0xFF;
-    return lv_color_mix(fr.grad_colors[(k + 1) % fr.grad_n], fr.grad_colors[k], t);
+    return lv_color_mix(fr.grad_colors[(k + 1) % n], fr.grad_colors[k], t);
 }
 
-/* Set the panel's gradient: evenly spread colours, or the loop shifted by fr.phase */
-static void grad_apply(void)
+/* Fill the text picture's colour table from the gradient, spread over the ink */
+static void text_grad_fill(void)
 {
-    if (!fr.drift) {
-        lv_grad_init_stops(&fr.grad, fr.grad_colors, NULL, NULL, fr.grad_n);
-    } else {
-        /* Colour k sits at k/n along the loop; the loop is shifted right by
-         * fr.phase, so it lands at x = k/n + phase (wrapping around). Both
-         * edges get the loop's colour at the left edge, so it joins up. */
-        lv_color_t colors[9];
-        uint8_t fracs[9];
-        int count = 0;
-        colors[count] = loop_color((65536 - fr.phase) & 0xFFFF);
-        fracs[count++] = 0;
-        for (int k = 0; k < fr.grad_n; k++) {
-            uint8_t x = ((((uint32_t)k << 16) / fr.grad_n + fr.phase) & 0xFFFF) >> 8;
-            int i = count++;
-            while (i > 1 && fracs[i - 1] > x) {      /* keep them in order */
-                colors[i] = colors[i - 1];
-                fracs[i] = fracs[i - 1];
-                i--;
-            }
-            colors[i] = fr.grad_colors[k];
-            fracs[i] = x;
-        }
-        colors[count] = colors[0];
-        fracs[count++] = 255;
-        lv_grad_init_stops(&fr.grad, colors, NULL, fracs, count);
+    textpic_t *pic = &fr.text.pic;
+    if (!pic->colors) {
+        return;
     }
-    if (fr.grad_vertical) {
-        lv_grad_vertical_init(&fr.grad);
-    } else {
-        lv_grad_horizontal_init(&fr.grad);
+    int count = pic->vertical ? pic->dsc.header.h : pic->dsc.header.w;
+    int from = pic->vertical ? pic->ink_y0 : pic->ink_x0;
+    int to = pic->vertical ? pic->ink_y1 : pic->ink_x1;
+    int span = LV_MAX(to - from, 1);
+    for (int i = 0; i < count; i++) {
+        int at = LV_CLAMP(0, i - from, span);
+        pic->colors[i] = grad_color((uint32_t)at * 65535 / span);
     }
-    lv_obj_set_style_bg_grad(fr.panel, &fr.grad, 0);
-    lv_obj_invalidate(fr.panel);        /* same descriptor, new contents */
+    lv_obj_invalidate(fr.text.img);
 }
 
 static void drift(lv_timer_t *timer)
 {
     fr.phase = (fr.phase + 65536 * DRIFT_MS / DRIFT_CYCLE_MS) & 0xFFFF;
-    grad_apply();
+    text_grad_fill();
 }
 
+/* Background, and whether the text takes the member's gradient. With a
+ * gradient: black behind gradient text. Without: dark -> member colour on the
+ * namecard (or just the member colour if `plain`), white text. */
 static void grad_set(uint32_t color, bool plain)
 {
     char text[64];
     store_front_grad(text, sizeof(text));
-    bool animate = grad_parse(text, color, plain);
+    bool animate = false;
+    fr.text_grad = grad_parse(text, &animate);
+    animate = animate && fr.text_grad;
     if (animate && !fr.drift) {
         fr.drift = lv_timer_create(drift, DRIFT_MS, NULL);
     } else if (!animate && fr.drift) {
         lv_timer_delete(fr.drift);
         fr.drift = NULL;
     }
-    grad_apply();
+
+    lv_color_t bg[2];
+    if (fr.text_grad) {
+        bg[0] = bg[1] = lv_color_black();
+    } else {
+        bg[0] = plain ? lv_color_hex(color) : darken(color, 60);
+        bg[1] = lv_color_hex(color);
+    }
+    lv_grad_init_stops(&fr.grad, bg, NULL, NULL, 2);
+    lv_grad_horizontal_init(&fr.grad);
+    lv_obj_set_style_bg_grad(fr.panel, &fr.grad, 0);
+    lv_obj_invalidate(fr.panel);        /* same descriptor, new contents */
 }
 
 /* ---------- photos ---------- */

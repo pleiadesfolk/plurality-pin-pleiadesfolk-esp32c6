@@ -7,6 +7,10 @@
  * hands it no decoded copy, and when asked for each line (get_area) reads that
  * line of 4-bit alpha from the file and expands it into a one-line buffer.
  * LVGL then draws it tinted (the image's recolour style).
+ *
+ * Gradient text (textpic_colors): the picture is described as ARGB8888
+ * instead, and each line comes out coloured from the table, with the 4-bit
+ * value as alpha. Still one line at a time, so no more RAM than a line.
  */
 
 #include <stdio.h>
@@ -24,7 +28,7 @@ static const char *TAG = "textpic";
 
 typedef struct {
     FILE *f;
-    lv_draw_buf_t *line;                /* one decoded line, A8 */
+    lv_draw_buf_t *line;                /* one decoded line, A8 (or ARGB8888 with colours) */
     uint8_t *raw;                       /* one line of 4-bit alpha from the file */
 } decoder_state_t;
 
@@ -58,7 +62,7 @@ static lv_result_t open_cb(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *
         setvbuf(st->f, NULL, _IOFBF, 4096);
     }
     st->raw = malloc(t->stride);
-    st->line = lv_draw_buf_create(t->dsc.header.w, 1, LV_COLOR_FORMAT_A8, LV_STRIDE_AUTO);
+    st->line = lv_draw_buf_create(t->dsc.header.w, 1, t->dsc.header.cf, LV_STRIDE_AUTO);
     if (!st->f || !st->raw || !st->line) {
         if (st->f) {
             fclose(st->f);
@@ -97,7 +101,7 @@ static lv_result_t get_area_cb(lv_image_decoder_t *decoder, lv_image_decoder_dsc
     if (fseek(st->f, offset, SEEK_SET) != 0 || fread(st->raw, 1, t->stride, st->f) != t->stride) {
         return LV_RESULT_INVALID;
     }
-    lv_draw_buf_t *line = lv_draw_buf_reshape(st->line, LV_COLOR_FORMAT_A8,
+    lv_draw_buf_t *line = lv_draw_buf_reshape(st->line, t->dsc.header.cf,
                                               lv_area_get_width(decoded_area), 1, LV_STRIDE_AUTO);
     if (!line) {
         return LV_RESULT_INVALID;
@@ -105,6 +109,12 @@ static lv_result_t get_area_cb(lv_image_decoder_t *decoder, lv_image_decoder_dsc
     uint8_t *out = line->data;
     for (int32_t x = decoded_area->x1; x <= decoded_area->x2; x++) {
         uint8_t v = x & 1 ? st->raw[x / 2] & 0x0F : st->raw[x / 2] >> 4;
+        if (t->colors) {
+            lv_color_t c = t->colors[t->vertical ? decoded_area->y1 : x];
+            *out++ = c.blue;
+            *out++ = c.green;
+            *out++ = c.red;
+        }
         *out++ = v * 17;                /* 0xF -> 0xFF */
     }
     dsc->decoded = line;
@@ -140,6 +150,18 @@ bool textpic_open(textpic_t *t, const char *path)
     }
     store_card_header_t h;
     bool ok = fread(&h, sizeof(h), 1, f) == 1 && memcmp(h.magic, "PC1", 4) == 0 && h.w && h.h;
+    /* Ink: any non-zero alpha, plus the emoji patch */
+    t->ink_x0 = h.w, t->ink_y0 = h.h;
+    uint8_t *row = ok ? malloc((h.w + 1) / 2) : NULL;
+    for (int y = 0; row && y < h.h && fread(row, 1, (h.w + 1) / 2, f) == (h.w + 1) / 2; y++) {
+        for (int x = 0; x < h.w; x++) {
+            if (x & 1 ? row[x / 2] & 0x0F : row[x / 2] >> 4) {
+                t->ink_x0 = LV_MIN(t->ink_x0, x), t->ink_x1 = LV_MAX(t->ink_x1, x);
+                t->ink_y0 = LV_MIN(t->ink_y0, y), t->ink_y1 = LV_MAX(t->ink_y1, y);
+            }
+        }
+    }
+    free(row);
     size_t patch_size = ok ? (size_t)h.patch_w * h.patch_h * 3 : 0;
     if (ok && patch_size) {
         t->patch_pixels = malloc(patch_size);
@@ -171,12 +193,28 @@ bool textpic_open(textpic_t *t, const char *path)
         };
         t->patch_x = h.patch_x;
         t->patch_y = h.patch_y;
+        t->ink_x0 = LV_MIN(t->ink_x0, h.patch_x), t->ink_x1 = LV_MAX(t->ink_x1, h.patch_x + h.patch_w - 1);
+        t->ink_y0 = LV_MIN(t->ink_y0, h.patch_y), t->ink_y1 = LV_MAX(t->ink_y1, h.patch_y + h.patch_h - 1);
+    }
+    if (t->ink_x0 > t->ink_x1) {        /* nothing drawn */
+        t->ink_x0 = t->ink_x1 = t->ink_y0 = t->ink_y1 = 0;
     }
     return true;
+}
+
+lv_color_t *textpic_colors(textpic_t *t, bool vertical)
+{
+    free(t->colors);
+    t->vertical = vertical;
+    t->colors = calloc(vertical ? t->dsc.header.h : t->dsc.header.w, sizeof(lv_color_t));
+    t->dsc.header.cf = t->colors ? LV_COLOR_FORMAT_ARGB8888 : LV_COLOR_FORMAT_A8;
+    t->dsc.header.stride = t->dsc.header.w * (t->colors ? 4 : 1);
+    return t->colors;
 }
 
 void textpic_close(textpic_t *t)
 {
     free(t->patch_pixels);
+    free(t->colors);
     memset(t, 0, sizeof(*t));
 }

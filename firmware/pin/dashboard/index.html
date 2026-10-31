@@ -144,6 +144,8 @@
       <input type="search" id="member-search" placeholder="Search members" class="grow">
       <button class="primary" id="member-add">Add member</button>
     </div>
+    <label class="check" id="system-tag-box"><input type="checkbox" id="system-tag"> <span id="system-tag-text"></span></label>
+    <p class="dim" id="system-tag-progress"></p>
     <div class="box list" id="member-list" style="margin-top:12px"></div>
   </section>
 
@@ -253,9 +255,9 @@
   <label class="field" for="editor-color">Colour</label>
   <input type="color" id="editor-color">
   <div id="editor-bg-box">
-  <label class="field">Background</label>
+  <label class="field">Text colour</label>
   <div class="seg" id="editor-bg">
-    <button data-bg="plain">Member colour</button><button data-bg="grad">Gradient</button>
+    <button data-bg="plain">White</button><button data-bg="grad">Gradient</button>
   </div>
   <div id="editor-grad-box" hidden>
     <div class="grad-colors" id="editor-grad-colors"></div>
@@ -471,8 +473,11 @@ function drawText(text, box) {
  * Encode a text picture for the pin (store_card_header_t in store.h): white pixels
  * become 4-bit alpha; coloured pixels (emoji) go into a small RGB565A8 patch instead.
  */
+// Pixel i (RGBA index) of a text picture is part of a colour emoji, not the white text
+const isEmojiPixel = (data, i) => data[i + 3] && !(data[i] > 235 && data[i + 1] > 235 && data[i + 2] > 235);
+
 function encodeCard(t) {
-  const isColour = (i) => t.data[i + 3] && !(t.data[i] > 235 && t.data[i + 1] > 235 && t.data[i + 2] > 235);
+  const isColour = i => isEmojiPixel(t.data, i);
   let px0 = t.w, py0 = t.h, px1 = -1, py1 = -1;
   for (let y = 0; y < t.h; y++) for (let x = 0; x < t.w; x++) {
     if (isColour((y * t.w + x) * 4)) {
@@ -603,14 +608,17 @@ async function photoFromFile(file) {
 
 /* ---------- previews ---------- */
 
-function textCanvas(t) {
+// The text picture as a canvas: white, or filled with gradient g (parseGrad form)
+function textCanvas(t, g) {
   const tmp = document.createElement("canvas");
   tmp.width = t.w; tmp.height = t.h;
-  tmp.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(t.data), t.w, t.h), 0, 0);
+  const data = new Uint8ClampedArray(t.data);
+  if (g) gradText4(t, data, g);
+  tmp.getContext("2d").putImageData(new ImageData(data, t.w, t.h), 0, 0);
   return tmp;
 }
 
-/* ---------- background gradients (must match grad_parse / grad_apply in fronter.c) ---------- */
+/* ---------- gradient text (must match grad_parse / grad_color / text_grad_fill in fronter.c) ---------- */
 
 // m.grad: "h|RRGGBB,RRGGBB,...|1" = direction (h/v), 2-7 colours, drift (1/0); "" = default
 function parseGrad(text) {
@@ -620,33 +628,50 @@ function parseGrad(text) {
 }
 const gradText = g => g ? `${g.vertical ? "v" : "h"}|${g.colors.map(c => c.slice(1).toUpperCase()).join(",")}|${g.animate ? 1 : 0}` : "";
 
-const DRIFT_CYCLE_MS = 10000;           // fronter.c DRIFT_CYCLE_MS
+const DRIFT_CYCLE_MS = 20000;           // fronter.c DRIFT_CYCLE_MS
+const DRIFT_SPREAD = 2;                 // fronter.c DRIFT_SPREAD: loop length in text widths
 const rgbOf = c => { const n = parseInt(c.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
 const rgbText = ([r, g, b]) => `rgb(${r},${g},${b})`;
 
-// Fill the screen with m's background. Without a gradient: dark -> colour (namecard)
-// or just the colour (`plain`, beside a photo). Animated ones drift with the clock.
+// Colour the white text pixels of picture t (RGBA `data`) with gradient g, spread
+// over the ink (4-bit alpha > 0, or emoji), left to right or top to bottom. Still:
+// colours evenly first to last; animated: a loop (last back to first), DRIFT_SPREAD
+// text widths long, drifting with the clock.
+function gradText4(t, data, g) {
+  const ink = i => Math.round(data[i + 3] / 17) > 0 || isEmojiPixel(data, i);
+  let from = Infinity, to = -1;
+  for (let y = 0; y < t.h; y++) for (let x = 0; x < t.w; x++) {
+    if (ink((y * t.w + x) * 4)) { const v = g.vertical ? y : x; from = Math.min(from, v); to = Math.max(to, v); }
+  }
+  if (to < 0) return;
+  const colors = g.colors.map(rgbOf), n = colors.length, span = Math.max(to - from, 1);
+  const phase = g.animate ? (Date.now() % DRIFT_CYCLE_MS) / DRIFT_CYCLE_MS : 0;
+  const at = u => {                     // gradient colour at u (0..1 across the text)
+    const pos = g.animate ? ((u / DRIFT_SPREAD - phase) % 1 + 1) % 1 * n : u * (n - 1);
+    const k = Math.floor(pos) % n, f = pos - Math.floor(pos);
+    return colors[k].map((v, i) => Math.round(v + (colors[(k + 1) % n][i] - v) * f));
+  };
+  const table = Array.from({ length: g.vertical ? t.h : t.w }, (_, i) => at(Math.min(Math.max(i - from, 0), span) / span));
+  for (let y = 0; y < t.h; y++) for (let x = 0; x < t.w; x++) {
+    const i = (y * t.w + x) * 4;
+    if (!data[i + 3] || isEmojiPixel(data, i)) continue;
+    const c = table[g.vertical ? y : x];
+    data[i] = c[0]; data[i + 1] = c[1]; data[i + 2] = c[2];
+  }
+}
+
+// Fill the screen with m's background: black behind gradient text; otherwise
+// dark -> colour (namecard) or just the colour (`plain`, beside a photo).
 function fillBackground(ctx, m, plain) {
   const color = hex(m.color);
-  const g = parseGrad(m.grad);
-  const colors = (g ? g.colors : [plain ? color : null, color]).map(c => c ? rgbOf(c) : rgbOf(color).map(v => Math.floor(v * 40 / 100)));
-  const n = colors.length;
-  const fill = g?.vertical ? ctx.createLinearGradient(0, 0, 0, 280) : ctx.createLinearGradient(0, 0, 456, 0);
-  if (!g?.animate) {
-    colors.forEach((c, k) => fill.addColorStop(k / (n - 1), rgbText(c)));
+  if (parseGrad(m.grad)) {
+    ctx.fillStyle = "#000";
   } else {
-    // The colours form a loop (last back to first), shifted along by the phase
-    const phase = (Date.now() % DRIFT_CYCLE_MS) / DRIFT_CYCLE_MS;
-    const at = u => {                   // loop colour at u (0..1)
-      const pos = ((u % 1) + 1) % 1 * n, k = Math.floor(pos) % n, t = pos - Math.floor(pos);
-      return colors[k].map((v, i) => Math.round(v + (colors[(k + 1) % n][i] - v) * t));
-    };
-    const edge = rgbText(at(-phase));
-    fill.addColorStop(0, edge);
-    colors.forEach((c, k) => fill.addColorStop((k / n + phase) % 1, rgbText(c)));
-    fill.addColorStop(1, edge);
+    const fill = ctx.createLinearGradient(0, 0, 456, 0);
+    fill.addColorStop(0, plain ? color : rgbText(rgbOf(color).map(v => Math.floor(v * 40 / 100))));
+    fill.addColorStop(1, color);
+    ctx.fillStyle = fill;
   }
-  ctx.fillStyle = fill;
   ctx.fillRect(0, 0, 456, 280);
 }
 
@@ -676,7 +701,7 @@ function drawPreview(canvas, m, photo, stored) {
   if (m.mode === "image_text") {
     fillBackground(ctx, m, true);
     const t = drawText(m.label || m.name, labelSpec(m.style));
-    if (t.w) ctx.drawImage(textCanvas(t), LABEL_BOX.x, LABEL_BOX.y + Math.round((LABEL_BOX.h - t.h) / 2));
+    if (t.w) ctx.drawImage(textCanvas(t, parseGrad(m.grad)), LABEL_BOX.x, LABEL_BOX.y + Math.round((LABEL_BOX.h - t.h) / 2));
     if (photo) ctx.drawImage(renderSide(photo), SIDE.x, 0);
     else if (stored?.side) ctx.drawImage(stored.side, SIDE.x, 0);
     else placeholder("Add a photo", 342, 145);
@@ -685,7 +710,7 @@ function drawPreview(canvas, m, photo, stored) {
 
   fillBackground(ctx, m, false);
   const t = drawText(m.card || m.name, cardSpec(m.style));
-  if (t.w) ctx.drawImage(textCanvas(t), CARD_BOX.x, CARD_BOX.y + Math.round((CARD_BOX.h - t.h) / 2));   // LEFT_MID, as on the pin
+  if (t.w) ctx.drawImage(textCanvas(t, parseGrad(m.grad)), CARD_BOX.x, CARD_BOX.y + Math.round((CARD_BOX.h - t.h) / 2));   // LEFT_MID, as on the pin
   return t;
 }
 
@@ -799,14 +824,47 @@ function renderMembers() {
         <button class="icon-delete" data-delete="${i}" aria-label="Delete ${esc(m.name)}" title="Delete">${TRASH_ICON}</button>
       </div>`);
   $("member-list").innerHTML = rows.join("") || `<p class="dim">No members yet - use Import.</p>`;
+  $("system-tag-box").style.display = state.system ? "" : "none";   // .check sets display, so hidden would not work
+  $("system-tag-text").textContent = `Add "${systemTag().trim()}" to card text`;
+  $("system-tag").checked = systemTagOn();
 }
+
+// Add or take off " of <system>" on every card, then redraw the cards that changed
+$("system-tag").addEventListener("change", async e => {
+  const on = e.target.checked, box = e.target, progress = $("system-tag-progress");
+  const members = state.members.map(m => ({ ...m, card: withTag(m.card, on) }));
+  const changed = members.filter((m, i) => m.card !== state.members[i].card);
+  box.disabled = true;
+  try {
+    await api("PUT", "/api/members", { system: state.system, members });
+    for (let i = 0; i < changed.length; i++) {
+      progress.textContent = `Redrawing namecards… ${i + 1} / ${changed.length}`;
+      await uploadPictures(changed[i], null);
+    }
+    progress.textContent = "";
+    toast(`${changed.length} card${changed.length === 1 ? "" : "s"} updated`);
+  } catch (err) {
+    progress.textContent = "";
+    toast("Couldn't update the cards: " + err.message);
+  }
+  box.disabled = false;
+  await loadState();
+});
 
 let editing = -1;                       // member index, or -1 for a new member
 let cardFollowsName = false;            // new member: card text tracks the name until edited
 let editorPhoto = null;                 // a new photo to crop and send (makePhoto), or null
 let editorStored = null;                // photos the pin already has for this member: {full, side}
 
-const defaultCard = name => `${name}${state.system ? " of " + state.system : ""}`;
+// " of <system>" at the end of card text: on while most cards have it (or no members yet)
+const systemTag = (system = state.system) => system ? " of " + system : "";
+const systemTagOn = () => !state.members.length ||
+  state.members.filter(m => systemTag() && m.card.endsWith(systemTag())).length * 2 > state.members.length;
+const withTag = (card, on, system) => {
+  const tag = systemTag(system), has = !!tag && card.endsWith(tag);
+  return on && !has ? card + tag : !on && has ? card.slice(0, -tag.length) : card;
+};
+const defaultCard = name => withTag(name, systemTagOn());
 
 function openEditor(index) {
   editing = index;
@@ -909,7 +967,7 @@ $("editor-align").addEventListener("click", e => {
   showEditorStyle(); updateEditorPreview();
 });
 
-// The background gradient being edited (parseGrad form), or null for the plain default
+// The text gradient being edited (parseGrad form), or null for white text
 let editorGrad = null;
 
 function showEditorGrad() {
@@ -932,9 +990,8 @@ $("editor-bg").addEventListener("click", e => {
   if (!b) return;
   if (b.dataset.bg === "plain") editorGrad = null;
   else if (!editorGrad) {
-    // Start from the default look: dark -> member colour
-    const c = $("editor-color").value;
-    editorGrad = { vertical: false, colors: ["#" + rgbOf(c).map(v => Math.floor(v * 40 / 100).toString(16).padStart(2, "0")).join(""), c], animate: false };
+    // Start from member colour -> white
+    editorGrad = { vertical: false, colors: [$("editor-color").value, "#ffffff"], animate: false };
   }
   showEditorGrad(); updateEditorPreview();
 });
@@ -1197,6 +1254,7 @@ function convertExport(pk) {
     throw new Error("This doesn't look like a PluralKit export (no members or switches).");
   }
   const system = pk.name || "";
+  const tagOn = systemTagOn();
   const list = [...pk.members].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
   // Keep what was set on the dashboard (button tick, display mode, image text)
   // for members that are already on the pin; their photos stay on the pin too
@@ -1204,7 +1262,7 @@ function convertExport(pk) {
   const members = list.map(m => ({
     id: m.id,
     name: m.name || m.id,
-    card: `${m.display_name || m.name}${system ? " of " + system : ""}`,
+    card: withTag(m.display_name || m.name, tagOn, system),
     pronouns: m.pronouns || "",
     color: (m.color || "468DC3").toUpperCase(),
     messages: m.message_count || 0,
