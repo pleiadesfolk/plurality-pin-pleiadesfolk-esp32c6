@@ -106,6 +106,9 @@ bool store_front_image_src(store_picture_t kind, char *src, size_t size);
 /** The current fronter's display mode (namecard when nobody fronts). */
 store_mode_t store_front_mode(void);
 
+/** The current fronter's background gradient text ("dir|RRGGBB,...|animate", may be ""). */
+void store_front_grad(char *text, size_t size);
+
 /** The current fronter's "image with name" text (the system name when nobody fronts). */
 void store_front_label(char *text, size_t size);
 

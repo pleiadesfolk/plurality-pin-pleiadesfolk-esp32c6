@@ -650,6 +650,14 @@ store_mode_t store_front_mode(void)
     return mode;
 }
 
+void store_front_grad(char *text, size_t size)
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    uint16_t first = front.time ? front.members[0] : STORE_NO_MEMBER;
+    strlcpy(text, first < member_count ? members[first].grad : "", size);
+    xSemaphoreGive(lock);
+}
+
 void store_front_label(char *text, size_t size)
 {
     xSemaphoreTake(lock, portMAX_DELAY);

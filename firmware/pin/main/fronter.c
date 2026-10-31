@@ -16,6 +16,12 @@
  *    didn't fit in a slot are read from their file instead, which is slow.)
  * Without a picture (e.g. before the first import) the generated label shows
  * plain text instead, in the screen's own font.
+ *
+ * Background (namecard, image with name): the member's gradient, 2-7 colours,
+ * horizontal or vertical, set on the dashboard ("h|RRGGBB,...|1"). Without
+ * one: dark -> member colour on the namecard, plain member colour beside a
+ * photo, as in the designs. Animated gradients drift: the
+ * colours are treated as a loop and slide along a little every DRIFT_MS.
  */
 
 #include <string.h>
@@ -45,7 +51,17 @@ typedef struct {
     bool mapped;                        /* photo_dsc points into a mapped flash slot */
     esp_partition_mmap_handle_t map;
     lv_image_dsc_t photo_dsc;
+    /* background gradient */
+    lv_color_t grad_colors[7];
+    int grad_n;
+    bool grad_vertical;
+    lv_grad_dsc_t grad;                 /* referenced by the panel's style */
+    lv_timer_t *drift;
+    uint32_t phase;                     /* drift position, 0..65535 = one cycle */
 } fronter_t;
+
+#define DRIFT_MS        200             /* 5 updates/s; each redraws the screen (~90 ms) */
+#define DRIFT_CYCLE_MS  10000           /* one full trip through the colours */
 
 static fronter_t fr;                    /* fr.shown is false while no fronter screen exists */
 
@@ -99,6 +115,104 @@ static void text_or_label(store_picture_t kind, const char *fallback)
         lv_obj_remove_flag(fr.label, LV_OBJ_FLAG_HIDDEN);
         lv_obj_add_flag(fr.text.img, LV_OBJ_FLAG_HIDDEN);
     }
+}
+
+/* ---------- background gradient ---------- */
+
+static lv_color_t darken(uint32_t rgb, int percent);
+
+/* Read "dir|RRGGBB,RRGGBB,...|animate"; without one, dark -> member colour
+ * (or just the member colour if `plain`). Returns whether it should drift. */
+static bool grad_parse(const char *text, uint32_t color, bool plain)
+{
+    fr.grad_n = 0;
+    fr.grad_vertical = text[0] == 'v';
+    const char *p = strchr(text, '|');
+    while (p && fr.grad_n < 7) {
+        char *end;
+        uint32_t rgb = strtoul(p + 1, &end, 16);
+        if (end - (p + 1) != 6) {
+            break;
+        }
+        fr.grad_colors[fr.grad_n++] = lv_color_hex(rgb);
+        p = *end == ',' ? end : NULL;
+    }
+    if (fr.grad_n < 2) {
+        fr.grad_n = 2;
+        fr.grad_vertical = false;
+        fr.grad_colors[0] = plain ? lv_color_hex(color) : darken(color, 60);
+        fr.grad_colors[1] = lv_color_hex(color);
+        return false;
+    }
+    const char *flag = strrchr(text, '|');
+    return flag && flag != strchr(text, '|') && flag[1] == '1';
+}
+
+/* Colour of the looped gradient at u (0..65535 along the loop c0 -> ... -> c(n-1) -> c0) */
+static lv_color_t loop_color(uint32_t u)
+{
+    uint32_t pos = u * fr.grad_n;       /* 16.16: segment and fraction */
+    int k = (pos >> 16) % fr.grad_n;
+    uint8_t t = (pos >> 8) & 0xFF;
+    return lv_color_mix(fr.grad_colors[(k + 1) % fr.grad_n], fr.grad_colors[k], t);
+}
+
+/* Set the panel's gradient: evenly spread colours, or the loop shifted by fr.phase */
+static void grad_apply(void)
+{
+    if (!fr.drift) {
+        lv_grad_init_stops(&fr.grad, fr.grad_colors, NULL, NULL, fr.grad_n);
+    } else {
+        /* Colour k sits at k/n along the loop; the loop is shifted right by
+         * fr.phase, so it lands at x = k/n + phase (wrapping around). Both
+         * edges get the loop's colour at the left edge, so it joins up. */
+        lv_color_t colors[9];
+        uint8_t fracs[9];
+        int count = 0;
+        colors[count] = loop_color((65536 - fr.phase) & 0xFFFF);
+        fracs[count++] = 0;
+        for (int k = 0; k < fr.grad_n; k++) {
+            uint8_t x = ((((uint32_t)k << 16) / fr.grad_n + fr.phase) & 0xFFFF) >> 8;
+            int i = count++;
+            while (i > 1 && fracs[i - 1] > x) {      /* keep them in order */
+                colors[i] = colors[i - 1];
+                fracs[i] = fracs[i - 1];
+                i--;
+            }
+            colors[i] = fr.grad_colors[k];
+            fracs[i] = x;
+        }
+        colors[count] = colors[0];
+        fracs[count++] = 255;
+        lv_grad_init_stops(&fr.grad, colors, NULL, fracs, count);
+    }
+    if (fr.grad_vertical) {
+        lv_grad_vertical_init(&fr.grad);
+    } else {
+        lv_grad_horizontal_init(&fr.grad);
+    }
+    lv_obj_set_style_bg_grad(fr.panel, &fr.grad, 0);
+    lv_obj_invalidate(fr.panel);        /* same descriptor, new contents */
+}
+
+static void drift(lv_timer_t *timer)
+{
+    fr.phase = (fr.phase + 65536 * DRIFT_MS / DRIFT_CYCLE_MS) & 0xFFFF;
+    grad_apply();
+}
+
+static void grad_set(uint32_t color, bool plain)
+{
+    char text[64];
+    store_front_grad(text, sizeof(text));
+    bool animate = grad_parse(text, color, plain);
+    if (animate && !fr.drift) {
+        fr.drift = lv_timer_create(drift, DRIFT_MS, NULL);
+    } else if (!animate && fr.drift) {
+        lv_timer_delete(fr.drift);
+        fr.drift = NULL;
+    }
+    grad_apply();
 }
 
 /* ---------- photos ---------- */
@@ -162,8 +276,7 @@ static void refresh(void)
 
     switch (fr.mode) {
     case STORE_MODE_CARD:
-        lv_obj_set_style_bg_color(fr.panel, darken(color, 60), 0);
-        lv_obj_set_style_bg_grad_color(fr.panel, lv_color_hex(color), 0);
+        grad_set(color, false);
         text_or_label(STORE_PICTURE_CARD, text);
         break;
 
@@ -177,7 +290,7 @@ static void refresh(void)
         break;
 
     case STORE_MODE_IMAGE_TEXT: {
-        lv_obj_set_style_bg_color(fr.panel, lv_color_hex(color), 0);
+        grad_set(color, true);
         char label[64];
         store_front_label(label, sizeof(label));
         text_or_label(STORE_PICTURE_LABEL, label);
@@ -189,6 +302,9 @@ static void refresh(void)
 
 static void deleted(lv_event_t *e)
 {
+    if (fr.drift) {
+        lv_timer_delete(fr.drift);
+    }
     text_free(&fr.text);
     if (fr.mapped) {
         photos_unmap(fr.map);           /* the image object is already gone */

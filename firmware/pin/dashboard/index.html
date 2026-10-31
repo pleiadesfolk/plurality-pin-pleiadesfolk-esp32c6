@@ -97,6 +97,10 @@
   .seg { display: inline-flex; background: var(--line); border-radius: 10px; padding: 2px; }
   .seg button { background: none; padding: 6px 12px; }
   .seg button.active { background: var(--card); }
+  .grad-colors { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
+  .grad-colors span { display: inline-flex; align-items: center; gap: 2px; }
+  .grad-colors input[type=color] { width: 44px; height: 36px; padding: 2px; }
+  .grad-colors button { padding: 4px 8px; }
   progress { width: 100%; height: 8px; accent-color: var(--accent); }
   dialog {
     border: 0; border-radius: 16px; padding: 16px; background: var(--card); color: var(--text);
@@ -236,6 +240,19 @@
   <input type="text" id="editor-pronouns">
   <label class="field" for="editor-color">Colour</label>
   <input type="color" id="editor-color">
+  <div id="editor-bg-box">
+  <label class="field">Background</label>
+  <div class="seg" id="editor-bg">
+    <button data-bg="plain">Member colour</button><button data-bg="grad">Gradient</button>
+  </div>
+  <div id="editor-grad-box" hidden>
+    <div class="grad-colors" id="editor-grad-colors"></div>
+    <div class="seg" id="editor-grad-dir" style="margin-top:8px">
+      <button data-dir="h">Left to right</button><button data-dir="v">Top to bottom</button>
+    </div>
+    <label class="check"><input type="checkbox" id="editor-grad-animate"> Animate (colours slowly drift)</label>
+  </div>
+  </div>
   <label class="check"><input type="checkbox" id="editor-button"> Include when pressing the pin's side button</label>
   <div class="row" style="margin-top:16px">
     <button id="editor-delete" class="danger">Delete</button>
@@ -558,6 +575,46 @@ function textCanvas(t) {
   return tmp;
 }
 
+/* ---------- background gradients (must match grad_parse / grad_apply in fronter.c) ---------- */
+
+// m.grad: "h|RRGGBB,RRGGBB,...|1" = direction (h/v), 2-7 colours, drift (1/0); "" = default
+function parseGrad(text) {
+  const [dir, colors = "", animate] = (text || "").split("|");
+  const list = colors.split(",").filter(c => /^[0-9a-f]{6}$/i.test(c)).slice(0, 7).map(c => "#" + c.toLowerCase());
+  return list.length < 2 ? null : { vertical: dir === "v", colors: list, animate: animate === "1" };
+}
+const gradText = g => g ? `${g.vertical ? "v" : "h"}|${g.colors.map(c => c.slice(1).toUpperCase()).join(",")}|${g.animate ? 1 : 0}` : "";
+
+const DRIFT_CYCLE_MS = 10000;           // fronter.c DRIFT_CYCLE_MS
+const rgbOf = c => { const n = parseInt(c.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const rgbText = ([r, g, b]) => `rgb(${r},${g},${b})`;
+
+// Fill the screen with m's background. Without a gradient: dark -> colour (namecard)
+// or just the colour (`plain`, beside a photo). Animated ones drift with the clock.
+function fillBackground(ctx, m, plain) {
+  const color = hex(m.color);
+  const g = parseGrad(m.grad);
+  const colors = (g ? g.colors : [plain ? color : null, color]).map(c => c ? rgbOf(c) : rgbOf(color).map(v => Math.floor(v * 40 / 100)));
+  const n = colors.length;
+  const fill = g?.vertical ? ctx.createLinearGradient(0, 0, 0, 280) : ctx.createLinearGradient(0, 0, 456, 0);
+  if (!g?.animate) {
+    colors.forEach((c, k) => fill.addColorStop(k / (n - 1), rgbText(c)));
+  } else {
+    // The colours form a loop (last back to first), shifted along by the phase
+    const phase = (Date.now() % DRIFT_CYCLE_MS) / DRIFT_CYCLE_MS;
+    const at = u => {                   // loop colour at u (0..1)
+      const pos = ((u % 1) + 1) % 1 * n, k = Math.floor(pos) % n, t = pos - Math.floor(pos);
+      return colors[k].map((v, i) => Math.round(v + (colors[(k + 1) % n][i] - v) * t));
+    };
+    const edge = rgbText(at(-phase));
+    fill.addColorStop(0, edge);
+    colors.forEach((c, k) => fill.addColorStop((k / n + phase) % 1, rgbText(c)));
+    fill.addColorStop(1, edge);
+  }
+  ctx.fillStyle = fill;
+  ctx.fillRect(0, 0, 456, 280);
+}
+
 /*
  * Show what the pin will show for `m` ({mode, name, card, label, color}). `photo` is
  * a photo to crop, or `stored` = {full, side} canvases already on the pin, or neither.
@@ -582,8 +639,7 @@ function drawPreview(canvas, m, photo, stored) {
   }
 
   if (m.mode === "image_text") {
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, 456, 280);
+    fillBackground(ctx, m, true);
     const t = drawText(m.label || m.name, labelSpec(m.style));
     if (t.w) ctx.drawImage(textCanvas(t), LABEL_BOX.x, LABEL_BOX.y + Math.round((LABEL_BOX.h - t.h) / 2));
     if (photo) ctx.drawImage(renderSide(photo), SIDE.x, 0);
@@ -592,11 +648,7 @@ function drawPreview(canvas, m, photo, stored) {
     return t;
   }
 
-  const grad = ctx.createLinearGradient(0, 0, 456, 0);
-  grad.addColorStop(0, darken(color, 60));
-  grad.addColorStop(1, color);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 456, 280);
+  fillBackground(ctx, m, false);
   const t = drawText(m.card || m.name, cardSpec(m.style));
   if (t.w) ctx.drawImage(textCanvas(t), CARD_BOX.x, CARD_BOX.y + Math.round((CARD_BOX.h - t.h) / 2));   // LEFT_MID, as on the pin
   return t;
@@ -735,6 +787,8 @@ function openEditor(index) {
   $("editor-mode").value = m.mode || "card";
   editorStyle = parseStyle(m.style);
   showEditorStyle();
+  editorGrad = parseGrad(m.grad);
+  showEditorGrad();
   $("editor-label").value = m.label || m.name;
   $("editor-avatar").hidden = !m.avatar;
   $("editor-zoom").value = 1;
@@ -764,6 +818,7 @@ function editorMember() {
     label: $("editor-label").value.trim() || name,
     color: $("editor-color").value,
     style: styleText(editorStyle),
+    grad: gradText(editorGrad),
   };
 }
 
@@ -799,10 +854,72 @@ $("editor-align").addEventListener("click", e => {
   showEditorStyle(); updateEditorPreview();
 });
 
+// The background gradient being edited (parseGrad form), or null for the plain default
+let editorGrad = null;
+
+function showEditorGrad() {
+  const g = editorGrad;
+  $("editor-bg").querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.bg === (g ? "grad" : "plain")));
+  $("editor-grad-box").hidden = !g;
+  if (g) {
+    $("editor-grad-colors").innerHTML = g.colors.map((c, i) =>
+      `<span><input type="color" value="${c}" data-i="${i}" aria-label="Colour ${i + 1}">` +
+      (g.colors.length > 2 ? `<button data-remove="${i}" aria-label="Remove colour ${i + 1}">&times;</button>` : "") + `</span>`).join("") +
+      (g.colors.length < 7 ? `<button data-add>+ Add colour</button>` : "");
+    $("editor-grad-dir").querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.dir === (g.vertical ? "v" : "h")));
+    $("editor-grad-animate").checked = g.animate;
+  }
+  animateEditorPreview();
+}
+
+$("editor-bg").addEventListener("click", e => {
+  const b = e.target.closest("[data-bg]");
+  if (!b) return;
+  if (b.dataset.bg === "plain") editorGrad = null;
+  else if (!editorGrad) {
+    // Start from the default look: dark -> member colour
+    const c = $("editor-color").value;
+    editorGrad = { vertical: false, colors: ["#" + rgbOf(c).map(v => Math.floor(v * 40 / 100).toString(16).padStart(2, "0")).join(""), c], animate: false };
+  }
+  showEditorGrad(); updateEditorPreview();
+});
+$("editor-grad-colors").addEventListener("input", e => {
+  if (e.target.dataset.i === undefined) return;
+  editorGrad.colors[+e.target.dataset.i] = e.target.value;
+  updateEditorPreview();
+});
+$("editor-grad-colors").addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  if (b.dataset.remove !== undefined) editorGrad.colors.splice(+b.dataset.remove, 1);
+  else editorGrad.colors.push(editorGrad.colors[editorGrad.colors.length - 1]);
+  showEditorGrad(); updateEditorPreview();
+});
+$("editor-grad-dir").addEventListener("click", e => {
+  const b = e.target.closest("[data-dir]");
+  if (!b) return;
+  editorGrad.vertical = b.dataset.dir === "v";
+  showEditorGrad(); updateEditorPreview();
+});
+$("editor-grad-animate").addEventListener("change", () => {
+  editorGrad.animate = $("editor-grad-animate").checked;
+  showEditorGrad(); updateEditorPreview();
+});
+
+// Keep redrawing the preview while an animated gradient is being edited
+let previewTimer = null;
+function animateEditorPreview(stop) {
+  const on = !stop && !!editorGrad?.animate && $("editor-mode").value !== "image";
+  if (on && !previewTimer) previewTimer = setInterval(() => $("editor").open ? updateEditorPreview() : animateEditorPreview(true), 150);
+  else if (!on && previewTimer) { clearInterval(previewTimer); previewTimer = null; }
+}
+
 function updateEditorMode() {
   const mode = $("editor-mode").value;
   $("editor-photo-box").hidden = mode === "card";
   $("editor-label-box").hidden = mode !== "image_text";
+  $("editor-bg-box").hidden = mode === "image";
+  animateEditorPreview();
   updateEditorPreview();
 }
 
@@ -914,6 +1031,7 @@ $("editor-save").addEventListener("click", async () => {
   m.mode = $("editor-mode").value;
   m.label = label;
   m.style = styleText(editorStyle);
+  m.grad = gradText(editorGrad);
   m.avatar ??= "";
   if (editing < 0) members.push(m);
 
