@@ -30,6 +30,8 @@
 #include "esp_log.h"
 #include "esp_http_client.h"
 #include "esp_crt_bundle.h"
+#include "esp_event.h"
+#include "esp_netif.h"
 #include "nvs.h"
 #include "cJSON.h"
 #include "pksync.h"
@@ -60,10 +62,11 @@ static uint32_t checked, synced, relay_seen;
 static int relay_via = -1;              /* route of the last good relay answer */
 static char error[64], relay_error[64];
 static TaskHandle_t task;
-static volatile bool settings_changed;
+static volatile bool settings_changed, network_changed;
 
 static esp_http_client_handle_t relay_client[ROUTE_COUNT];   /* kept open between requests */
 static int relay_seq = -1;
+static int home_tries = 1;              /* home probes before taking the internet route */
 
 static bool is_system_id(const char *s)
 {
@@ -295,7 +298,10 @@ static bool relay_wait(void)
 
     /* Home when it answers quickly (we're on the home network), else internet */
     route_t route = ROUTE_NET;
-    if (have_home) {
+    for (int i = 0; have_home && route == ROUTE_NET && i < home_tries; i++) {
+        if (i) {
+            vTaskDelay(pdMS_TO_TICKS(1000));
+        }
         response_t probe = { 0 };
         int status = relay_client[ROUTE_HOME] ? 200     /* it worked last time */
                      : relay_get(ROUTE_HOME, "/health", HOME_PROBE_MS, &probe);
@@ -304,6 +310,7 @@ static bool relay_wait(void)
             route = ROUTE_HOME;
         }
     }
+    home_tries = 1;
     if (route == ROUTE_NET && !have_net) {
         set_text(relay_error, sizeof(relay_error), "the relay's home address isn't reachable from here");
         return false;
@@ -335,8 +342,12 @@ static bool relay_wait(void)
     set_text(relay_error, sizeof(relay_error), "");
     xSemaphoreTake(lock, portMAX_DELAY);
     relay_seen = (uint32_t)time(NULL);
+    bool new_route = relay_via != (int)route;
     relay_via = route;
     xSemaphoreGive(lock);
+    if (new_route) {
+        ESP_LOGI(TAG, "using the relay's %s address", ROUTE_NAMES[route]);
+    }
     if (seq->valueint != relay_seq) {
         relay_seq = seq->valueint;
         apply((uint32_t)cJSON_GetNumberValue(cJSON_GetObjectItem(root, "time")), cJSON_GetObjectItem(root, "members"));
@@ -357,6 +368,16 @@ static void sync_task(void *arg)
             relay_close(ROUTE_NET);
             relay_seq = -1;
             last_direct = 0;
+        }
+        if (network_changed) {
+            /* New network (e.g. home Wi-Fi -> hotspot): the old connections
+             * are dead, and the home address may or may not be reachable now.
+             * Ask afresh straight away, in case a switch came in meanwhile. */
+            network_changed = false;
+            relay_close(ROUTE_HOME);
+            relay_close(ROUTE_NET);
+            relay_seq = -1;
+            home_tries = 3;             /* the first moments on a network can be patchy */
         }
         bool relay;
         xSemaphoreTake(lock, portMAX_DELAY);
@@ -379,6 +400,14 @@ static void sync_task(void *arg)
         }
         ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(relay ? RELAY_RETRY_MS : POLL_MS));
     }
+}
+
+/* Joined a network (ESP-IDF's event task): wake the sync instead of letting it
+ * sit out a retry delay */
+static void on_got_ip(void *arg, esp_event_base_t base, int32_t id, void *data)
+{
+    network_changed = true;
+    xTaskNotifyGive(task);
 }
 
 static void load_str(nvs_handle_t nvs, const char *key, char *dst, size_t size)
@@ -405,6 +434,7 @@ void pksync_start(void)
     /* TLS needs a big stack. Lowest priority: setting up a TLS session is
      * seconds of maths, which mustn't hold up anything else (or the watchdog) */
     xTaskCreate(sync_task, "pksync", 8192, NULL, tskIDLE_PRIORITY, &task);
+    esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, on_got_ip, NULL);
 }
 
 static bool printable(const char *s, size_t max)
