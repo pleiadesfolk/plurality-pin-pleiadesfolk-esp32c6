@@ -70,6 +70,9 @@
   label.check input { width: 20px; height: 20px; accent-color: var(--accent); }
   .tag { font-size: 12px; color: var(--accent); }
   .dot { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+  .whos { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+  .who { display: inline-flex; align-items: center; gap: 6px; }
+  .who .dot { width: 10px; height: 10px; }
   .warn { color: var(--accent); font-size: 14px; }
   .error { color: var(--bad); }
 
@@ -137,20 +140,24 @@
     <div class="members" id="front-members"></div>
   </section>
 
-  <!-- Members: edit namecard text, pronouns, colour -->
+  <!-- Members: how each member (and "nobody fronting") shows on the pin -->
   <section id="tab-members">
-    <p class="dim" style="margin-top:0">The pin's side button switches to the next member marked <span class="tag">● button</span>, most PluralKit messages first (or to anyone, if nobody is marked).</p>
+    <p class="dim" style="margin-top:0">The pin's side button switches to the next member marked <span class="tag">Quick Switch</span>, most PluralKit messages first (or to anyone, if nobody is marked). Press it twice for nobody fronting, three times (or hold it) for the clock.</p>
     <div class="row">
       <input type="search" id="member-search" placeholder="Search members" class="grow">
       <button class="primary" id="member-add">Add member</button>
     </div>
     <label class="check" id="system-tag-box"><input type="checkbox" id="system-tag"> <span id="system-tag-text"></span></label>
     <p class="dim" id="system-tag-progress"></p>
+    <div class="box list" id="nobody-row" style="margin-top:12px"></div>
     <div class="box list" id="member-list" style="margin-top:12px"></div>
   </section>
 
-  <!-- History: time fronting per member -->
+  <!-- History: recent switches, time fronting per member, battery log -->
   <section id="tab-history">
+    <h2 style="margin-top:0">Recent switches</h2>
+    <div class="box list" id="history-recent"></div>
+    <h2>Time fronting</h2>
     <div class="seg" id="history-range">
       <button data-days="1">24 h</button>
       <button data-days="7" class="active">7 days</button>
@@ -158,8 +165,16 @@
       <button data-days="0">All</button>
     </div>
     <div class="box list" id="history-list" style="margin-top:12px"></div>
-    <h2>Recent switches</h2>
-    <div class="box list" id="history-recent"></div>
+    <h2>Battery</h2>
+    <div class="box">
+      <p class="dim" style="margin-top:0" id="battery-summary"></p>
+      <svg id="battery-chart" viewBox="0 0 600 220" style="width:100%; height:auto; display:block"></svg>
+      <p class="dim">The pin notes its battery voltage once a minute and keeps the last 4 days, even if the battery runs flat. To measure a full charge: charge it fully, clear the log, then use the pin on battery until it switches off.</p>
+      <div class="row">
+        <button id="battery-csv">Download</button>
+        <button id="battery-clear" class="danger">Clear log</button>
+      </div>
+    </div>
   </section>
 
   <!-- Wi-Fi networks the pin joins -->
@@ -196,7 +211,7 @@
         <button id="pw-remove">Remove password</button>
         <button id="pw-logout">Log out</button>
       </div>
-      <p class="dim">Forgot it? Hold the pin's side button for 10 seconds (it switches fronter once first) - that removes the password.</p>
+      <p class="dim">Forgot it? Hold the pin's side button for 10 seconds (it opens the clock first) - that removes the password.</p>
     </div>
   </section>
 
@@ -253,8 +268,10 @@
   <h2 style="margin-top:0" id="editor-title"></h2>
   <canvas class="preview" id="editor-preview" width="456" height="280"></canvas>
   <p class="warn" id="editor-warn"></p>
-  <label class="field" for="editor-name">Name</label>
-  <input type="text" id="editor-name" maxlength="40">
+  <div id="editor-name-box">
+    <label class="field" for="editor-name">Name</label>
+    <input type="text" id="editor-name" maxlength="40">
+  </div>
   <label class="field" for="editor-mode">Shown on the pin as</label>
   <select id="editor-mode">
     <option value="card">Namecard</option>
@@ -278,8 +295,11 @@
     <label class="field" for="editor-label">Name beside the photo</label>
     <input type="text" id="editor-label">
   </div>
-  <label class="field" for="editor-card">Namecard text</label>
-  <textarea id="editor-card"></textarea>
+  <div id="editor-card-box">
+    <label class="field" for="editor-card">Namecard text</label>
+    <textarea id="editor-card"></textarea>
+  </div>
+  <div id="editor-style-box">
   <div class="row" style="gap:8px">
     <div class="grow"><label class="field" for="editor-font">Font</label><select id="editor-font"></select></div>
     <div class="grow"><label class="field" for="editor-weight">Weight</label><select id="editor-weight"></select></div>
@@ -290,10 +310,11 @@
   <div class="seg" id="editor-align">
     <button data-align="left">Left</button><button data-align="center">Centre</button><button data-align="right">Right</button>
   </div>
-  <label class="field" for="editor-pronouns">Pronouns</label>
-  <input type="text" id="editor-pronouns">
-  <label class="field" for="editor-color">Colour</label>
-  <input type="color" id="editor-color">
+  </div>
+  <div id="editor-color-box">
+    <label class="field" for="editor-color">Background colour</label>
+    <input type="color" id="editor-color">
+  </div>
   <div id="editor-bg-box">
   <label class="field">Text colour</label>
   <div class="seg" id="editor-bg">
@@ -307,7 +328,7 @@
     <label class="check"><input type="checkbox" id="editor-grad-animate"> Animate (colours slowly drift)</label>
   </div>
   </div>
-  <label class="check"><input type="checkbox" id="editor-button"> Include when pressing the pin's side button</label>
+  <label class="check" id="editor-button-box"><input type="checkbox" id="editor-button"> Quick Switch</label>
   <div class="row" style="margin-top:16px">
     <button id="editor-delete" class="danger">Delete</button>
     <span class="grow"></span>
@@ -324,7 +345,7 @@
     <p class="error" id="login-error"></p>
     <button class="primary" id="login-go" style="width:100%">Log in</button>
   </form>
-  <p class="dim">Forgot it? Hold the pin's side button for 10 seconds to remove the password.</p>
+  <p class="dim">Forgot it? Hold the pin's side button for 10 seconds (it opens the clock first) to remove the password.</p>
 </dialog>
 
 <div id="toast"></div>
@@ -336,7 +357,7 @@ const $ = id => document.getElementById(id);
 
 /* ---------- pin API ---------- */
 
-let state = { system: "", members: [], front: [], front_since: 0, switches: 0, now: 0 };
+let state = { system: "", members: [], nobody: null, front: [], front_since: 0, switches: 0, now: 0 };
 let clockOffset = 0;                    // pin time - phone time, seconds
 
 async function api(method, path, body) {
@@ -430,6 +451,8 @@ function membersPayload() {
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const hex = c => "#" + (c || "468DC3").replace(/^#/, "").padStart(6, "0").slice(0, 6);
+// A member's colour in PluralKit (as imported), for history - not their card colour
+const pkHex = m => hex(m.pk_color || m.color);
 
 function toast(text) {
   const t = $("toast");
@@ -896,11 +919,12 @@ function renderFront() {
 // The current fronter as the pin shows them (photos fetched back from the pin)
 async function renderFrontPreview(current) {
   await loadFonts();
-  const m = current || { mode: "card", name: state.system, card: state.system, color: "468DC3" };
+  const shown = current || state.nobody;
+  const m = shown || { mode: "card", name: state.system, card: state.system, color: "468DC3" };
   let stored = null;
-  if (current && (current.mode === "image" || current.mode === "image_text")) {
-    const kind = current.mode === "image" ? "full" : "side";
-    stored = { [kind]: await storedPhoto(current.id, kind).catch(() => null) };
+  if (shown && (shown.mode === "image" || shown.mode === "image_text")) {
+    const kind = shown.mode === "image" ? "full" : "side";
+    stored = { [kind]: await storedPhoto(shown.id, kind).catch(() => null) };
   }
   drawPreview($("front-preview"), m, null, stored);
 }
@@ -929,18 +953,27 @@ function renderMembers() {
   const rows = state.members
     .map((m, i) => ({ m, i }))
     .sort((a, b) => a.m.name.localeCompare(b.m.name))
-    .filter(({ m }) => !query || (m.name + " " + m.card + " " + m.pronouns).toLowerCase().includes(query))
+    .filter(({ m }) => !query || (m.name + " " + m.card).toLowerCase().includes(query))
     .map(({ m, i }) => `
       <div class="item" data-index="${i}" style="cursor:pointer">
-        <span class="dot" style="background:${hex(m.color)}"></span>
         <div class="grow">
-          <div>${esc(m.name)} <span class="dim">${esc(m.pronouns)}</span>${m.button ? ' <span class="tag">● button</span>' : ""}${m.mode === "image" ? ' <span class="tag">▣ image</span>' : m.mode === "image_text" ? ' <span class="tag">◐ image + name</span>' : ""}</div>
+          <div>${esc(m.name)}${m.button ? ' <span class="tag">Quick Switch</span>' : ""}${m.mode === "image" ? ' <span class="tag">▣ image</span>' : m.mode === "image_text" ? ' <span class="tag">◐ image + name</span>' : ""}</div>
           <div class="dim">${esc(m.card)}</div>
         </div>
         <span class="dim">Edit</span>
         <button class="icon-delete" data-delete="${i}" aria-label="Delete ${esc(m.name)}" title="Delete">${TRASH_ICON}</button>
       </div>`);
   $("member-list").innerHTML = rows.join("") || `<p class="dim">No members yet - use Import.</p>`;
+  const n = state.nobody;
+  $("nobody-row").innerHTML = `
+    <div class="item" data-index="${NOBODY}" style="cursor:pointer">
+      <div class="grow">
+        <div>Nobody fronting</div>
+        <div class="dim">${n ? esc(n.mode === "image" ? "Photo" : n.mode === "image_text" ? n.label || state.system : n.card || state.system)
+          : `Shows "${esc(state.system || "the system name")}" - tap to change`}</div>
+      </div>
+      <span class="dim">Edit</span>
+    </div>`;
   $("system-tag-box").style.display = state.system ? "" : "none";   // .check sets display, so hidden would not work
   $("system-tag-text").textContent = `Add "${systemTag().trim()}" to card text`;
   $("system-tag").checked = systemTagOn();
@@ -968,7 +1001,8 @@ $("system-tag").addEventListener("change", async e => {
   await loadState();
 });
 
-let editing = -1;                       // member index, or -1 for a new member
+const NOBODY = -2;                      // "editing" value for the nobody-fronting card
+let editing = -1;                       // member index, -1 for a new member, or NOBODY
 let cardFollowsName = false;            // new member: card text tracks the name until edited
 let editorPhoto = null;                 // a new photo to crop and send (makePhoto), or null
 let editorStored = null;                // photos the pin already has for this member: {full, side}
@@ -983,15 +1017,24 @@ const withTag = (card, on, system) => {
 };
 const defaultCard = name => withTag(name, systemTagOn());
 
+// What "nobody fronting" looks like before it's set up: the system name on a namecard
+const defaultNobody = () => ({ id: "nobody0", name: "Nobody fronting", card: state.system || "Nobody fronting",
+  label: state.system || "Nobody fronting", color: "468DC3", mode: "card", style: "", grad: "", fast: false, avatar: "" });
+// The member (or nobody card) the editor has open, as saved on the pin
+const editingSaved = () => editing === NOBODY ? state.nobody : state.members[editing];
+
 function openEditor(index) {
   editing = index;
-  const m = index >= 0 ? state.members[index]
-    : { name: "", card: "", pronouns: "", color: "468DC3" };
-  cardFollowsName = index < 0;
-  $("editor-title").textContent = index >= 0 ? m.name : "New member";
+  const nobody = index === NOBODY;
+  const m = nobody ? state.nobody || defaultNobody()
+    : index >= 0 ? state.members[index]
+    : { name: "", card: "", color: "468DC3" };
+  cardFollowsName = index === -1;
+  $("editor-title").textContent = nobody ? "Nobody fronting" : index >= 0 ? m.name : "New member";
+  $("editor-name-box").hidden = nobody;
+  $("editor-button-box").style.display = nobody ? "none" : "";   // .check sets display, so hidden would not work
   $("editor-name").value = m.name;
   $("editor-card").value = m.card;
-  $("editor-pronouns").value = m.pronouns;
   $("editor-color").value = hex(m.color);
   $("editor-button").checked = !!m.button;
   $("editor-mode").value = m.mode || "card";
@@ -1003,14 +1046,15 @@ function openEditor(index) {
   $("editor-avatar").hidden = !m.avatar;
   $("editor-zoom").value = 1;
   $("editor-delete").hidden = index < 0;
+  if (nobody) $("editor-avatar").hidden = true;
   editorPhoto = null;
   editorStored = null;
   editorPhotos = { free_slots: null, have: "" };
   $("editor-fast").checked = !!m.fast;
   showFastNote();
-  if (index >= 0) loadStoredPhotos(m);
+  if (index >= 0 || nobody) loadStoredPhotos(m);
   photoInfo().then(info => {
-    if (state.members[editing]?.id !== m.id && index >= 0) return;
+    if (editing !== index) return;      // the editor moved on meanwhile
     editorPhotos = { free_slots: info.free_slots, have: info.photos[m.id] || "" };
     // Photos already in a slot from before "fast" existed count as fast
     if (/[FS]/.test(editorPhotos.have)) $("editor-fast").checked = true;
@@ -1018,12 +1062,12 @@ function openEditor(index) {
   }).catch(() => {});
   updateEditorMode();
   $("editor").showModal();
-  if (index < 0) $("editor-name").focus();
+  if (index === -1) $("editor-name").focus();
 }
 
 // What the pin has for the member being edited (from photoInfo)
 let editorPhotos = { free_slots: null, have: "" };
-const wasFast = () => /[FS]/.test(editorPhotos.have) || !!state.members[editing]?.fast;
+const wasFast = () => /[FS]/.test(editorPhotos.have) || !!editingSaved()?.fast;
 
 function showFastNote() {
   const free = editorPhotos.free_slots;
@@ -1033,14 +1077,14 @@ function showFastNote() {
 
 async function loadStoredPhotos(m) {
   const [full, side] = await Promise.all(["full", "side"].map(k => storedPhoto(m.id, k).catch(() => null)));
-  if (state.members[editing]?.id !== m.id) return;   // the editor moved on meanwhile
+  if (editingSaved()?.id !== m.id) return;   // the editor moved on meanwhile
   editorStored = { full, side };
   updateEditorPreview();
 }
 
 // The member as currently typed into the editor
 function editorMember() {
-  const name = $("editor-name").value.trim() || " ";
+  const name = editing === NOBODY ? state.system || "Nobody fronting" : $("editor-name").value.trim() || " ";
   return {
     mode: $("editor-mode").value,
     name,
@@ -1143,11 +1187,16 @@ function animateEditorPreview(stop) {
   else if (!on && previewTimer) { clearInterval(previewTimer); previewTimer = null; }
 }
 
+// Only what the chosen mode uses: namecard text for "card", the name beside the
+// photo for "image with name", neither (nor text styling) for a plain photo
 function updateEditorMode() {
   const mode = $("editor-mode").value;
   $("editor-photo-box").hidden = mode === "card";
   $("editor-label-box").hidden = mode !== "image_text";
   $("editor-zoom-box").hidden = mode !== "image_text";       // the full photo isn't cropped
+  $("editor-card-box").hidden = mode !== "card";
+  $("editor-style-box").hidden = mode === "image";
+  $("editor-color-box").hidden = mode === "image";
   $("editor-bg-box").hidden = mode === "image";
   animateEditorPreview();
   updateEditorPreview();
@@ -1227,6 +1276,7 @@ $("member-list").addEventListener("click", e => {
   const row = e.target.closest("[data-index]");
   if (row) openEditor(+row.dataset.index);
 });
+$("nobody-row").addEventListener("click", () => openEditor(NOBODY));
 $("member-search").addEventListener("input", renderMembers);
 $("member-add").addEventListener("click", () => openEditor(-1));
 $("editor-name").addEventListener("input", () => {
@@ -1237,51 +1287,51 @@ $("editor-card").addEventListener("input", () => { cardFollowsName = false; upda
 $("editor-color").addEventListener("input", updateEditorPreview);
 $("editor-cancel").addEventListener("click", () => $("editor").close());
 $("editor-save").addEventListener("click", async () => {
-  const name = $("editor-name").value.trim();
+  const isNobody = editing === NOBODY;
+  const name = isNobody ? "Nobody fronting" : $("editor-name").value.trim();
   if (!name) { toast("A member needs a name"); $("editor-name").focus(); return; }
-  if (state.members.some((m, i) => i !== editing && m.name.toLowerCase() === name.toLowerCase())) {
+  if (!isNobody && state.members.some((m, i) => i !== editing && m.name.toLowerCase() === name.toLowerCase())) {
     toast(`There's already a member called ${name}`);
     return;
   }
   // The pin stores names in 48 bytes and namecard text in 128 (store.c); CJK and emoji take 3-4 each
   const bytes = s => new TextEncoder().encode(s).length;
-  const card = $("editor-card").value.trim() || defaultCard(name);
+  const card = $("editor-card").value.trim() || (isNobody ? state.system || name : defaultCard(name));
   if (bytes(name) > 47) { toast("That name is too long for the pin"); return; }
   if (bytes(card) > 127) { toast("That namecard text is too long for the pin"); return; }
-  const label = $("editor-label").value.trim() || name;
+  const label = $("editor-label").value.trim() || (isNobody ? state.system || name : name);
   if (bytes(label) > 63) { toast("The name beside the photo is too long for the pin"); return; }
 
   // Work on a copy, so a failed save doesn't leave half-changed members behind
   const members = state.members.map(m => ({ ...m }));
-  const m = editing >= 0 ? members[editing] : { id: newId() };
+  const m = isNobody ? { ...(state.nobody || defaultNobody()) } : editing >= 0 ? members[editing] : { id: newId() };
   m.name = name;
   m.card = card;
-  m.pronouns = $("editor-pronouns").value.trim();
   m.color = $("editor-color").value.replace("#", "").toUpperCase();
-  m.button = $("editor-button").checked;
+  m.button = !isNobody && $("editor-button").checked;
   m.mode = $("editor-mode").value;
   m.label = label;
   m.style = styleText(editorStyle);
   m.grad = gradText(editorGrad);
   m.fast = $("editor-fast").checked;
   m.avatar ??= "";
-  const moving = editing >= 0 && m.fast !== wasFast() && !editorPhoto && /[fs]/i.test(editorPhotos.have);
+  const moving = editing !== -1 && m.fast !== wasFast() && !editorPhoto && /[fs]/i.test(editorPhotos.have);
   if (m.fast && !wasFast() && editorPhotos.free_slots === 0 && (editorPhoto || moving)) {
     toast(`All ${FAST_PLACES} fast photo places are in use - untick Fast photo on another member first`);
     return;
   }
-  if (editing < 0) members.push(m);
+  if (editing === -1) members.push(m);
 
   $("editor-save").disabled = true;
   try {
-    await api("PUT", "/api/members", { system: state.system, members });
+    await api("PUT", "/api/members", isNobody ? { system: state.system, members, nobody: m } : { system: state.system, members });
     await uploadPictures(m, editorPhoto);
     if (moving) {
       toast(m.fast ? "Moving the photo into the pin's memory…" : "Moving the photo to the SD card…");
       await movePhotos(m, editorPhotos.have);
     }
     $("editor").close();
-    toast(editing >= 0 ? "Saved" : `Added ${name}`);
+    toast(editing !== -1 ? "Saved" : `Added ${name}`);
     await loadState();
   } catch (e) { toast("Couldn't save: " + e.message); }
   $("editor-save").disabled = false;
@@ -1339,19 +1389,77 @@ async function renderHistory() {
   $("history-list").innerHTML = sorted.map(([idx, s]) => {
     const m = state.members[idx];
     return `<div class="item">
-      <span class="dot" style="background:${hex(m.color)}"></span>
+      <span class="dot" style="background:${pkHex(m)}"></span>
       <div class="grow">
         <div class="row"><span class="grow">${esc(m.name)}</span><span class="dim">${duration(s)}</span></div>
-        <div class="bar"><div style="width:${(s / max * 100).toFixed(1)}%; background:${hex(m.color)}"></div></div>
+        <div class="bar"><div style="width:${(s / max * 100).toFixed(1)}%; background:${pkHex(m)}"></div></div>
       </div></div>`;
   }).join("") || `<p class="dim">No fronting in this period.</p>`;
 
   $("history-recent").innerHTML = recent.map(({ start, members }) => {
-    const names = members.map(i => state.members[i]?.name || "?").join(", ") || "Nobody";
+    const who = members.map(i => state.members[i]).map(m => m
+      ? `<span class="who"><span class="dot" style="background:${pkHex(m)}"></span>${esc(m.name)}</span>`
+      : `<span class="who">?</span>`).join("") || `<span class="who dim">Nobody</span>`;
     const when = new Date((start - clockOffset) * 1000).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
-    return `<div class="item"><span class="grow">${esc(names)}</span><span class="dim">${when}</span></div>`;
+    return `<div class="item"><span class="grow whos">${who}</span><span class="dim">${when}</span></div>`;
   }).join("") || `<p class="dim">No switches yet.</p>`;
 }
+
+/* ---------- battery log (History tab) ---------- */
+
+let batteryLog = [];                    // [{time, volts, usb}], oldest first
+
+async function renderBattery() {
+  const view = new DataView(await (await api("GET", "/api/battery")).arrayBuffer());
+  batteryLog = [];
+  for (let i = 0; i + 8 <= view.byteLength; i += 8)
+    batteryLog.push({ time: view.getUint32(i, true), volts: view.getUint16(i + 4, true) / 1000, usb: !!view.getUint8(i + 6) });
+  const onBattery = batteryLog.filter(e => !e.usb);
+  const fmt = t => new Date((t - clockOffset) * 1000).toLocaleString([], { dateStyle: "short", timeStyle: "short" });
+  const last = onBattery[onBattery.length - 1];
+  $("battery-summary").textContent = !batteryLog.length ? "Nothing logged yet."
+    : !onBattery.length ? `${batteryLog.length} readings, all on USB power - unplug the pin to log the battery.`
+    : `${onBattery.length} readings on battery, ${fmt(onBattery[0].time)} – ${fmt(last.time)}. Latest: ${last.volts.toFixed(2)} V.`;
+
+  // Volts over time; the line breaks where the pin was on USB or off
+  const W = 600, H = 220, L = 40, B = 24, lo = 3.2, hi = 4.3;
+  const t0 = onBattery[0]?.time, t1 = last?.time;
+  const x = t => L + (t1 > t0 ? (t - t0) / (t1 - t0) : 0) * (W - L - 8);
+  const y = v => (H - B) - (Math.min(hi, Math.max(lo, v)) - lo) / (hi - lo) * (H - B - 8);
+  let lines = "", run = [], prev = null;
+  for (const e of batteryLog) {
+    if (e.usb || (prev && e.time - prev.time > 300)) { if (run.length > 1) lines += `<polyline points="${run.join(" ")}"/>`; run = []; }
+    if (!e.usb && t0 !== undefined) run.push(`${x(e.time).toFixed(1)},${y(e.volts).toFixed(1)}`);
+    prev = e;
+  }
+  if (run.length > 1) lines += `<polyline points="${run.join(" ")}"/>`;
+  const grid = [3.4, 3.6, 3.8, 4.0, 4.2].map(v =>
+    `<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="currentColor" stroke-opacity=".15"/>` +
+    `<text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="currentColor" fill-opacity=".6">${v.toFixed(1)}</text>`).join("");
+  const hours = t1 > t0 ? `<text x="${W - 8}" y="${H - 6}" text-anchor="end" font-size="12" fill="currentColor" fill-opacity=".6">${duration(t1 - t0)}</text>` +
+    `<text x="${L}" y="${H - 6}" font-size="12" fill="currentColor" fill-opacity=".6">0</text>` : "";
+  $("battery-chart").innerHTML = grid + hours +
+    `<g fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round">${lines}</g>`;
+}
+
+$("battery-csv").addEventListener("click", () => {
+  if (!batteryLog.length) return toast("Nothing logged yet");
+  const csv = "time,volts,usb\n" + batteryLog.map(e =>
+    `${new Date((e.time - clockOffset) * 1000).toISOString()},${e.volts.toFixed(3)},${e.usb ? 1 : 0}`).join("\n") + "\n";
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+  a.download = "pin-battery.csv";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+$("battery-clear").addEventListener("click", async () => {
+  if (!confirm("Clear the battery log? Do this when starting a new measurement, e.g. just after charging.")) return;
+  try {
+    await api("DELETE", "/api/battery");
+    await renderBattery();
+    toast("Battery log cleared");
+  } catch (e) { toast(e.message); }
+});
 
 $("history-range").addEventListener("click", e => {
   const b = e.target.closest("[data-days]");
@@ -1373,15 +1481,15 @@ function convertExport(pk) {
   const system = pk.name || "";
   const tagOn = systemTagOn();
   const list = [...pk.members].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-  // Keep what was set on the dashboard (button tick, display mode, image text)
+  // Keep what was set on the dashboard (Quick Switch, display mode, card colour, image text)
   // for members that are already on the pin; their photos stay on the pin too
   const before = new Map(state.members.map(m => [m.id, m]));
   const members = list.map(m => ({
     id: m.id,
     name: m.name || m.id,
     card: withTag(m.display_name || m.name, tagOn, system),
-    pronouns: m.pronouns || "",
-    color: (m.color || "468DC3").toUpperCase(),
+    color: before.get(m.id)?.color || (m.color || "468DC3").toUpperCase(),
+    pk_color: (m.color || "").toUpperCase(),
     messages: m.message_count || 0,
     button: !!before.get(m.id)?.button,
     mode: before.get(m.id)?.mode || "card",
@@ -1432,8 +1540,8 @@ function previewImport(p) {
       <div id="import-progress" style="margin-top:12px"></div>
     </div>
     <div class="box list">${p.members.map(m => `
-      <div class="item"><span class="dot" style="background:${hex(m.color)}"></span>
-        <div class="grow"><div>${esc(m.name)} <span class="dim">${esc(m.pronouns)}</span></div><div class="dim">${esc(m.card)}</div></div>
+      <div class="item"><span class="dot" style="background:${pkHex(m)}"></span>
+        <div class="grow"><div>${esc(m.name)}</div><div class="dim">${esc(m.card)}</div></div>
       </div>`).join("")}
     </div>`;
   $("import-go").addEventListener("click", runImport);
@@ -1656,7 +1764,10 @@ document.querySelector("nav").addEventListener("click", e => {
   if (!b) return;
   document.querySelectorAll("nav button").forEach(x => x.classList.toggle("active", x === b));
   document.querySelectorAll("main section").forEach(s => s.classList.toggle("active", s.id === "tab-" + b.dataset.tab));
-  if (b.dataset.tab === "history") renderHistory().catch(err => toast(err.message));
+  if (b.dataset.tab === "history") {
+    renderHistory().catch(err => toast(err.message));
+    renderBattery().catch(err => toast(err.message));
+  }
   if (b.dataset.tab === "wifi") loadWifi().catch(err => toast(err.message));
   if (b.dataset.tab === "import") loadPkSync().catch(err => toast(err.message));
 });

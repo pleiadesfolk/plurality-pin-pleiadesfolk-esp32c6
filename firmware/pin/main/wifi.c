@@ -69,6 +69,8 @@ static volatile bool clock_set;         /* the clock has been set from the inter
 static bool started;                    /* the driver is initialised */
 static volatile bool enabled = true;
 static int current = -1;                /* network being joined / joined, index into nets */
+static int wanted = -1;                 /* network to try first next time (wifi_switch_next) */
+static volatile bool switching;         /* we left a network on purpose to join another */
 static char current_ssid[33];
 static esp_ip4_addr_t current_ip;
 
@@ -195,8 +197,12 @@ static void scan_done(void)
     }
     wifi_config_t config = {0};
     xSemaphoreTake(lock, portMAX_DELAY);
+    /* In list order, or from the network asked for (and round from there) */
+    int first = wanted >= 0 && wanted < net_count ? wanted : 0;
+    wanted = -1;
     current = -1;
-    for (int i = 0; i < net_count && current < 0; i++) {
+    for (int j = 0; j < net_count && current < 0; j++) {
+        int i = (first + j) % net_count;
         if (nets[i].flags & NET_SKIP) {
             continue;
         }
@@ -238,6 +244,12 @@ static void on_event(void *arg, esp_event_base_t base, int32_t id, void *data)
         current_ip.addr = 0;
         if (!enabled) {
             state = WIFI_DISABLED;          /* turned off on purpose: don't retry */
+            return;
+        }
+        if (switching) {                    /* left on purpose: find the next one now */
+            switching = false;
+            state = WIFI_CONNECTING;
+            start_scan();
             return;
         }
         fails++;
@@ -343,6 +355,39 @@ void wifi_set_enabled(bool on)
 bool wifi_is_enabled(void)
 {
     return enabled;
+}
+
+esp_err_t wifi_switch_next(char *ssid, size_t size)
+{
+    if (!started || !enabled || net_count == 0) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    xSemaphoreTake(lock, portMAX_DELAY);
+    int next = -1;
+    for (int j = 1; j <= net_count && next < 0; j++) {
+        int i = (current + j + net_count) % net_count;  /* current -1: from the top */
+        if (!(nets[i].flags & NET_SKIP) && i != current) {
+            next = i;
+        }
+    }
+    if (next >= 0) {
+        wanted = next;
+        strlcpy(ssid, nets[next].ssid, size);
+    }
+    xSemaphoreGive(lock);
+    if (next < 0) {
+        return ESP_ERR_NOT_FOUND;
+    }
+    ESP_LOGI(TAG, "switching to %s", ssid);
+    fails = 0;
+    if (state == WIFI_CONNECTED) {
+        switching = true;
+        esp_wifi_disconnect();          /* then the disconnect event scans */
+    } else {
+        xTimerStop(retry_timer, 0);
+        start_scan();                   /* or the scan already running picks it */
+    }
+    return ESP_OK;
 }
 
 wifi_state_t wifi_get_state(void)

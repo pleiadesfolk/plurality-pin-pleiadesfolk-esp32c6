@@ -26,6 +26,15 @@ void wifi_start(void);
 void wifi_set_enabled(bool on);
 bool wifi_is_enabled(void);
 
+/**
+ * Move to the next saved network after the current one (list order, skipping
+ * switched-off ones) and write its name to `ssid`. If it isn't in range, the
+ * one after it that is gets joined (possibly the current one again).
+ * ESP_ERR_NOT_FOUND if there's no other network to try, ESP_ERR_INVALID_STATE
+ * if Wi-Fi is off.
+ */
+esp_err_t wifi_switch_next(char *ssid, size_t size);
+
 /* Safe to call from any task (e.g. the LVGL task polling for the UI) */
 wifi_state_t wifi_get_state(void);
 /** Name of the network being joined / joined ("" before the first). */

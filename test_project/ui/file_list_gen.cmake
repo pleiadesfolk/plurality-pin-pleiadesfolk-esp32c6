@@ -31,7 +31,6 @@ list(
   ${CMAKE_CURRENT_LIST_DIR}/components/edit/edit_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/ellipse_2/ellipse_2_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/frame_5/frame_5_gen.c
-  ${CMAKE_CURRENT_LIST_DIR}/components/front_history_card/front_history_card_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/image_b/image_b_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/ipad_leading_accessories/ipad_leading_accessories_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/ipad_trailing_accessories/ipad_trailing_accessories_gen.c
@@ -479,7 +478,6 @@ list(
   ${CMAKE_CURRENT_LIST_DIR}/screens/boot_screen_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/connect_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/connect_wi_fi_gen.c
-  ${CMAKE_CURRENT_LIST_DIR}/screens/front_history_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/image_mode_full_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/image_mode_with_text_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/namecard_mode_gen.c

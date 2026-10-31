@@ -6,20 +6,22 @@
  * use doesn't grow with the number of screens.
  *
  * Three places you can be:
- *   MAIN  - the main screens: the fronter (namecard), Clock, Front history.
+ *   MAIN  - the main screens: the fronter (namecard) and Clock.
  *           Press and hold starts "switch mode": dots show where you are and
  *           swiping left/right slides between the main screens; a tap or 3 s
  *           without swiping ends it. Outside switch mode, swiping left/right
  *           on the fronter screen switches to the next/previous fronter (on
- *           Clock and Front history it still moves between screens).
+ *           Clock it still moves between screens).
  *           "The fronter" is the namecard, image or image-with-name screen,
  *           whichever the current fronter's display mode is.
  *   MENU  - the pull-down menu, opened by swiping down on the fronter screen
- *   PAGE  - a screen opened by one of the menu's buttons
+ *   PAGE  - a screen opened by one of the menu's buttons; swiping right goes
+ *           back to the menu, swiping up straight back to the fronter
  */
 
 #include <string.h>
 #include "nav.h"
+#include "status.h"
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "esp_heap_caps.h"
@@ -43,7 +45,6 @@ static const screen_t image_text_screen     = { "image_mode_with_text",   "Image
 static const screen_t status_screen         = { "status",                 "Status",             status_create };
 static const screen_t connect_screen        = { "connect",                "Open the dashboard", connect_create };
 static const screen_t menu_screen           = { "pull_down_menu_initial", "Menu",               pull_down_menu_initial_create };
-static const screen_t front_history_screen  = { "front_history",          "Front history",      front_history_create };
 static const screen_t settings_screen       = { "settings",               "Settings",           settings_create };
 
 /* Switch mode (and left/right away from the fronter screen) moves through these.
@@ -51,7 +52,6 @@ static const screen_t settings_screen       = { "settings",               "Setti
 static const screen_t *const main_screens[] = {
     &namecard_screen,                   /* the fronter: first, shown at start */
     &watch_screen,
-    &front_history_screen,
 };
 #define MAIN_COUNT (sizeof(main_screens) / sizeof(main_screens[0]))
 
@@ -131,6 +131,9 @@ static void wire_menu(lv_obj_t *scr)
     make_button(lv_obj_get_child(lv_obj_get_child(buttons, 0), 0), &status_screen);        /* Status */
     make_button(lv_obj_get_child(lv_obj_get_child(buttons, 1), 0), &settings_screen);      /* Settings */
     make_button(lv_obj_get_child(lv_obj_get_child(buttons, 2), 0), &connect_screen);       /* Connect to pin */
+    /* status bar > [row > [Wi-Fi icon, battery %, battery icon], row] */
+    lv_obj_t *status_bar = lv_obj_get_child(lv_obj_get_child(scr, 1), 0);
+    status_wifi_icon(lv_obj_get_child(lv_obj_get_child(status_bar, 0), 0), false);
 }
 
 /* ---------- switching ---------- */
@@ -301,6 +304,8 @@ static void on_swipe(lv_dir_t dir)
         if (dir == LV_DIR_RIGHT) {
             place = AT_MENU;
             show(&menu_screen);
+        } else if (dir == LV_DIR_TOP) {
+            nav_show_fronter();
         }
         break;
     }
@@ -320,11 +325,29 @@ void nav_show_fronter(void)
     show(&namecard_screen);
 }
 
+void nav_toggle_clock(void)
+{
+    if (place == AT_MAIN && shown == &watch_screen) {
+        nav_show_fronter();
+        return;
+    }
+    if (switching) {
+        switch_end();
+    }
+    for (int i = 0; i < MAIN_COUNT; i++) {
+        if (main_screens[i] == &watch_screen) {
+            main_index = i;
+        }
+    }
+    place = AT_MAIN;
+    show(&watch_screen);
+}
+
 void nav_benchmark(void)
 {
     static const screen_t *const all[] = {
         &watch_screen, &namecard_screen, &image_full_screen, &image_text_screen, &status_screen,
-        &connect_screen, &menu_screen, &front_history_screen, &settings_screen,
+        &connect_screen, &menu_screen, &settings_screen,
     };
 
     for (int i = 0; i < sizeof(all) / sizeof(all[0]); i++) {

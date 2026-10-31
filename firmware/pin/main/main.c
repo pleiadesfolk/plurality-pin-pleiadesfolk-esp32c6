@@ -109,6 +109,10 @@ static void on_screen(const char *name, lv_obj_t *scr)
         settings_attach(scr);
         return;
     }
+    if (strcmp(name, "status") == 0) {
+        status_attach(scr);
+        return;
+    }
     if (strcmp(name, "namecard_mode") == 0) {
         fronter_attach(scr, STORE_MODE_CARD);
         return;

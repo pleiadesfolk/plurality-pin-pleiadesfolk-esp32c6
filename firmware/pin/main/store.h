@@ -13,6 +13,9 @@
 
 #define STORE_FRONT_MAX     4           /* fronters per switch */
 #define STORE_NO_MEMBER     0xFFFF
+/* The "nobody fronting" card's id for its pictures: PluralKit ids are letters
+ * only, so it can't clash with a member's */
+#define STORE_NOBODY_ID     "nobody0"
 
 /* One switch: who fronted from `time` on. 12 bytes, also the file and upload format. */
 typedef struct __attribute__((packed)) {
@@ -27,7 +30,9 @@ void store_init(void);
 
 /*
  * Members, as JSON (format: see members_from_json() in store.c and the dashboard):
- * {"system": "...", "members": [{"id","name","card","pronouns","color":"RRGGBB"}]}
+ * {"system": "...", "members": [{"id","name","card","color":"RRGGBB","pk_color":"RRGGBB",...}],
+ *  "nobody": {...}}  - "nobody": what shows while nobody fronts, same fields as a
+ *  member (optional: without it, the one already saved is kept)
  */
 esp_err_t store_set_members_json(const char *json);
 /** Receives JSON text in pieces; returns false to stop. */
@@ -58,7 +63,7 @@ int store_member_index(const char *id);
 
 /**
  * The member the BOOT button switches to next: the one after the current
- * fronter among members marked "button" on the dashboard (or all members if
+ * fronter among members marked "Quick Switch" (JSON "button") on the dashboard (or all members if
  * none are), ordered by PluralKit message count (most first), then name.
  * direction < 0 steps backwards instead.
  * Returns its index and copies its name, or -1.

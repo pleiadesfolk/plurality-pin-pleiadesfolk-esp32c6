@@ -7,6 +7,7 @@
 #include "settings.h"
 #include "brightness.h"
 #include "nav.h"
+#include "status.h"
 #include "wifi.h"
 
 static void wifi_tapped(lv_event_t *e)
@@ -47,5 +48,7 @@ void settings_attach(lv_obj_t *scr)
      * screen > [background, column > [title row, row > [Wi-Fi, Bluetooth, battery], brightness]] */
     lv_obj_t *cards = lv_obj_get_child(lv_obj_get_child(scr, 1), 1);
     make_button(lv_obj_get_child(cards, 0), wifi_tapped);
+    /* Wi-Fi card > column > [column > icon, ...] */
+    status_wifi_icon(lv_obj_get_child(lv_obj_get_child(lv_obj_get_child(lv_obj_get_child(cards, 0), 0), 0), 0), true);
     make_button(lv_obj_get_child(cards, 1), bluetooth_tapped);
 }

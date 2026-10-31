@@ -2,7 +2,8 @@
  * Members and front history in the "storage" partition (FAT with wear
  * levelling, mounted at /data).
  *
- *   /data/members.json   system name + members (written by the dashboard)
+ *   /data/members.json   system name, members and the "nobody fronting" card
+ *                        (written by the dashboard)
  *   /data/switches.bin   store_switch_t records, oldest first; the last one is
  *                        the current front
  *   /data/cards/<id>.bin   namecard text picture per member (store_card_header_t)
@@ -53,9 +54,9 @@ typedef struct {
     char id[12];                        /* PluralKit member id */
     char name[48];
     char card[128];                     /* namecard text */
-    char pronouns[48];
-    uint32_t color;                     /* 0xRRGGBB */
-    bool on_button;                     /* in the BOOT button's shortlist */
+    uint32_t color;                     /* namecard colour, 0xRRGGBB */
+    int32_t pk_color;                   /* colour in PluralKit, 0xRRGGBB; -1 = unknown */
+    bool on_button;                     /* in the BOOT button's Quick Switch list */
     uint32_t messages;                  /* PluralKit message count: the button's order */
     uint8_t mode;                       /* store_mode_t */
     char label[64];                     /* text on the "image with name" screen */
@@ -71,6 +72,9 @@ static SemaphoreHandle_t lock;
 static char system_name[64];
 static member_t *members;               /* member_count entries */
 static int member_count;
+/* What shows while nobody fronts: a member-like card the dashboard sets up
+ * (id STORE_NOBODY_ID); id "" = not set up, show the system name */
+static member_t nobody;
 static store_switch_t front;            /* last switch; time 0 = none yet */
 static uint32_t switch_count;
 static bool front_changed = true;       /* tell the UI on first poll */
@@ -90,8 +94,36 @@ static void copy_string(char *dst, size_t size, const cJSON *item)
     strlcpy(dst, s, size);
 }
 
-/* Parse the dashboard's members JSON into a new array (*out, free() it); returns count or -1 */
-static int members_from_json(const char *json, char *system, size_t system_size, member_t **out)
+static void member_from_json(const cJSON *item, member_t *m)
+{
+    copy_string(m->id, sizeof(m->id), cJSON_GetObjectItem(item, "id"));
+    copy_string(m->name, sizeof(m->name), cJSON_GetObjectItem(item, "name"));
+    copy_string(m->card, sizeof(m->card), cJSON_GetObjectItem(item, "card"));
+    m->on_button = cJSON_IsTrue(cJSON_GetObjectItem(item, "button"));
+    m->fast = cJSON_IsTrue(cJSON_GetObjectItem(item, "fast"));
+    copy_string(m->label, sizeof(m->label), cJSON_GetObjectItem(item, "label"));
+    copy_string(m->avatar, sizeof(m->avatar), cJSON_GetObjectItem(item, "avatar"));
+    copy_string(m->style, sizeof(m->style), cJSON_GetObjectItem(item, "style"));
+    copy_string(m->grad, sizeof(m->grad), cJSON_GetObjectItem(item, "grad"));
+    const cJSON *mode = cJSON_GetObjectItem(item, "mode");
+    m->mode = STORE_MODE_CARD;
+    for (int k = 0; k < 3 && cJSON_IsString(mode); k++) {
+        if (strcmp(mode->valuestring, mode_names[k]) == 0) {
+            m->mode = k;
+        }
+    }
+    const cJSON *messages = cJSON_GetObjectItem(item, "messages");
+    m->messages = cJSON_IsNumber(messages) && messages->valuedouble > 0 ? (uint32_t)messages->valuedouble : 0;
+    const cJSON *color = cJSON_GetObjectItem(item, "color");
+    m->color = cJSON_IsString(color) ? strtoul(color->valuestring, NULL, 16) : 0x468DC3;
+    const cJSON *pk_color = cJSON_GetObjectItem(item, "pk_color");
+    m->pk_color = cJSON_IsString(pk_color) && pk_color->valuestring[0] ? (int32_t)strtoul(pk_color->valuestring, NULL, 16) : -1;
+}
+
+/* Parse the dashboard's members JSON into a new array (*out, free() it); returns
+ * count or -1. *has_nobody: whether it had a "nobody" card (then in *nobody_out). */
+static int members_from_json(const char *json, char *system, size_t system_size, member_t **out,
+                             member_t *nobody_out, bool *has_nobody)
 {
     cJSON *root = cJSON_Parse(json);
     if (!root) {
@@ -103,6 +135,14 @@ static int members_from_json(const char *json, char *system, size_t system_size,
         return -1;
     }
     copy_string(system, system_size, cJSON_GetObjectItem(root, "system"));
+    const cJSON *none = cJSON_GetObjectItem(root, "nobody");
+    *has_nobody = cJSON_IsObject(none);
+    memset(nobody_out, 0, sizeof(*nobody_out));
+    if (*has_nobody) {
+        member_from_json(none, nobody_out);
+        strlcpy(nobody_out->id, STORE_NOBODY_ID, sizeof(nobody_out->id));
+        nobody_out->on_button = false;
+    }
 
     *out = calloc(cJSON_GetArraySize(list) + 1, sizeof(member_t));
     if (!*out) {
@@ -112,28 +152,7 @@ static int members_from_json(const char *json, char *system, size_t system_size,
     int n = 0;
     const cJSON *item;
     cJSON_ArrayForEach(item, list) {
-        member_t *m = &(*out)[n++];
-        copy_string(m->id, sizeof(m->id), cJSON_GetObjectItem(item, "id"));
-        copy_string(m->name, sizeof(m->name), cJSON_GetObjectItem(item, "name"));
-        copy_string(m->card, sizeof(m->card), cJSON_GetObjectItem(item, "card"));
-        copy_string(m->pronouns, sizeof(m->pronouns), cJSON_GetObjectItem(item, "pronouns"));
-        m->on_button = cJSON_IsTrue(cJSON_GetObjectItem(item, "button"));
-        m->fast = cJSON_IsTrue(cJSON_GetObjectItem(item, "fast"));
-        copy_string(m->label, sizeof(m->label), cJSON_GetObjectItem(item, "label"));
-        copy_string(m->avatar, sizeof(m->avatar), cJSON_GetObjectItem(item, "avatar"));
-        copy_string(m->style, sizeof(m->style), cJSON_GetObjectItem(item, "style"));
-        copy_string(m->grad, sizeof(m->grad), cJSON_GetObjectItem(item, "grad"));
-        const cJSON *mode = cJSON_GetObjectItem(item, "mode");
-        m->mode = STORE_MODE_CARD;
-        for (int k = 0; k < 3 && cJSON_IsString(mode); k++) {
-            if (strcmp(mode->valuestring, mode_names[k]) == 0) {
-                m->mode = k;
-            }
-        }
-        const cJSON *messages = cJSON_GetObjectItem(item, "messages");
-        m->messages = cJSON_IsNumber(messages) && messages->valuedouble > 0 ? (uint32_t)messages->valuedouble : 0;
-        const cJSON *color = cJSON_GetObjectItem(item, "color");
-        m->color = cJSON_IsString(color) ? strtoul(color->valuestring, NULL, 16) : 0x468DC3;
+        member_from_json(item, &(*out)[n++]);
     }
     cJSON_Delete(root);
     return n;
@@ -147,7 +166,6 @@ static cJSON *member_to_json(const member_t *m)
     cJSON_AddStringToObject(item, "id", m->id);
     cJSON_AddStringToObject(item, "name", m->name);
     cJSON_AddStringToObject(item, "card", m->card);
-    cJSON_AddStringToObject(item, "pronouns", m->pronouns);
     cJSON_AddBoolToObject(item, "button", m->on_button);
     cJSON_AddBoolToObject(item, "fast", m->fast);
     cJSON_AddNumberToObject(item, "messages", m->messages);
@@ -157,6 +175,10 @@ static cJSON *member_to_json(const member_t *m)
     cJSON_AddStringToObject(item, "style", m->style);
     cJSON_AddStringToObject(item, "grad", m->grad);
     cJSON_AddStringToObject(item, "color", color);
+    if (m->pk_color >= 0) {
+        snprintf(color, sizeof(color), "%06lX", (unsigned long)(m->pk_color & 0xFFFFFF));
+        cJSON_AddStringToObject(item, "pk_color", color);
+    }
     return item;
 }
 
@@ -171,7 +193,7 @@ static bool emit_json(cJSON *item, store_emit_t emit, void *ctx)
 }
 
 /*
- * The members as JSON, {"system":"...","members":[...] without the closing
+ * The members as JSON, {"system":"...","members":[...],"nobody":{...} without the closing
  * brace, one member at a time: printing it all at once needs one 20+ KB
  * block of memory, which the pin often doesn't have in one piece.
  * Caller holds the lock.
@@ -183,7 +205,11 @@ static bool emit_members(store_emit_t emit, void *ctx)
     for (int i = 0; ok && i < member_count; i++) {
         ok = (i == 0 || emit(",", 1, ctx)) && emit_json(member_to_json(&members[i]), emit, ctx);
     }
-    return ok && emit("]", 1, ctx);
+    ok = ok && emit("]", 1, ctx);
+    if (ok && nobody.id[0]) {
+        ok = emit(",\"nobody\":", 10, ctx) && emit_json(member_to_json(&nobody), emit, ctx);
+    }
+    return ok;
 }
 
 static bool emit_to_file(const char *text, size_t len, void *f)
@@ -275,7 +301,8 @@ void store_init(void)
 
     char *json = read_file(MEMBERS_FILE);
     if (json) {
-        int n = members_from_json(json, system_name, sizeof(system_name), &members);
+        bool has_nobody;
+        int n = members_from_json(json, system_name, sizeof(system_name), &members, &nobody, &has_nobody);
         member_count = n < 0 ? 0 : n;
         free(json);
     }
@@ -287,8 +314,13 @@ esp_err_t store_set_members_json(const char *json)
 {
     member_t *parsed = NULL;
     char system[sizeof(system_name)];
-    int n = members_from_json(json, system, sizeof(system), &parsed);
+    member_t *new_nobody = malloc(sizeof(member_t)), *old_nobody = malloc(sizeof(member_t));
+    bool has_nobody;
+    int n = new_nobody && old_nobody
+            ? members_from_json(json, system, sizeof(system), &parsed, new_nobody, &has_nobody) : -1;
     if (n < 0) {
+        free(new_nobody);
+        free(old_nobody);
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -297,19 +329,26 @@ esp_err_t store_set_members_json(const char *json)
     int old_count = member_count;
     char old_system[sizeof(system_name)];
     strlcpy(old_system, system_name, sizeof(old_system));
+    *old_nobody = nobody;
     members = parsed;
     member_count = n;
     strlcpy(system_name, system, sizeof(system_name));
+    if (has_nobody) {                   /* without "nobody", keep the one there is */
+        nobody = *new_nobody;
+    }
     esp_err_t err = save_members_file();
     if (err != ESP_OK) {                /* keep what's saved */
         members = old;
         member_count = old_count;
         strlcpy(system_name, old_system, sizeof(system_name));
+        nobody = *old_nobody;
         old = parsed;
     }
     front_changed = true;
     xSemaphoreGive(lock);
     free(old);
+    free(new_nobody);
+    free(old_nobody);
     return err;
 }
 
@@ -335,9 +374,12 @@ char *store_photos_json(void)
 {
     xSemaphoreTake(lock, portMAX_DELAY);
     int n = member_count;
-    char (*ids)[12] = malloc(n * sizeof(*ids) + 1);
+    char (*ids)[12] = malloc((n + 1) * sizeof(*ids));
     for (int i = 0; ids && i < n; i++) {
         strlcpy(ids[i], members[i].id, sizeof(ids[i]));
+    }
+    if (ids && nobody.id[0]) {
+        strlcpy(ids[n++], nobody.id, sizeof(ids[0]));
     }
     xSemaphoreGive(lock);
     if (!ids) {
@@ -652,6 +694,9 @@ static bool member_is_fast(const char *id)
             fast = members[i].fast;
         }
     }
+    if (strcmp(nobody.id, id) == 0 && id[0]) {
+        fast = nobody.fast;
+    }
     xSemaphoreGive(lock);
     return fast;
 }
@@ -755,11 +800,19 @@ static void delete_pictures(const char *id)
     }
 }
 
+/* Who's shown: the first fronter, the "nobody fronting" card, or NULL for
+ * the plain system name (caller holds the lock) */
+static const member_t *front_member(void)
+{
+    uint16_t first = front.time ? front.members[0] : STORE_NO_MEMBER;
+    return first < member_count ? &members[first] : nobody.id[0] ? &nobody : NULL;
+}
+
 /* Current fronter's id, or "" (caller holds the lock) */
 static const char *front_id(void)
 {
-    uint16_t first = front.time ? front.members[0] : STORE_NO_MEMBER;
-    return first < member_count && valid_id(members[first].id) ? members[first].id : "";
+    const member_t *m = front_member();
+    return m && valid_id(m->id) ? m->id : "";
 }
 
 bool store_picture_file(const char *id, store_picture_t kind, char *path, size_t size)
@@ -808,8 +861,8 @@ bool store_front_image_src(store_picture_t kind, char *src, size_t size)
 store_mode_t store_front_mode(void)
 {
     xSemaphoreTake(lock, portMAX_DELAY);
-    uint16_t first = front.time ? front.members[0] : STORE_NO_MEMBER;
-    store_mode_t mode = first < member_count ? members[first].mode : STORE_MODE_CARD;
+    const member_t *m = front_member();
+    store_mode_t mode = m ? m->mode : STORE_MODE_CARD;
     xSemaphoreGive(lock);
     return mode;
 }
@@ -817,16 +870,15 @@ store_mode_t store_front_mode(void)
 void store_front_grad(char *text, size_t size)
 {
     xSemaphoreTake(lock, portMAX_DELAY);
-    uint16_t first = front.time ? front.members[0] : STORE_NO_MEMBER;
-    strlcpy(text, first < member_count ? members[first].grad : "", size);
+    const member_t *m = front_member();
+    strlcpy(text, m ? m->grad : "", size);
     xSemaphoreGive(lock);
 }
 
 void store_front_label(char *text, size_t size)
 {
     xSemaphoreTake(lock, portMAX_DELAY);
-    uint16_t first = front.time ? front.members[0] : STORE_NO_MEMBER;
-    const member_t *m = first < member_count ? &members[first] : NULL;
+    const member_t *m = front_member();
     strlcpy(text, !m ? system_name : m->label[0] ? m->label : m->name, size);
     xSemaphoreGive(lock);
 }
@@ -839,9 +891,9 @@ bool store_get_front_card(char *text, size_t text_size, uint32_t *color, bool *c
 
     uint16_t first = front.time ? front.members[0] : STORE_NO_MEMBER;
     bool found = first < member_count;
-    if (found) {
-        const member_t *m = &members[first];
-        strlcpy(text, m->card[0] ? m->card : m->name, text_size);
+    const member_t *m = front_member();
+    if (m) {
+        strlcpy(text, m->card[0] ? m->card : m == &nobody ? system_name : m->name, text_size);
         *color = m->color;
     } else {
         strlcpy(text, system_name, text_size);

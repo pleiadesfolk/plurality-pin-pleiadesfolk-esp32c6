@@ -18,6 +18,8 @@
  *   PUT  /api/wifi         replace the saved networks (see wifi_set_networks_json)
  *   GET  /api/wifi/scan    networks in range (see wifi_scan_json)
  *   GET/PUT /api/pk        PluralKit sync status / settings (see pksync.h)
+ *   GET  /api/battery      battery log (raw status_log_entry_t records, oldest first)
+ *   DELETE /api/battery    clear the battery log
  *
  * Login (auth.h): once a dashboard password is set, every /api/ route except
  * these needs the session cookie ("pin_session", SameSite=Strict, so other
@@ -222,9 +224,10 @@ static esp_err_t put_switches(httpd_req_t *req)
     return receive_stream(req, store_switches_write, store_switches_end);
 }
 
-static esp_err_t get_switches(httpd_req_t *req)
+/* Send a file as it is (an empty answer if it doesn't exist) */
+static esp_err_t send_file(httpd_req_t *req, const char *path)
 {
-    FILE *f = fopen(STORE_SWITCHES_FILE, "rb");
+    FILE *f = fopen(path, "rb");
     httpd_resp_set_type(req, "application/octet-stream");
     httpd_resp_set_hdr(req, "Cache-Control", "no-store");
     if (!f) {
@@ -240,6 +243,22 @@ static esp_err_t get_switches(httpd_req_t *req)
     free(buf);
     fclose(f);
     return httpd_resp_send_chunk(req, NULL, 0);
+}
+
+static esp_err_t get_switches(httpd_req_t *req)
+{
+    return send_file(req, STORE_SWITCHES_FILE);
+}
+
+static esp_err_t get_battery(httpd_req_t *req)
+{
+    return send_file(req, STATUS_BATTERY_LOG);
+}
+
+static esp_err_t delete_battery(httpd_req_t *req)
+{
+    status_battery_log_clear();
+    return send_ok(req);
 }
 
 static esp_err_t post_front(httpd_req_t *req)
@@ -564,6 +583,8 @@ void web_start(void)
         { .uri = "/api/wifi/scan", .method = HTTP_GET,  .handler = guarded, .user_ctx = get_wifi_scan },
         { .uri = "/api/pk",        .method = HTTP_GET,  .handler = guarded, .user_ctx = get_pk },
         { .uri = "/api/pk",        .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_pk },
+        { .uri = "/api/battery",   .method = HTTP_GET,  .handler = guarded, .user_ctx = get_battery },
+        { .uri = "/api/battery",   .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_battery },
         { .uri = "/api/auth",      .method = HTTP_GET,  .handler = get_auth },
         { .uri = "/api/login",     .method = HTTP_POST, .handler = post_login },
         { .uri = "/api/logout",    .method = HTTP_POST, .handler = post_logout },
