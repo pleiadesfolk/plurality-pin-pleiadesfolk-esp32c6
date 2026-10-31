@@ -408,7 +408,50 @@ esp_err_t store_switches_end(bool ok)
 
 esp_err_t store_add_switch(const uint16_t *list, int count)
 {
-    store_switch_t sw = { .time = (uint32_t)time(NULL) };
+    return store_add_switch_at((uint32_t)time(NULL), list, count);
+}
+
+uint32_t store_front_time(void)
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    uint32_t t = front.time;
+    xSemaphoreGive(lock);
+    return t;
+}
+
+bool store_front_is(const uint16_t *list, int count)
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    int now = 0, found = 0;
+    for (int i = 0; i < STORE_FRONT_MAX; i++) {
+        if (front.members[i] == STORE_NO_MEMBER) {
+            continue;
+        }
+        now++;
+        for (int k = 0; k < count; k++) {
+            found += list[k] == front.members[i];
+        }
+    }
+    xSemaphoreGive(lock);
+    return now == count && found == count;
+}
+
+int store_member_index(const char *id)
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    int index = -1;
+    for (int i = 0; i < member_count && index < 0; i++) {
+        if (strcmp(members[i].id, id) == 0) {
+            index = i;
+        }
+    }
+    xSemaphoreGive(lock);
+    return index;
+}
+
+esp_err_t store_add_switch_at(uint32_t time, const uint16_t *list, int count)
+{
+    store_switch_t sw = { .time = time };
     for (int i = 0; i < STORE_FRONT_MAX; i++) {
         sw.members[i] = i < count ? list[i] : STORE_NO_MEMBER;
     }

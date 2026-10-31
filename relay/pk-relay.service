@@ -1,0 +1,20 @@
+[Unit]
+Description=PluralKit -> plurality pin relay
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/pk-relay/pk_relay.py
+# PK_TOKEN and PIN_SECRET; readable by root only (systemd reads it before dropping rights)
+EnvironmentFile=/etc/pk-relay.env
+DynamicUser=yes
+StateDirectory=pk-relay
+Restart=always
+RestartSec=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

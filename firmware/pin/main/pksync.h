@@ -1,0 +1,37 @@
+#pragma once
+
+#include "esp_err.h"
+
+/*
+ * PluralKit -> pin front sync. Switches come from a relay (relay/pk_relay.py,
+ * which PluralKit pushes to: instant), or failing that from PluralKit itself,
+ * checked once a minute. When PluralKit's latest switch is newer than the
+ * pin's current front and has different members, it's added to the pin's
+ * history with PluralKit's time. Members the pin doesn't have are left out.
+ * Nothing is ever sent to PluralKit. Runs while Wi-Fi is up and the clock set.
+ */
+
+/** Start the sync task. Needs NVS; call after wifi_start(). */
+void pksync_start(void);
+
+/**
+ * Change settings, saved in flash; NULL leaves one as it is, "" clears it.
+ *   ref    for asking PluralKit directly: a system ID (5-6 letters; the
+ *          system's front must be public) or a PluralKit token (pk;token)
+ *   home   the relay on the home network, e.g. "http://192.168.50.20:8787"
+ *   net    the relay from anywhere, e.g. "https://nanopi.tail1234.ts.net"
+ *   secret the relay's PIN_SECRET
+ * ESP_ERR_INVALID_ARG if something is malformed.
+ */
+esp_err_t pksync_set(const char *ref, const char *home, const char *net, const char *secret);
+
+/**
+ * Status for the dashboard (malloc'd, caller frees): {"set", "token" (bool),
+ * "system" (the ID, only when one was given instead of a token), "checked"
+ * (unix time of the last direct check, 0 = none), "synced" (time of the last
+ * switch taken from PluralKit), "error" ("" when fine), "relay_home",
+ * "relay_net", "relay_secret" (bool), "relay_seen" (time of the last answer
+ * from the relay), "relay_via" ("home"/"internet"/""), "relay_error"}.
+ * Never contains the token or the secret.
+ */
+char *pksync_status_json(void);

@@ -65,6 +65,7 @@ static volatile wifi_state_t state = WIFI_OFF;
 static int fails;
 static TimerHandle_t retry_timer;
 static bool sntp_started;
+static volatile bool clock_set;         /* the clock has been set from the internet */
 static bool started;                    /* the driver is initialised */
 static volatile bool enabled = true;
 static int current = -1;                /* network being joined / joined, index into nets */
@@ -121,6 +122,7 @@ static void time_synced(struct timeval *tv)
     char buf[24];
     strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &tm);
     ESP_LOGI(TAG, "clock set from the internet: %s", buf);
+    clock_set = true;
 }
 
 static void start_scan(void)
@@ -491,4 +493,9 @@ esp_err_t wifi_set_networks_json(const char *json)
         }
     }
     return err;
+}
+
+bool wifi_clock_set(void)
+{
+    return clock_set;
 }

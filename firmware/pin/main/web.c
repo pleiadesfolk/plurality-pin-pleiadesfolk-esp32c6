@@ -17,8 +17,16 @@
  *   GET  /api/wifi         saved Wi-Fi networks (no passwords) and the pin's address
  *   PUT  /api/wifi         replace the saved networks (see wifi_set_networks_json)
  *   GET  /api/wifi/scan    networks in range (see wifi_scan_json)
+ *   GET/PUT /api/pk        PluralKit sync status / settings (see pksync.h)
  *
- * There's no login: anyone on the same Wi-Fi network can use it.
+ * Login (auth.h): once a dashboard password is set, every /api/ route except
+ * these needs the session cookie ("pin_session", SameSite=Strict, so other
+ * websites can't make the phone send requests with it):
+ *   GET  /api/auth         {"password": set?, "logged_in": bool}
+ *   POST /api/login        {"password"} -> session cookie
+ *   POST /api/logout       end this session
+ *   PUT  /api/password     {"password": new, "" = remove} (needs a session if one is set)
+ * The page itself and the fonts are always served (the page shows the login).
  */
 
 #include <string.h>
@@ -30,6 +38,8 @@
 #include "photos.h"
 #include "store.h"
 #include "wifi.h"
+#include "pksync.h"
+#include "auth.h"
 #include "web.h"
 
 static const char *TAG = "web";
@@ -380,6 +390,134 @@ static esp_err_t get_wifi_scan(httpd_req_t *req)
     return err;
 }
 
+static esp_err_t get_pk(httpd_req_t *req)
+{
+    char *json = pksync_status_json();
+    if (!json) {
+        return send_error(req, "500 Internal Server Error", "out of memory");
+    }
+    httpd_resp_set_type(req, "application/json");
+    esp_err_t err = httpd_resp_sendstr(req, json);
+    free(json);
+    return err;
+}
+
+/* {"ref", "home", "net", "secret"}: any of them; missing = keep, "" = clear (see pksync_set) */
+static esp_err_t put_pk(httpd_req_t *req)
+{
+    char *body = read_body(req);
+    cJSON *root = body ? cJSON_Parse(body) : NULL;
+    free(body);
+    const char *ref = cJSON_GetStringValue(cJSON_GetObjectItem(root, "ref"));
+    const char *home = cJSON_GetStringValue(cJSON_GetObjectItem(root, "home"));
+    const char *net = cJSON_GetStringValue(cJSON_GetObjectItem(root, "net"));
+    const char *secret = cJSON_GetStringValue(cJSON_GetObjectItem(root, "secret"));
+    esp_err_t err = root ? pksync_set(ref, home, net, secret) : ESP_ERR_INVALID_ARG;
+    cJSON_Delete(root);
+    return err == ESP_OK ? send_ok(req)
+           : send_error(req, "400 Bad Request",
+                        "expected a system ID (5-6 letters) or token, addresses starting http:// or https://, no spaces");
+}
+
+/* ---------- login ---------- */
+
+#define COOKIE_NAME     "pin_session"
+#define COOKIE_AGE      (400 * 24 * 3600)   /* about as long as browsers allow */
+
+/* The session token from the Cookie header, or "" */
+static void session_token(httpd_req_t *req, char *token)
+{
+    token[0] = 0;
+    char cookies[512];
+    if (httpd_req_get_hdr_value_str(req, "Cookie", cookies, sizeof(cookies)) != ESP_OK) {
+        return;
+    }
+    for (char *p = cookies; (p = strstr(p, COOKIE_NAME "=")); p++) {
+        if (p == cookies || p[-1] == ' ' || p[-1] == ';') {
+            strlcpy(token, p + strlen(COOKIE_NAME "="), AUTH_TOKEN_LEN + 1);
+            token[strcspn(token, "; ")] = 0;
+            return;
+        }
+    }
+}
+
+static bool logged_in(httpd_req_t *req)
+{
+    char token[AUTH_TOKEN_LEN + 1];
+    session_token(req, token);
+    return auth_session_ok(token);
+}
+
+/* Every protected route goes through here; user_ctx is the real handler */
+static esp_err_t guarded(httpd_req_t *req)
+{
+    if (!logged_in(req)) {
+        return send_error(req, "401 Unauthorized", "log in first");
+    }
+    return ((esp_err_t (*)(httpd_req_t *))req->user_ctx)(req);
+}
+
+/* Give the phone a session cookie (token "" clears it) */
+static void set_cookie(httpd_req_t *req, const char *token, char *buf, size_t size)
+{
+    snprintf(buf, size, COOKIE_NAME "=%s; Path=/; Max-Age=%d; HttpOnly; SameSite=Strict",
+             token, token[0] ? COOKIE_AGE : 0);
+    httpd_resp_set_hdr(req, "Set-Cookie", buf);
+}
+
+static esp_err_t get_auth(httpd_req_t *req)
+{
+    char json[64];
+    snprintf(json, sizeof(json), "{\"password\":%s,\"logged_in\":%s}",
+             auth_password_set() ? "true" : "false", logged_in(req) ? "true" : "false");
+    httpd_resp_set_type(req, "application/json");
+    return httpd_resp_sendstr(req, json);
+}
+
+static esp_err_t post_login(httpd_req_t *req)
+{
+    char *body = read_body(req);
+    cJSON *root = body ? cJSON_Parse(body) : NULL;
+    free(body);
+    const char *password = cJSON_GetStringValue(cJSON_GetObjectItem(root, "password"));
+    char token[AUTH_TOKEN_LEN + 1], cookie[128];
+    esp_err_t err = password ? auth_login(password, token) : ESP_ERR_INVALID_ARG;
+    cJSON_Delete(root);
+    if (err == ESP_ERR_INVALID_STATE) {
+        return send_error(req, "429 Too Many Requests", "too many wrong passwords - wait 30 seconds");
+    }
+    if (err != ESP_OK) {
+        return send_error(req, "401 Unauthorized", "wrong password");
+    }
+    set_cookie(req, token, cookie, sizeof(cookie));
+    return send_ok(req);
+}
+
+static esp_err_t post_logout(httpd_req_t *req)
+{
+    char token[AUTH_TOKEN_LEN + 1], cookie[128];
+    session_token(req, token);
+    auth_logout(token);
+    set_cookie(req, "", cookie, sizeof(cookie));
+    return send_ok(req);
+}
+
+static esp_err_t put_password(httpd_req_t *req)
+{
+    char *body = read_body(req);
+    cJSON *root = body ? cJSON_Parse(body) : NULL;
+    free(body);
+    const char *password = cJSON_GetStringValue(cJSON_GetObjectItem(root, "password"));
+    char token[AUTH_TOKEN_LEN + 1] = "", cookie[128];
+    esp_err_t err = password ? auth_set_password(password, token) : ESP_ERR_INVALID_ARG;
+    cJSON_Delete(root);
+    if (err != ESP_OK) {
+        return send_error(req, "400 Bad Request", "the password must be 4 to 64 characters");
+    }
+    set_cookie(req, token, cookie, sizeof(cookie));
+    return send_ok(req);
+}
+
 static esp_err_t put_wifi(httpd_req_t *req)
 {
     char *body = read_body(req);
@@ -398,7 +536,7 @@ void web_start(void)
 {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.stack_size = 8192;           /* JSON handling needs more than the default */
-    config.max_uri_handlers = 16;
+    config.max_uri_handlers = 24;
     config.lru_purge_enable = true;     /* phones keep connections open; recycle them */
     config.uri_match_fn = httpd_uri_match_wildcard;   /* for the fonts route */
     config.recv_wait_timeout = 10;
@@ -412,18 +550,24 @@ void web_start(void)
     static const httpd_uri_t routes[] = {
         { .uri = "/",              .method = HTTP_GET,  .handler = get_index },
         { .uri = "/fonts/*",       .method = HTTP_GET,  .handler = get_font },
-        { .uri = "/api/state",     .method = HTTP_GET,  .handler = get_state },
-        { .uri = "/api/members",   .method = HTTP_PUT,  .handler = put_members },
-        { .uri = "/api/switches",  .method = HTTP_PUT,  .handler = put_switches },
-        { .uri = "/api/switches",  .method = HTTP_GET,  .handler = get_switches },
-        { .uri = "/api/front",     .method = HTTP_POST, .handler = post_front },
-        { .uri = "/api/card",      .method = HTTP_PUT,  .handler = put_card },
-        { .uri = "/api/card",      .method = HTTP_GET,  .handler = get_card },
-        { .uri = "/api/photos",    .method = HTTP_GET,  .handler = get_photos },
-        { .uri = "/api/member",    .method = HTTP_DELETE, .handler = delete_member },
-        { .uri = "/api/wifi",      .method = HTTP_GET,  .handler = get_wifi },
-        { .uri = "/api/wifi",      .method = HTTP_PUT,  .handler = put_wifi },
-        { .uri = "/api/wifi/scan", .method = HTTP_GET,  .handler = get_wifi_scan },
+        { .uri = "/api/state",     .method = HTTP_GET,  .handler = guarded, .user_ctx = get_state },
+        { .uri = "/api/members",   .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_members },
+        { .uri = "/api/switches",  .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_switches },
+        { .uri = "/api/switches",  .method = HTTP_GET,  .handler = guarded, .user_ctx = get_switches },
+        { .uri = "/api/front",     .method = HTTP_POST, .handler = guarded, .user_ctx = post_front },
+        { .uri = "/api/card",      .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_card },
+        { .uri = "/api/card",      .method = HTTP_GET,  .handler = guarded, .user_ctx = get_card },
+        { .uri = "/api/photos",    .method = HTTP_GET,  .handler = guarded, .user_ctx = get_photos },
+        { .uri = "/api/member",    .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_member },
+        { .uri = "/api/wifi",      .method = HTTP_GET,  .handler = guarded, .user_ctx = get_wifi },
+        { .uri = "/api/wifi",      .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_wifi },
+        { .uri = "/api/wifi/scan", .method = HTTP_GET,  .handler = guarded, .user_ctx = get_wifi_scan },
+        { .uri = "/api/pk",        .method = HTTP_GET,  .handler = guarded, .user_ctx = get_pk },
+        { .uri = "/api/pk",        .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_pk },
+        { .uri = "/api/auth",      .method = HTTP_GET,  .handler = get_auth },
+        { .uri = "/api/login",     .method = HTTP_POST, .handler = post_login },
+        { .uri = "/api/logout",    .method = HTTP_POST, .handler = post_logout },
+        { .uri = "/api/password",  .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_password },
     };
     for (int i = 0; i < sizeof(routes) / sizeof(routes[0]); i++) {
         httpd_register_uri_handler(server, &routes[i]);

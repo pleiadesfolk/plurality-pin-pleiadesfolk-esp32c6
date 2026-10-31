@@ -26,6 +26,7 @@
 #include "photos.h"
 #include "lvgl.h"
 #include "assets.h"
+#include "auth.h"
 #include "boot.h"
 #include "brightness.h"
 #include "connect.h"
@@ -37,6 +38,7 @@
 #include "fronter.h"
 #include "textpic.h"
 #include "nav.h"
+#include "pksync.h"
 #include "store.h"
 #include "web.h"
 #include "wifi.h"
@@ -216,7 +218,9 @@ void app_main(void)
 
     display_init();                     /* brightness is set by brightness_init() */
     wifi_start();
+    auth_init();                        /* dashboard password, before the web server */
     web_start();
+    pksync_start();                     /* PluralKit -> pin front sync */
     storage_info_start();               /* after the display: the SD card shares its SPI bus */
 
     /* All LVGL calls happen in this one task from here on (its stack is bigger

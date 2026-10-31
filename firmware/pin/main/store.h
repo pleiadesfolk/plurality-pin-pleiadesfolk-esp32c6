@@ -47,6 +47,14 @@ esp_err_t store_switches_end(bool ok);
 
 /** Record a new switch now. `members` may be empty (nobody fronting). */
 esp_err_t store_add_switch(const uint16_t *members, int count);
+/** Record a switch that happened at `time` (unix seconds), e.g. one made in PluralKit. */
+esp_err_t store_add_switch_at(uint32_t time, const uint16_t *members, int count);
+/** When the current front started (unix seconds); 0 if there's no history. */
+uint32_t store_front_time(void);
+/** True if exactly these members (in any order) are fronting now. */
+bool store_front_is(const uint16_t *members, int count);
+/** Index of the member with PluralKit id `id`; -1 if the pin doesn't have them. */
+int store_member_index(const char *id);
 
 /**
  * The member the BOOT button switches to next: the one after the current

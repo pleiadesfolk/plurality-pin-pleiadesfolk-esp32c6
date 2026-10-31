@@ -60,7 +60,7 @@
   select { font: inherit; padding: 10px 12px; border-radius: 10px; width: 100%;
     border: 1px solid var(--line); background: var(--bg); color: var(--text); }
   #editor-preview { touch-action: none; }
-  input[type=text], input[type=search], textarea {
+  input[type=text], input[type=search], input[type=password], textarea {
     font: inherit; width: 100%; padding: 10px 12px; border-radius: 10px;
     border: 1px solid var(--line); background: var(--bg); color: var(--text);
   }
@@ -184,10 +184,48 @@
       <button id="wifi-add">Add</button>
     </div>
     <button class="primary" id="wifi-save" disabled>Save to the pin</button>
+    <div class="box">
+      <h2 style="margin-top:0">Dashboard password</h2>
+      <p class="dim" style="margin-top:0" id="pw-now"></p>
+      <label class="field" for="pw-new">New password</label>
+      <input type="password" id="pw-new" autocomplete="new-password">
+      <label class="field" for="pw-again">Type it again</label>
+      <input type="password" id="pw-again" autocomplete="new-password">
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="pw-save">Set password</button>
+        <button id="pw-remove">Remove password</button>
+        <button id="pw-logout">Log out</button>
+      </div>
+      <p class="dim">Forgot it? Hold the pin's side button for 10 seconds (it switches fronter once first) - that removes the password.</p>
+    </div>
   </section>
 
   <!-- Import a pk;export file -->
   <section id="tab-import">
+    <div class="box">
+      <h2 style="margin-top:0">Sync with PluralKit</h2>
+      <p style="margin-top:0">When you switch in PluralKit (e.g. <b>pk;switch</b> in Discord), the pin picks it up within a minute and adds it to its front history. The pin only reads from PluralKit, never changes anything there.</p>
+      <p class="dim">Enter your system ID if your front is public, or your token (send <b>pk;token</b> to PluralKit in a DM) to also work with a private front. The token stays on the pin and is never shown here again.</p>
+      <input type="password" id="pk-ref" placeholder="System ID or token" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="pk-save">Save</button>
+        <button id="pk-off">Turn off</button>
+      </div>
+      <p class="dim" id="pk-status"></p>
+      <h2>Instant, through your relay</h2>
+      <p class="dim" style="margin-top:0">With the relay running on an always-on computer (see relay/README.md), PluralKit tells the relay about each switch and the pin gets it straight away. Checking PluralKit directly (above) then only happens if the relay can't be reached.</p>
+      <label class="field" for="relay-home">Address at home</label>
+      <input type="text" id="relay-home" placeholder="http://192.168.50.20:8787" autocapitalize="off" spellcheck="false">
+      <label class="field" for="relay-net">Address from anywhere</label>
+      <input type="text" id="relay-net" placeholder="https://nanopi.tail1234.ts.net" autocapitalize="off" spellcheck="false">
+      <label class="field" for="relay-secret">Relay secret (PIN_SECRET)</label>
+      <input type="password" id="relay-secret" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="relay-save">Save relay</button>
+        <button id="relay-off">Remove relay</button>
+      </div>
+      <p class="dim" id="relay-status"></p>
+    </div>
     <div class="box">
       <p style="margin-top:0">In Discord, send <b>pk;export</b> to PluralKit, save the file it sends you, then pick it here.</p>
       <input type="file" id="import-file" accept=".json,application/json">
@@ -278,10 +316,23 @@
   </div>
 </dialog>
 
+<dialog id="login">
+  <h2 style="margin-top:0">Log in to the pin</h2>
+  <form id="login-form" method="dialog">
+    <label class="field" for="login-password">Dashboard password</label>
+    <input type="password" id="login-password" autocomplete="current-password">
+    <p class="error" id="login-error"></p>
+    <button class="primary" id="login-go" style="width:100%">Log in</button>
+  </form>
+  <p class="dim">Forgot it? Hold the pin's side button for 10 seconds to remove the password.</p>
+</dialog>
+
 <div id="toast"></div>
 
 <script>
 "use strict";
+
+const $ = id => document.getElementById(id);
 
 /* ---------- pin API ---------- */
 
@@ -298,9 +349,68 @@ async function api(method, path, body) {
     options.headers = { "Content-Type": "application/json" };
   }
   const res = await fetch(path, options);
+  if (res.status === 401 && path !== "/api/login") showLogin();
   if (!res.ok) throw new Error(`${method} ${path}: ${res.status} ${await res.text()}`);
   return res;
 }
+
+/* ---------- login (dashboard password) ---------- */
+
+let auth = { password: false, logged_in: true };
+
+function showLogin() {
+  if ($("login").open) return;
+  $("login-error").textContent = "";
+  $("login-password").value = "";
+  $("login").showModal();
+  $("login-password").focus();
+}
+$("login").addEventListener("cancel", e => e.preventDefault());   // can't be dismissed
+$("login-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  $("login-go").disabled = true;
+  try {
+    await api("POST", "/api/login", { password: $("login-password").value });
+    $("login").close();
+    await start();
+  } catch (err) {
+    $("login-error").textContent = err.message.replace(/^.*: \d+ /, "");
+  }
+  $("login-go").disabled = false;
+});
+
+function showPassword() {
+  $("pw-now").textContent = auth.password
+    ? "On: the dashboard asks for it on each new phone or browser."
+    : "Off: anyone on the same Wi-Fi can change the pin from this dashboard.";
+  $("pw-save").textContent = auth.password ? "Change password" : "Set password";
+  $("pw-remove").hidden = $("pw-logout").hidden = !auth.password;
+}
+$("pw-save").addEventListener("click", async () => {
+  const pw = $("pw-new").value;
+  if (pw.length < 4 || pw.length > 64) return toast("Use 4 to 64 characters");
+  if (pw !== $("pw-again").value) return toast("The two don't match");
+  try {
+    await api("PUT", "/api/password", { password: pw });
+    $("pw-new").value = $("pw-again").value = "";
+    auth.password = true;
+    showPassword();
+    toast("Password set - other phones will need to log in");
+  } catch (e) { toast(e.message); }
+});
+$("pw-remove").addEventListener("click", async () => {
+  if (!confirm("Remove the dashboard password? Anyone on the same Wi-Fi could then change the pin.")) return;
+  try {
+    await api("PUT", "/api/password", { password: "" });
+    auth.password = false;
+    showPassword();
+    toast("Password removed");
+  } catch (e) { toast(e.message); }
+});
+$("pw-logout").addEventListener("click", async () => {
+  await api("POST", "/api/logout").catch(() => {});
+  showLogin();
+});
 
 async function loadState() {
   state = await (await api("GET", "/api/state")).json();
@@ -318,7 +428,6 @@ function membersPayload() {
 
 /* ---------- small helpers ---------- */
 
-const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const hex = c => "#" + (c || "468DC3").replace(/^#/, "").padStart(6, "0").slice(0, 6);
 
@@ -1365,6 +1474,49 @@ $("import-file").addEventListener("change", async e => {
 });
 
 // Import every member's PluralKit avatar as their photo
+/* PluralKit sync: {set, token, system, checked, synced, error} from the pin */
+async function loadPkSync() {
+  const st = await (await api("GET", "/api/pk")).json();
+  const ago = t => t ? `${duration(Date.now() / 1000 + clockOffset - t)} ago` : "";
+  $("pk-off").hidden = !st.set;
+  const relay = st.relay_secret && (st.relay_home || st.relay_net);
+  $("pk-status").textContent = !st.set ? "Off."
+    : (st.token ? "On, with your token. " : `On, for system ${st.system}. `)
+      + (st.error ? `Problem: ${st.error}.` : st.checked ? `Last checked ${ago(st.checked)}.`
+         : relay ? "Only used when the relay can't be reached." : "Checking…")
+      + (st.synced ? ` Last switch taken from PluralKit: ${ago(st.synced)}.` : "");
+  if (document.activeElement !== $("relay-home")) $("relay-home").value = st.relay_home;
+  if (document.activeElement !== $("relay-net")) $("relay-net").value = st.relay_net;
+  $("relay-secret").placeholder = st.relay_secret ? "Saved - type a new one to change it" : "";
+  $("relay-off").hidden = !relay;
+  $("relay-status").textContent = !relay ? "Not set up."
+    : st.relay_error ? `Problem: ${st.relay_error}.`
+    : st.relay_seen ? `Connected ${st.relay_via === "home" ? "at home" : "over the internet"}, last heard ${ago(st.relay_seen)}.`
+    : "Connecting…";
+}
+
+async function savePk(body, message) {
+  try {
+    await api("PUT", "/api/pk", body);
+    $("pk-ref").value = ""; $("relay-secret").value = "";
+    toast(message);
+    await loadPkSync();
+    setTimeout(() => loadPkSync().then(loadState).catch(() => {}), 8000);
+  } catch (e) { toast(e.message); }
+}
+$("pk-save").addEventListener("click", () => {
+  const ref = $("pk-ref").value.trim();
+  if (ref) savePk({ ref }, "Saved - checking PluralKit…");
+});
+$("pk-off").addEventListener("click", () => savePk({ ref: "" }, "PluralKit sync turned off"));
+$("relay-save").addEventListener("click", () => {
+  const body = { home: $("relay-home").value.trim(), net: $("relay-net").value.trim() };
+  const secret = $("relay-secret").value.trim();
+  if (secret) body.secret = secret;
+  savePk(body, "Relay saved - connecting…");
+});
+$("relay-off").addEventListener("click", () => savePk({ home: "", net: "", secret: "" }, "Relay removed"));
+
 $("pfp-go").addEventListener("click", async () => {
   const progress = $("pfp-progress");
   const step = (text, value, max) => progress.innerHTML = `<p class="dim">${esc(text)}</p>` + (max ? `<progress value="${value}" max="${max}"></progress>` : "");
@@ -1506,10 +1658,17 @@ document.querySelector("nav").addEventListener("click", e => {
   document.querySelectorAll("main section").forEach(s => s.classList.toggle("active", s.id === "tab-" + b.dataset.tab));
   if (b.dataset.tab === "history") renderHistory().catch(err => toast(err.message));
   if (b.dataset.tab === "wifi") loadWifi().catch(err => toast(err.message));
+  if (b.dataset.tab === "import") loadPkSync().catch(err => toast(err.message));
 });
 
-loadState().catch(e => { $("subtitle").textContent = "Can't reach the pin: " + e.message; });
-setInterval(() => loadState().catch(() => {}), 30000);
+async function start() {
+  auth = await (await api("GET", "/api/auth")).json();
+  showPassword();
+  if (auth.password && !auth.logged_in) return showLogin();
+  await loadState();
+}
+start().catch(e => { $("subtitle").textContent = "Can't reach the pin: " + e.message; });
+setInterval(() => { if (!$("login").open) loadState().catch(() => {}); }, 30000);
 </script>
 </body>
 </html>

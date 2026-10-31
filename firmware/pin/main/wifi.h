@@ -33,6 +33,9 @@ const char *wifi_get_ssid(void);
 /** The pin's address while connected, e.g. "192.168.50.99"; false if not connected. */
 bool wifi_get_ip(char *buf, size_t size);
 
+/** True once the clock has been set from the internet (NTP) since starting. */
+bool wifi_clock_set(void);
+
 /** Saved networks for the dashboard: {"networks":[{"ssid","skip","current"}],"ip"}
  *  - passwords are never included. free() the result. */
 char *wifi_networks_json(void);
