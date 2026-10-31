@@ -92,6 +92,9 @@
   .member.current { outline: 2px solid var(--accent); }
   .list .item { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
   .list .item:last-child { border-bottom: 0; }
+  .icon-delete { background: none; padding: 8px; color: var(--dim); display: flex; }
+  .icon-delete:hover { color: var(--bad); }
+  .icon-delete svg { width: 20px; height: 20px; }
   .bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
   .bar > div { height: 100%; border-radius: 4px; }
   .seg { display: inline-flex; background: var(--line); border-radius: 10px; padding: 2px; }
@@ -777,6 +780,8 @@ $("front-search").addEventListener("input", renderFront);
 
 /* ---------- Members tab ---------- */
 
+const TRASH_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>`;
+
 function renderMembers() {
   const query = $("member-search").value.trim().toLowerCase();
   const rows = state.members
@@ -791,6 +796,7 @@ function renderMembers() {
           <div class="dim">${esc(m.card)}</div>
         </div>
         <span class="dim">Edit</span>
+        <button class="icon-delete" data-delete="${i}" aria-label="Delete ${esc(m.name)}" title="Delete">${TRASH_ICON}</button>
       </div>`);
   $("member-list").innerHTML = rows.join("") || `<p class="dim">No members yet - use Import.</p>`;
 }
@@ -1042,6 +1048,8 @@ async function switchesWith(index) {
 }
 
 $("member-list").addEventListener("click", e => {
+  const del = e.target.closest("[data-delete]");
+  if (del) return deleteMember(+del.dataset.delete, del);
   const row = e.target.closest("[data-index]");
   if (row) openEditor(+row.dataset.index);
 });
@@ -1105,23 +1113,28 @@ $("editor-save").addEventListener("click", async () => {
   $("editor-save").disabled = false;
 });
 
-$("editor-delete").addEventListener("click", async () => {
-  const m = state.members[editing];
-  const count = await switchesWith(editing).catch(() => 0);
+// Ask, then delete member `index`; `button` shows progress
+async function deleteMember(index, button) {
+  const m = state.members[index];
+  const count = await switchesWith(index).catch(() => 0);
   const history = count
     ? `\n\n${m.name} is in ${count} switch${count === 1 ? "" : "es"} of the front history. They'll be taken out; where they fronted alone, it becomes "nobody fronting".`
     : "";
-  if (!confirm(`Delete ${m.name}?${history}\n\nThis can't be undone (except by importing again).`)) return;
-  const button = $("editor-delete");
+  if (!confirm(`Delete ${m.name}?${history}\n\nThis can't be undone (except by importing again).`)) return false;
   button.disabled = true;
-  button.textContent = "Deleting…";
   try {
-    await api("DELETE", `/api/member?index=${editing}`);
-    $("editor").close();
+    await api("DELETE", `/api/member?index=${index}`);
     toast(`Deleted ${m.name}`);
     await loadState();
-  } catch (e) { toast("Couldn't delete: " + e.message); }
-  button.disabled = false;
+    return true;
+  } catch (e) { toast("Couldn't delete: " + e.message); return false; }
+  finally { button.disabled = false; }
+}
+
+$("editor-delete").addEventListener("click", async () => {
+  const button = $("editor-delete");
+  button.textContent = "Deleting…";
+  if (await deleteMember(editing, button)) $("editor").close();
   button.textContent = "Delete";
 });
 
