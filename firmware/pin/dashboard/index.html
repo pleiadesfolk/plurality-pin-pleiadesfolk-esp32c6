@@ -231,8 +231,10 @@
     </div>
     <label class="check"><input type="checkbox" id="editor-fast"> Fast photo</label>
     <p class="dim" id="editor-fast-note" style="margin:4px 0 0 28px"></p>
+    <div id="editor-zoom-box">
     <label class="field" for="editor-zoom">Zoom <span class="dim">(drag the preview to move the photo)</span></label>
     <input type="range" id="editor-zoom" min="1" max="4" step="0.01" value="1" style="width:100%">
+    </div>
   </div>
   <div id="editor-label-box" hidden>
     <label class="field" for="editor-label">Name beside the photo</label>
@@ -387,9 +389,11 @@ function labelSpec(style) {
   return { ...LABEL_BOX, max, min: Math.max(14, Math.round(max / 2)), pitch: f.labelPitch,
            align: "center", css: f.css, weight: st.weight };
 }
-// Photos: "image" is 280 x 280 centred; "image with name" is a 350 px circle centred at
-// (403, 140), of which only x >= 228 is on screen, so only that 228 x 280 part is stored.
-const FULL = { x: 88, y: 0, size: 280 };
+// Photos: "image" is the whole photo fitted within the screen and centred (no crop);
+// "image with name" is a 350 px circle centred at (403, 140), of which only x >= 228
+// is on screen, so only that 228 x 280 part is stored.
+const FULL = { w: 456, h: 280 };
+const FAST_PLACES = 8;                  // photos.h PHOTOS_SLOTS
 const SIDE = { x: 228, w: 228, h: 280, cx: 175, cy: 140, r: 175 };
 // CJK and emoji fall back to Noto Sans HK (if reachable) or the phone's own fonts
 const FONTS = (spec, size) => `${spec.weight} ${size}px ${spec.css}, "Noto Sans HK", "PingFang HK", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
@@ -529,11 +533,15 @@ function drawSquare(ctx, photo, x, y, size) {
   ctx.drawImage(photo.source, c.sx, c.sy, c.side, c.side, x, y, size, size);
 }
 
-// The "image" photo: 280 x 280
+// The "image" photo: the whole photo, scaled to fit within 456 x 280
 function renderFull(photo) {
+  const scale = Math.min(FULL.w / photo.w, FULL.h / photo.h);
   const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = FULL.size;
-  drawSquare(canvas.getContext("2d"), photo, 0, 0, FULL.size);
+  canvas.width = Math.max(1, Math.round(photo.w * scale));
+  canvas.height = Math.max(1, Math.round(photo.h * scale));
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(photo.source, 0, 0, canvas.width, canvas.height);
   return canvas;
 }
 
@@ -690,10 +698,10 @@ function drawPreview(canvas, m, photo, stored) {
   };
 
   if (m.mode === "image") {
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#333";               // fronter.c PHOTO_BG
     ctx.fillRect(0, 0, 456, 280);
-    if (photo) drawSquare(ctx, photo, FULL.x, FULL.y, FULL.size);
-    else if (stored?.full) ctx.drawImage(stored.full, FULL.x, FULL.y);
+    const full = photo ? renderFull(photo) : stored?.full;     // centred, as on the pin
+    if (full) ctx.drawImage(full, Math.round((FULL.w - full.width) / 2), Math.round((FULL.h - full.height) / 2));
     else placeholder("Add a photo", 228, 145);
     return null;
   }
@@ -911,7 +919,7 @@ const wasFast = () => /[FS]/.test(editorPhotos.have) || !!state.members[editing]
 function showFastNote() {
   const free = editorPhotos.free_slots;
   $("editor-fast-note").textContent = "Kept in the pin's own memory, so it shows straight away. Other photos load from the SD card in a couple of seconds."
-    + (free === null ? "" : ` ${free} of 11 fast places free.`);
+    + (free === null ? "" : ` ${free} of ${FAST_PLACES} fast places free.`);
 }
 
 async function loadStoredPhotos(m) {
@@ -1030,6 +1038,7 @@ function updateEditorMode() {
   const mode = $("editor-mode").value;
   $("editor-photo-box").hidden = mode === "card";
   $("editor-label-box").hidden = mode !== "image_text";
+  $("editor-zoom-box").hidden = mode !== "image_text";       // the full photo isn't cropped
   $("editor-bg-box").hidden = mode === "image";
   animateEditorPreview();
   updateEditorPreview();
@@ -1057,15 +1066,14 @@ async function setEditorPhoto(load) {
 // Drag on the preview to move the photo inside its crop
 let dragFrom = null;
 $("editor-preview").addEventListener("pointerdown", e => {
-  if (!editorPhoto || $("editor-mode").value === "card") return;
+  if (!editorPhoto || $("editor-mode").value !== "image_text") return;
   dragFrom = { x: e.clientX, y: e.clientY };
   e.target.setPointerCapture(e.pointerId);
 });
 $("editor-preview").addEventListener("pointermove", e => {
   if (!dragFrom) return;
   const canvasPx = 456 / e.target.clientWidth;      // screen px -> preview px
-  const shown = $("editor-mode").value === "image" ? FULL.size : SIDE.r * 2;
-  const perPx = cropOf(editorPhoto).side / shown;   // preview px -> photo px
+  const perPx = cropOf(editorPhoto).side / (SIDE.r * 2);    // preview px -> photo px
   editorPhoto.cx -= (e.clientX - dragFrom.x) * canvasPx * perPx;
   editorPhoto.cy -= (e.clientY - dragFrom.y) * canvasPx * perPx;
   const c = cropOf(editorPhoto);                    // keep it within the photo
@@ -1150,7 +1158,7 @@ $("editor-save").addEventListener("click", async () => {
   m.avatar ??= "";
   const moving = editing >= 0 && m.fast !== wasFast() && !editorPhoto && /[fs]/i.test(editorPhotos.have);
   if (m.fast && !wasFast() && editorPhotos.free_slots === 0 && (editorPhoto || moving)) {
-    toast("All 11 fast photo places are in use - untick Fast photo on another member first");
+    toast(`All ${FAST_PLACES} fast photo places are in use - untick Fast photo on another member first`);
     return;
   }
   if (editing < 0) members.push(m);

@@ -2,7 +2,7 @@
  * The fronter screen: shows the current fronter in their display mode.
  *
  *   namecard       namecard_mode.xml: gradient + namecard text picture
- *   image          image_mode_full.xml: 280x280 photo
+ *   image          image_mode_full.xml: the whole photo, fitted, on dark grey
  *   image with name image_mode_with_text.xml: member-coloured background,
  *                  name text picture, photo in a circle cut off by the right edge
  *
@@ -67,6 +67,7 @@ typedef struct {
 
 #define DRIFT_MS        200             /* 5 updates/s; each redraws the text */
 #define DRIFT_CYCLE_MS  20000           /* one full trip through the colours */
+#define PHOTO_BG        0x333333        /* behind the photo in image mode */
 #define DRIFT_SPREAD    2               /* a drifting loop is this many text widths long */
 
 static fronter_t fr;                    /* fr.shown is false while no fronter screen exists */
@@ -355,11 +356,14 @@ void fronter_attach(lv_obj_t *scr, store_mode_t mode)
     case STORE_MODE_IMAGE: {
         /* image_mode_full.xml: screen > container > [rotated panel, image]; the
          * image is replaced by the member's photo, and a label is added for
-         * when there's no photo */
+         * when there's no photo. Dark grey either side of the photo (the
+         * design has white). */
+        lv_obj_set_style_bg_color(scr, lv_color_hex(PHOTO_BG), 0);
         lv_obj_t *box = lv_obj_get_child(scr, 0);
         fr.photo = lv_obj_get_child(box, 1);
+        lv_obj_set_size(fr.photo, LV_SIZE_CONTENT, LV_SIZE_CONTENT);   /* whole photo, centred */
         fr.label = lv_label_create(scr);
-        lv_obj_set_style_text_color(fr.label, lv_color_hex(0x333333), 0);
+        lv_obj_set_style_text_color(fr.label, lv_color_hex(0xB0B0B0), 0);
         lv_obj_center(fr.label);
         break;
     }

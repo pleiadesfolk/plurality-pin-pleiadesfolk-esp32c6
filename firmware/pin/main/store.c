@@ -47,7 +47,7 @@ static const char *TAG = "store";
 #define CARDS_DIR           "/data/cards"
 #define SD_IMAGES_DIR       "/sdcard/pin"
 #define DATA_IMAGES_DIR     "/data/img"
-#define MAX_CARD_BYTES      (200 * 1024) /* largest picture upload (a 280x280 photo is 157 KB) */
+#define MAX_CARD_BYTES      (256 * 1024) /* largest picture upload (a 456x280 photo is 250 KB) */
 
 typedef struct {
     char id[12];                        /* PluralKit member id */

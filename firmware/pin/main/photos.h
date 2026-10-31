@@ -14,7 +14,7 @@
  * when needed (below).
  */
 
-#define PHOTOS_SLOTS 11
+#define PHOTOS_SLOTS 8
 
 typedef enum { PHOTO_FULL, PHOTO_SIDE } photo_kind_t;
 

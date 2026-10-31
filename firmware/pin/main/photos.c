@@ -2,9 +2,9 @@
  * Photo slots in the "photos" partition (see photos.h).
  *
  * Layout: a 4 KB table at the start, then PHOTOS_SLOTS slots of SLOT_SIZE.
- * Each slot: the "image" photo (280x280 RGB565, 157 KB) in the first
- * FULL_SIZE bytes, then the "image with name" circle (228x280 RGB565A8,
- * 192 KB). Flash must be erased before it's written, so an upload erases its
+ * Each slot: the "image" photo (the whole photo fitted to the screen, up to
+ * 456x280 RGB565, 250 KB) in the first FULL_SIZE bytes, then the "image with
+ * name" circle (228x280 RGB565A8, 192 KB). Flash must be erased before it's written, so an upload erases its
  * half of the slot first.
  *
  * Only the web server writes (one upload at a time); the table is guarded by
@@ -26,7 +26,7 @@
 static const char *TAG = "photos";
 
 #define TABLE_SIZE  0x1000
-#define FULL_SIZE   0x28000             /* 160 KB >= 12 + 280*280*2 */
+#define FULL_SIZE   0x3F000             /* 252 KB >= 12 + 456*280*2 */
 #define SIDE_SIZE   0x30000             /* 192 KB >= 12 + 228*280*3 */
 #define SLOT_SIZE   (FULL_SIZE + SIDE_SIZE)
 
@@ -36,13 +36,13 @@ typedef struct {
 } slot_t;
 
 typedef struct {
-    char magic[4];                      /* "PPH1" */
+    char magic[4];                      /* "PPH2" (PPH1: 11 smaller slots, square photos) */
     slot_t slots[PHOTOS_SLOTS];
     slot_t staged;                      /* what's in the staging area (added later: may read as 0xFF) */
 } table_t;
 
 #define STAGE_OFFSET (TABLE_SIZE + PHOTOS_SLOTS * SLOT_SIZE)
-#define STAGE_SIZE   SIDE_SIZE          /* fits either photo */
+#define STAGE_SIZE   FULL_SIZE          /* fits either photo */
 
 static const esp_partition_t *part;
 static table_t table;
@@ -95,9 +95,10 @@ void photos_init(void)
         return;
     }
     esp_partition_read(part, 0, &table, sizeof(table));
-    if (memcmp(table.magic, "PPH1", 4) != 0) {
-        memset(&table, 0, sizeof(table));       /* first start: empty table */
-        memcpy(table.magic, "PPH1", 4);
+    if (memcmp(table.magic, "PPH2", 4) != 0) {
+        /* first start, or the old layout (its slots are elsewhere): empty table */
+        memset(&table, 0, sizeof(table));
+        memcpy(table.magic, "PPH2", 4);
         save_table();
     }
     can_stage = part->size >= STAGE_OFFSET + STAGE_SIZE;

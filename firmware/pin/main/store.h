@@ -88,7 +88,7 @@ typedef enum {
 typedef enum {
     STORE_PICTURE_CARD,                 /* namecard text (store_card_header_t format) */
     STORE_PICTURE_LABEL,                /* name text for "image with name" (same format) */
-    STORE_PICTURE_FULL,                 /* photo for "image": LVGL .bin, RGB565, 280x280 */
+    STORE_PICTURE_FULL,                 /* photo for "image": LVGL .bin, RGB565, fitted within 456x280 */
     STORE_PICTURE_SIDE,                 /* visible part of the circle photo: LVGL .bin, RGB565, 228x280 */
 } store_picture_t;
 
