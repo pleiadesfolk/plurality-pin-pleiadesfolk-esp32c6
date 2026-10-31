@@ -23,11 +23,14 @@ list(
   ${CMAKE_CURRENT_LIST_DIR}/components/configuration_label_only_state_enabled_selected_false/configuration_label_only_state_enabled_selected_false_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/configuration_label_only_state_enabled_selected_true/configuration_label_only_state_enabled_selected_true_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/connect_b/connect_b_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/components/connect_to_pin/connect_to_pin_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/derived/tile_2/tile_2_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/derived/tile/tile_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/edit_b/edit_b_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/components/edit_members/edit_members_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/edit/edit_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/ellipse_2/ellipse_2_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/components/frame_5/frame_5_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/front_history_card/front_history_card_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/image_b/image_b_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/ipad_leading_accessories/ipad_leading_accessories_gen.c
@@ -48,11 +51,15 @@ list(
   ${CMAKE_CURRENT_LIST_DIR}/components/settings_c/settings_c_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/settings_d/settings_d_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/settings_e/settings_e_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/components/settings_f/settings_f_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/components/settings_g/settings_g_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/stars_filled/stars_filled_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/stars/stars_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/status_b/status_b_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/status_bar/status_bar_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/status_c/status_c_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/components/status_d/status_d_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/components/status_e/status_e_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/text_box_b/text_box_b_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/text_box/text_box_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/components/tf_storage/tf_storage_gen.c
@@ -431,8 +438,45 @@ list(
   ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_42_877_data.c
   ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_42_2416_data.c
   ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_42_2418_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_963_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_964_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_965_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_966_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_967_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_968_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_969_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_970_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_971_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_972_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_973_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_974_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_975_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_976_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_977_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_978_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_979_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_980_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_981_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_982_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_983_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_984_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_985_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_986_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_987_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_988_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_989_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_990_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_991_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_992_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_993_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_994_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_995_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_996_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_997_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_998_data.c
   ${CMAKE_CURRENT_LIST_DIR}/plurality_pin_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/plurality_pin.c
+  ${CMAKE_CURRENT_LIST_DIR}/screens/boot_screen_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/connect_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/connect_wi_fi_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/front_history_gen.c

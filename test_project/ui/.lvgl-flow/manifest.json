@@ -1,58 +1,170 @@
 {
   "version": 1,
-  "exportedAt": "2026-09-21T09:44:40.262Z",
+  "exportedAt": "2026-10-31T13:41:50.554Z",
   "files": {
-    "project.xml": {
+    ".lvgl-flow/screens/boot_screen.json": {
       "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
+      "exportedAt": "2026-10-31T13:41:50.554Z"
     },
-    ".lvgl-flow/screens/watch.json": {
+    "screens/boot_screen.xml": {
       "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
-    },
-    "screens/watch.xml": {
-      "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
-    },
-    "components/base/container/container.xml": {
-      "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
-    },
-    "components/base/image/image.xml": {
-      "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
-    },
-    "components/base/panel/panel.xml": {
-      "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
-    },
-    "components/base/card/card.xml": {
-      "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
-    },
-    "components/base/row/row.xml": {
-      "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
-    },
-    "components/base/column/column.xml": {
-      "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
-    },
-    "components/base/label/label.xml": {
-      "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
+      "exportedAt": "2026-10-31T13:41:50.554Z"
     },
     "globals.xml": {
       "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
+      "exportedAt": "2026-10-31T13:41:50.554Z"
     },
     "images/index.json": {
       "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_963.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_964.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_965.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_966.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_967.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_968.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_969.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_970.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_971.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_972.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_973.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_974.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_975.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_976.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_977.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_978.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_979.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_980.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_981.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_982.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_983.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_984.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_985.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_986.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_987.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_988.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_989.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_990.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_991.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_992.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_993.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_994.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_995.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_996.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_997.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
+    },
+    "images/vec_46_998.png": {
+      "owner": "tool",
+      "exportedAt": "2026-10-31T13:41:50.554Z"
     },
     "images/index_vectors.json": {
       "owner": "tool",
-      "exportedAt": "2026-09-21T09:44:40.262Z"
+      "exportedAt": "2026-10-31T13:41:50.554Z"
     }
   }
 }

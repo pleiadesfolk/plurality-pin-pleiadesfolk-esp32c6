@@ -3141,69 +3141,6 @@
     "pngPath": "images/vec_25_1105.png"
   },
   {
-    "nodeId": "34:869",
-    "nodeName": "battery",
-    "name": "image_vec_34_869",
-    "svgPath": "vectors/34_869.svg",
-    "width": 18,
-    "height": 11,
-    "pngPath": "images/vec_34_869.png"
-  },
-  {
-    "nodeId": "34:872",
-    "nodeName": "zap",
-    "name": "image_vec_34_872",
-    "svgPath": "vectors/34_872.svg",
-    "width": 11,
-    "height": 12,
-    "pngPath": "images/vec_34_872.png"
-  },
-  {
-    "nodeId": "23:372",
-    "nodeName": "wifi",
-    "name": "image_vec_23_372",
-    "svgPath": "vectors/23_372.svg",
-    "width": 21,
-    "height": 16,
-    "pngPath": "images/vec_23_372.png"
-  },
-  {
-    "nodeId": "42:877",
-    "nodeName": "wifi",
-    "name": "image_vec_42_877",
-    "svgPath": "vectors/42_877.svg",
-    "width": 21,
-    "height": 16,
-    "pngPath": "images/vec_42_877.png"
-  },
-  {
-    "nodeId": "12:212",
-    "nodeName": "bluetooth",
-    "name": "image_vec_12_212",
-    "svgPath": "vectors/12_212.svg",
-    "width": 8,
-    "height": 16,
-    "pngPath": "images/vec_12_212.png"
-  },
-  {
-    "nodeId": "42:862",
-    "nodeName": "battery",
-    "name": "image_vec_42_862",
-    "svgPath": "vectors/42_862.svg",
-    "width": 18,
-    "height": 11,
-    "pngPath": "images/vec_42_862.png"
-  },
-  {
-    "nodeId": "7:1590",
-    "nodeName": "sun",
-    "name": "image_vec_7_1590",
-    "svgPath": "vectors/7_1590.svg",
-    "width": 12,
-    "height": 12,
-    "pngPath": "images/vec_7_1590.png"
-  },
-  {
     "nodeId": "7:1412",
     "nodeName": "settings",
     "name": "image_vec_7_1412",
@@ -3276,6 +3213,15 @@
     "pngPath": "images/vec_7_1415.png"
   },
   {
+    "nodeId": "23:214",
+    "nodeName": "edit",
+    "name": "image_vec_23_214",
+    "svgPath": "vectors/23_214.svg",
+    "width": 18,
+    "height": 18,
+    "pngPath": "images/vec_23_214.png"
+  },
+  {
     "nodeId": "42:2416",
     "nodeName": "Wifi",
     "name": "image_vec_42_2416",
@@ -3294,12 +3240,390 @@
     "pngPath": "images/vec_42_2418.png"
   },
   {
-    "nodeId": "23:214",
-    "nodeName": "edit",
-    "name": "image_vec_23_214",
-    "svgPath": "vectors/23_214.svg",
+    "nodeId": "34:869",
+    "nodeName": "battery",
+    "name": "image_vec_34_869",
+    "svgPath": "vectors/34_869.svg",
+    "width": 18,
+    "height": 11,
+    "pngPath": "images/vec_34_869.png"
+  },
+  {
+    "nodeId": "34:872",
+    "nodeName": "zap",
+    "name": "image_vec_34_872",
+    "svgPath": "vectors/34_872.svg",
+    "width": 11,
+    "height": 12,
+    "pngPath": "images/vec_34_872.png"
+  },
+  {
+    "nodeId": "23:372",
+    "nodeName": "wifi",
+    "name": "image_vec_23_372",
+    "svgPath": "vectors/23_372.svg",
+    "width": 21,
+    "height": 16,
+    "pngPath": "images/vec_23_372.png"
+  },
+  {
+    "nodeId": "42:877",
+    "nodeName": "wifi",
+    "name": "image_vec_42_877",
+    "svgPath": "vectors/42_877.svg",
+    "width": 21,
+    "height": 16,
+    "pngPath": "images/vec_42_877.png"
+  },
+  {
+    "nodeId": "12:212",
+    "nodeName": "bluetooth",
+    "name": "image_vec_12_212",
+    "svgPath": "vectors/12_212.svg",
+    "width": 8,
+    "height": 16,
+    "pngPath": "images/vec_12_212.png"
+  },
+  {
+    "nodeId": "42:862",
+    "nodeName": "battery",
+    "name": "image_vec_42_862",
+    "svgPath": "vectors/42_862.svg",
+    "width": 18,
+    "height": 11,
+    "pngPath": "images/vec_42_862.png"
+  },
+  {
+    "nodeId": "7:1590",
+    "nodeName": "sun",
+    "name": "image_vec_7_1590",
+    "svgPath": "vectors/7_1590.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_7_1590.png"
+  },
+  {
+    "nodeId": "46:963",
+    "nodeName": "Vector",
+    "name": "image_vec_46_963",
+    "svgPath": "vectors/46_963.svg",
+    "width": 40,
+    "height": 40,
+    "pngPath": "images/vec_46_963.png"
+  },
+  {
+    "nodeId": "46:964",
+    "nodeName": "Vector",
+    "name": "image_vec_46_964",
+    "svgPath": "vectors/46_964.svg",
+    "width": 28,
+    "height": 27,
+    "pngPath": "images/vec_46_964.png"
+  },
+  {
+    "nodeId": "46:965",
+    "nodeName": "Vector",
+    "name": "image_vec_46_965",
+    "svgPath": "vectors/46_965.svg",
+    "width": 11,
+    "height": 11,
+    "pngPath": "images/vec_46_965.png"
+  },
+  {
+    "nodeId": "46:966",
+    "nodeName": "Vector",
+    "name": "image_vec_46_966",
+    "svgPath": "vectors/46_966.svg",
+    "width": 10,
+    "height": 10,
+    "pngPath": "images/vec_46_966.png"
+  },
+  {
+    "nodeId": "46:967",
+    "nodeName": "Vector",
+    "name": "image_vec_46_967",
+    "svgPath": "vectors/46_967.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_967.png"
+  },
+  {
+    "nodeId": "46:968",
+    "nodeName": "Vector",
+    "name": "image_vec_46_968",
+    "svgPath": "vectors/46_968.svg",
+    "width": 23,
+    "height": 23,
+    "pngPath": "images/vec_46_968.png"
+  },
+  {
+    "nodeId": "46:969",
+    "nodeName": "Vector",
+    "name": "image_vec_46_969",
+    "svgPath": "vectors/46_969.svg",
+    "width": 23,
+    "height": 23,
+    "pngPath": "images/vec_46_969.png"
+  },
+  {
+    "nodeId": "46:970",
+    "nodeName": "Vector",
+    "name": "image_vec_46_970",
+    "svgPath": "vectors/46_970.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_970.png"
+  },
+  {
+    "nodeId": "46:971",
+    "nodeName": "Vector",
+    "name": "image_vec_46_971",
+    "svgPath": "vectors/46_971.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_971.png"
+  },
+  {
+    "nodeId": "46:972",
+    "nodeName": "Vector",
+    "name": "image_vec_46_972",
+    "svgPath": "vectors/46_972.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_972.png"
+  },
+  {
+    "nodeId": "46:973",
+    "nodeName": "Vector",
+    "name": "image_vec_46_973",
+    "svgPath": "vectors/46_973.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_973.png"
+  },
+  {
+    "nodeId": "46:974",
+    "nodeName": "Vector",
+    "name": "image_vec_46_974",
+    "svgPath": "vectors/46_974.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_974.png"
+  },
+  {
+    "nodeId": "46:975",
+    "nodeName": "Vector",
+    "name": "image_vec_46_975",
+    "svgPath": "vectors/46_975.svg",
+    "width": 19,
+    "height": 19,
+    "pngPath": "images/vec_46_975.png"
+  },
+  {
+    "nodeId": "46:976",
+    "nodeName": "Vector",
+    "name": "image_vec_46_976",
+    "svgPath": "vectors/46_976.svg",
     "width": 18,
     "height": 18,
-    "pngPath": "images/vec_23_214.png"
+    "pngPath": "images/vec_46_976.png"
+  },
+  {
+    "nodeId": "46:977",
+    "nodeName": "Vector",
+    "name": "image_vec_46_977",
+    "svgPath": "vectors/46_977.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_977.png"
+  },
+  {
+    "nodeId": "46:978",
+    "nodeName": "Vector",
+    "name": "image_vec_46_978",
+    "svgPath": "vectors/46_978.svg",
+    "width": 10,
+    "height": 10,
+    "pngPath": "images/vec_46_978.png"
+  },
+  {
+    "nodeId": "46:979",
+    "nodeName": "Vector",
+    "name": "image_vec_46_979",
+    "svgPath": "vectors/46_979.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_979.png"
+  },
+  {
+    "nodeId": "46:980",
+    "nodeName": "Vector",
+    "name": "image_vec_46_980",
+    "svgPath": "vectors/46_980.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_980.png"
+  },
+  {
+    "nodeId": "46:981",
+    "nodeName": "Vector",
+    "name": "image_vec_46_981",
+    "svgPath": "vectors/46_981.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_981.png"
+  },
+  {
+    "nodeId": "46:982",
+    "nodeName": "Vector",
+    "name": "image_vec_46_982",
+    "svgPath": "vectors/46_982.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_982.png"
+  },
+  {
+    "nodeId": "46:983",
+    "nodeName": "Vector",
+    "name": "image_vec_46_983",
+    "svgPath": "vectors/46_983.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_983.png"
+  },
+  {
+    "nodeId": "46:984",
+    "nodeName": "Vector",
+    "name": "image_vec_46_984",
+    "svgPath": "vectors/46_984.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_984.png"
+  },
+  {
+    "nodeId": "46:985",
+    "nodeName": "Vector",
+    "name": "image_vec_46_985",
+    "svgPath": "vectors/46_985.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_985.png"
+  },
+  {
+    "nodeId": "46:986",
+    "nodeName": "Vector",
+    "name": "image_vec_46_986",
+    "svgPath": "vectors/46_986.svg",
+    "width": 11,
+    "height": 11,
+    "pngPath": "images/vec_46_986.png"
+  },
+  {
+    "nodeId": "46:987",
+    "nodeName": "Vector",
+    "name": "image_vec_46_987",
+    "svgPath": "vectors/46_987.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_987.png"
+  },
+  {
+    "nodeId": "46:988",
+    "nodeName": "Vector",
+    "name": "image_vec_46_988",
+    "svgPath": "vectors/46_988.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_988.png"
+  },
+  {
+    "nodeId": "46:989",
+    "nodeName": "Vector",
+    "name": "image_vec_46_989",
+    "svgPath": "vectors/46_989.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_989.png"
+  },
+  {
+    "nodeId": "46:990",
+    "nodeName": "Vector",
+    "name": "image_vec_46_990",
+    "svgPath": "vectors/46_990.svg",
+    "width": 12,
+    "height": 12,
+    "pngPath": "images/vec_46_990.png"
+  },
+  {
+    "nodeId": "46:991",
+    "nodeName": "Vector",
+    "name": "image_vec_46_991",
+    "svgPath": "vectors/46_991.svg",
+    "width": 23,
+    "height": 23,
+    "pngPath": "images/vec_46_991.png"
+  },
+  {
+    "nodeId": "46:992",
+    "nodeName": "Vector",
+    "name": "image_vec_46_992",
+    "svgPath": "vectors/46_992.svg",
+    "width": 20,
+    "height": 20,
+    "pngPath": "images/vec_46_992.png"
+  },
+  {
+    "nodeId": "46:993",
+    "nodeName": "Vector",
+    "name": "image_vec_46_993",
+    "svgPath": "vectors/46_993.svg",
+    "width": 11,
+    "height": 11,
+    "pngPath": "images/vec_46_993.png"
+  },
+  {
+    "nodeId": "46:994",
+    "nodeName": "Vector",
+    "name": "image_vec_46_994",
+    "svgPath": "vectors/46_994.svg",
+    "width": 10,
+    "height": 11,
+    "pngPath": "images/vec_46_994.png"
+  },
+  {
+    "nodeId": "46:995",
+    "nodeName": "Vector",
+    "name": "image_vec_46_995",
+    "svgPath": "vectors/46_995.svg",
+    "width": 11,
+    "height": 12,
+    "pngPath": "images/vec_46_995.png"
+  },
+  {
+    "nodeId": "46:996",
+    "nodeName": "Vector",
+    "name": "image_vec_46_996",
+    "svgPath": "vectors/46_996.svg",
+    "width": 11,
+    "height": 12,
+    "pngPath": "images/vec_46_996.png"
+  },
+  {
+    "nodeId": "46:997",
+    "nodeName": "Vector",
+    "name": "image_vec_46_997",
+    "svgPath": "vectors/46_997.svg",
+    "width": 11,
+    "height": 12,
+    "pngPath": "images/vec_46_997.png"
+  },
+  {
+    "nodeId": "46:998",
+    "nodeName": "Vector",
+    "name": "image_vec_46_998",
+    "svgPath": "vectors/46_998.svg",
+    "width": 11,
+    "height": 12,
+    "pngPath": "images/vec_46_998.png"
   }
 ]

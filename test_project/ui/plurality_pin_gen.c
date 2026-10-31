@@ -779,20 +779,6 @@ const void * image_vec_6_2964 = NULL;
 extern const void * image_vec_6_2964_data;
 const void * image_vec_25_1105 = NULL;
 extern const void * image_vec_25_1105_data;
-const void * image_vec_34_869 = NULL;
-extern const void * image_vec_34_869_data;
-const void * image_vec_34_872 = NULL;
-extern const void * image_vec_34_872_data;
-const void * image_vec_23_372 = NULL;
-extern const void * image_vec_23_372_data;
-const void * image_vec_42_877 = NULL;
-extern const void * image_vec_42_877_data;
-const void * image_vec_12_212 = NULL;
-extern const void * image_vec_12_212_data;
-const void * image_vec_42_862 = NULL;
-extern const void * image_vec_42_862_data;
-const void * image_vec_7_1590 = NULL;
-extern const void * image_vec_7_1590_data;
 const void * image_vec_7_1412 = NULL;
 extern const void * image_vec_7_1412_data;
 const void * image_vec_1_241 = NULL;
@@ -809,12 +795,98 @@ const void * image_vec_25_1004 = NULL;
 extern const void * image_vec_25_1004_data;
 const void * image_vec_7_1415 = NULL;
 extern const void * image_vec_7_1415_data;
+const void * image_vec_23_214 = NULL;
+extern const void * image_vec_23_214_data;
 const void * image_vec_42_2416 = NULL;
 extern const void * image_vec_42_2416_data;
 const void * image_vec_42_2418 = NULL;
 extern const void * image_vec_42_2418_data;
-const void * image_vec_23_214 = NULL;
-extern const void * image_vec_23_214_data;
+const void * image_vec_34_869 = NULL;
+extern const void * image_vec_34_869_data;
+const void * image_vec_34_872 = NULL;
+extern const void * image_vec_34_872_data;
+const void * image_vec_23_372 = NULL;
+extern const void * image_vec_23_372_data;
+const void * image_vec_42_877 = NULL;
+extern const void * image_vec_42_877_data;
+const void * image_vec_12_212 = NULL;
+extern const void * image_vec_12_212_data;
+const void * image_vec_42_862 = NULL;
+extern const void * image_vec_42_862_data;
+const void * image_vec_7_1590 = NULL;
+extern const void * image_vec_7_1590_data;
+const void * image_vec_46_963 = NULL;
+extern const void * image_vec_46_963_data;
+const void * image_vec_46_964 = NULL;
+extern const void * image_vec_46_964_data;
+const void * image_vec_46_965 = NULL;
+extern const void * image_vec_46_965_data;
+const void * image_vec_46_966 = NULL;
+extern const void * image_vec_46_966_data;
+const void * image_vec_46_967 = NULL;
+extern const void * image_vec_46_967_data;
+const void * image_vec_46_968 = NULL;
+extern const void * image_vec_46_968_data;
+const void * image_vec_46_969 = NULL;
+extern const void * image_vec_46_969_data;
+const void * image_vec_46_970 = NULL;
+extern const void * image_vec_46_970_data;
+const void * image_vec_46_971 = NULL;
+extern const void * image_vec_46_971_data;
+const void * image_vec_46_972 = NULL;
+extern const void * image_vec_46_972_data;
+const void * image_vec_46_973 = NULL;
+extern const void * image_vec_46_973_data;
+const void * image_vec_46_974 = NULL;
+extern const void * image_vec_46_974_data;
+const void * image_vec_46_975 = NULL;
+extern const void * image_vec_46_975_data;
+const void * image_vec_46_976 = NULL;
+extern const void * image_vec_46_976_data;
+const void * image_vec_46_977 = NULL;
+extern const void * image_vec_46_977_data;
+const void * image_vec_46_978 = NULL;
+extern const void * image_vec_46_978_data;
+const void * image_vec_46_979 = NULL;
+extern const void * image_vec_46_979_data;
+const void * image_vec_46_980 = NULL;
+extern const void * image_vec_46_980_data;
+const void * image_vec_46_981 = NULL;
+extern const void * image_vec_46_981_data;
+const void * image_vec_46_982 = NULL;
+extern const void * image_vec_46_982_data;
+const void * image_vec_46_983 = NULL;
+extern const void * image_vec_46_983_data;
+const void * image_vec_46_984 = NULL;
+extern const void * image_vec_46_984_data;
+const void * image_vec_46_985 = NULL;
+extern const void * image_vec_46_985_data;
+const void * image_vec_46_986 = NULL;
+extern const void * image_vec_46_986_data;
+const void * image_vec_46_987 = NULL;
+extern const void * image_vec_46_987_data;
+const void * image_vec_46_988 = NULL;
+extern const void * image_vec_46_988_data;
+const void * image_vec_46_989 = NULL;
+extern const void * image_vec_46_989_data;
+const void * image_vec_46_990 = NULL;
+extern const void * image_vec_46_990_data;
+const void * image_vec_46_991 = NULL;
+extern const void * image_vec_46_991_data;
+const void * image_vec_46_992 = NULL;
+extern const void * image_vec_46_992_data;
+const void * image_vec_46_993 = NULL;
+extern const void * image_vec_46_993_data;
+const void * image_vec_46_994 = NULL;
+extern const void * image_vec_46_994_data;
+const void * image_vec_46_995 = NULL;
+extern const void * image_vec_46_995_data;
+const void * image_vec_46_996 = NULL;
+extern const void * image_vec_46_996_data;
+const void * image_vec_46_997 = NULL;
+extern const void * image_vec_46_997_data;
+const void * image_vec_46_998 = NULL;
+extern const void * image_vec_46_998_data;
 
 /*----------------
  * Global styles
@@ -2428,34 +2500,6 @@ void plurality_pin_init_gen(const char * asset_path)
         if (!image_vec_25_1105) {
             image_vec_25_1105 = &image_vec_25_1105_data;
         }
-        /* image_vec_34_869 */
-        if (!image_vec_34_869) {
-            image_vec_34_869 = &image_vec_34_869_data;
-        }
-        /* image_vec_34_872 */
-        if (!image_vec_34_872) {
-            image_vec_34_872 = &image_vec_34_872_data;
-        }
-        /* image_vec_23_372 */
-        if (!image_vec_23_372) {
-            image_vec_23_372 = &image_vec_23_372_data;
-        }
-        /* image_vec_42_877 */
-        if (!image_vec_42_877) {
-            image_vec_42_877 = &image_vec_42_877_data;
-        }
-        /* image_vec_12_212 */
-        if (!image_vec_12_212) {
-            image_vec_12_212 = &image_vec_12_212_data;
-        }
-        /* image_vec_42_862 */
-        if (!image_vec_42_862) {
-            image_vec_42_862 = &image_vec_42_862_data;
-        }
-        /* image_vec_7_1590 */
-        if (!image_vec_7_1590) {
-            image_vec_7_1590 = &image_vec_7_1590_data;
-        }
         /* image_vec_7_1412 */
         if (!image_vec_7_1412) {
             image_vec_7_1412 = &image_vec_7_1412_data;
@@ -2488,6 +2532,10 @@ void plurality_pin_init_gen(const char * asset_path)
         if (!image_vec_7_1415) {
             image_vec_7_1415 = &image_vec_7_1415_data;
         }
+        /* image_vec_23_214 */
+        if (!image_vec_23_214) {
+            image_vec_23_214 = &image_vec_23_214_data;
+        }
         /* image_vec_42_2416 */
         if (!image_vec_42_2416) {
             image_vec_42_2416 = &image_vec_42_2416_data;
@@ -2496,9 +2544,177 @@ void plurality_pin_init_gen(const char * asset_path)
         if (!image_vec_42_2418) {
             image_vec_42_2418 = &image_vec_42_2418_data;
         }
-        /* image_vec_23_214 */
-        if (!image_vec_23_214) {
-            image_vec_23_214 = &image_vec_23_214_data;
+        /* image_vec_34_869 */
+        if (!image_vec_34_869) {
+            image_vec_34_869 = &image_vec_34_869_data;
+        }
+        /* image_vec_34_872 */
+        if (!image_vec_34_872) {
+            image_vec_34_872 = &image_vec_34_872_data;
+        }
+        /* image_vec_23_372 */
+        if (!image_vec_23_372) {
+            image_vec_23_372 = &image_vec_23_372_data;
+        }
+        /* image_vec_42_877 */
+        if (!image_vec_42_877) {
+            image_vec_42_877 = &image_vec_42_877_data;
+        }
+        /* image_vec_12_212 */
+        if (!image_vec_12_212) {
+            image_vec_12_212 = &image_vec_12_212_data;
+        }
+        /* image_vec_42_862 */
+        if (!image_vec_42_862) {
+            image_vec_42_862 = &image_vec_42_862_data;
+        }
+        /* image_vec_7_1590 */
+        if (!image_vec_7_1590) {
+            image_vec_7_1590 = &image_vec_7_1590_data;
+        }
+        /* image_vec_46_963 */
+        if (!image_vec_46_963) {
+            image_vec_46_963 = &image_vec_46_963_data;
+        }
+        /* image_vec_46_964 */
+        if (!image_vec_46_964) {
+            image_vec_46_964 = &image_vec_46_964_data;
+        }
+        /* image_vec_46_965 */
+        if (!image_vec_46_965) {
+            image_vec_46_965 = &image_vec_46_965_data;
+        }
+        /* image_vec_46_966 */
+        if (!image_vec_46_966) {
+            image_vec_46_966 = &image_vec_46_966_data;
+        }
+        /* image_vec_46_967 */
+        if (!image_vec_46_967) {
+            image_vec_46_967 = &image_vec_46_967_data;
+        }
+        /* image_vec_46_968 */
+        if (!image_vec_46_968) {
+            image_vec_46_968 = &image_vec_46_968_data;
+        }
+        /* image_vec_46_969 */
+        if (!image_vec_46_969) {
+            image_vec_46_969 = &image_vec_46_969_data;
+        }
+        /* image_vec_46_970 */
+        if (!image_vec_46_970) {
+            image_vec_46_970 = &image_vec_46_970_data;
+        }
+        /* image_vec_46_971 */
+        if (!image_vec_46_971) {
+            image_vec_46_971 = &image_vec_46_971_data;
+        }
+        /* image_vec_46_972 */
+        if (!image_vec_46_972) {
+            image_vec_46_972 = &image_vec_46_972_data;
+        }
+        /* image_vec_46_973 */
+        if (!image_vec_46_973) {
+            image_vec_46_973 = &image_vec_46_973_data;
+        }
+        /* image_vec_46_974 */
+        if (!image_vec_46_974) {
+            image_vec_46_974 = &image_vec_46_974_data;
+        }
+        /* image_vec_46_975 */
+        if (!image_vec_46_975) {
+            image_vec_46_975 = &image_vec_46_975_data;
+        }
+        /* image_vec_46_976 */
+        if (!image_vec_46_976) {
+            image_vec_46_976 = &image_vec_46_976_data;
+        }
+        /* image_vec_46_977 */
+        if (!image_vec_46_977) {
+            image_vec_46_977 = &image_vec_46_977_data;
+        }
+        /* image_vec_46_978 */
+        if (!image_vec_46_978) {
+            image_vec_46_978 = &image_vec_46_978_data;
+        }
+        /* image_vec_46_979 */
+        if (!image_vec_46_979) {
+            image_vec_46_979 = &image_vec_46_979_data;
+        }
+        /* image_vec_46_980 */
+        if (!image_vec_46_980) {
+            image_vec_46_980 = &image_vec_46_980_data;
+        }
+        /* image_vec_46_981 */
+        if (!image_vec_46_981) {
+            image_vec_46_981 = &image_vec_46_981_data;
+        }
+        /* image_vec_46_982 */
+        if (!image_vec_46_982) {
+            image_vec_46_982 = &image_vec_46_982_data;
+        }
+        /* image_vec_46_983 */
+        if (!image_vec_46_983) {
+            image_vec_46_983 = &image_vec_46_983_data;
+        }
+        /* image_vec_46_984 */
+        if (!image_vec_46_984) {
+            image_vec_46_984 = &image_vec_46_984_data;
+        }
+        /* image_vec_46_985 */
+        if (!image_vec_46_985) {
+            image_vec_46_985 = &image_vec_46_985_data;
+        }
+        /* image_vec_46_986 */
+        if (!image_vec_46_986) {
+            image_vec_46_986 = &image_vec_46_986_data;
+        }
+        /* image_vec_46_987 */
+        if (!image_vec_46_987) {
+            image_vec_46_987 = &image_vec_46_987_data;
+        }
+        /* image_vec_46_988 */
+        if (!image_vec_46_988) {
+            image_vec_46_988 = &image_vec_46_988_data;
+        }
+        /* image_vec_46_989 */
+        if (!image_vec_46_989) {
+            image_vec_46_989 = &image_vec_46_989_data;
+        }
+        /* image_vec_46_990 */
+        if (!image_vec_46_990) {
+            image_vec_46_990 = &image_vec_46_990_data;
+        }
+        /* image_vec_46_991 */
+        if (!image_vec_46_991) {
+            image_vec_46_991 = &image_vec_46_991_data;
+        }
+        /* image_vec_46_992 */
+        if (!image_vec_46_992) {
+            image_vec_46_992 = &image_vec_46_992_data;
+        }
+        /* image_vec_46_993 */
+        if (!image_vec_46_993) {
+            image_vec_46_993 = &image_vec_46_993_data;
+        }
+        /* image_vec_46_994 */
+        if (!image_vec_46_994) {
+            image_vec_46_994 = &image_vec_46_994_data;
+        }
+        /* image_vec_46_995 */
+        if (!image_vec_46_995) {
+            image_vec_46_995 = &image_vec_46_995_data;
+        }
+        /* image_vec_46_996 */
+        if (!image_vec_46_996) {
+            image_vec_46_996 = &image_vec_46_996_data;
+        }
+        /* image_vec_46_997 */
+        if (!image_vec_46_997) {
+            image_vec_46_997 = &image_vec_46_997_data;
+        }
+        /* image_vec_46_998 */
+        if (!image_vec_46_998) {
+            image_vec_46_998 = &image_vec_46_998_data;
         }
     }
     #endif
@@ -3045,13 +3261,6 @@ void plurality_pin_init_gen(const char * asset_path)
     lv_xml_register_image(NULL, "image_vec_6_2963", image_vec_6_2963);
     lv_xml_register_image(NULL, "image_vec_6_2964", image_vec_6_2964);
     lv_xml_register_image(NULL, "image_vec_25_1105", image_vec_25_1105);
-    lv_xml_register_image(NULL, "image_vec_34_869", image_vec_34_869);
-    lv_xml_register_image(NULL, "image_vec_34_872", image_vec_34_872);
-    lv_xml_register_image(NULL, "image_vec_23_372", image_vec_23_372);
-    lv_xml_register_image(NULL, "image_vec_42_877", image_vec_42_877);
-    lv_xml_register_image(NULL, "image_vec_12_212", image_vec_12_212);
-    lv_xml_register_image(NULL, "image_vec_42_862", image_vec_42_862);
-    lv_xml_register_image(NULL, "image_vec_7_1590", image_vec_7_1590);
     lv_xml_register_image(NULL, "image_vec_7_1412", image_vec_7_1412);
     lv_xml_register_image(NULL, "image_vec_1_241", image_vec_1_241);
     lv_xml_register_image(NULL, "image_vec_7_1491", image_vec_7_1491);
@@ -3060,9 +3269,52 @@ void plurality_pin_init_gen(const char * asset_path)
     lv_xml_register_image(NULL, "image_vec_1_882", image_vec_1_882);
     lv_xml_register_image(NULL, "image_vec_25_1004", image_vec_25_1004);
     lv_xml_register_image(NULL, "image_vec_7_1415", image_vec_7_1415);
+    lv_xml_register_image(NULL, "image_vec_23_214", image_vec_23_214);
     lv_xml_register_image(NULL, "image_vec_42_2416", image_vec_42_2416);
     lv_xml_register_image(NULL, "image_vec_42_2418", image_vec_42_2418);
-    lv_xml_register_image(NULL, "image_vec_23_214", image_vec_23_214);
+    lv_xml_register_image(NULL, "image_vec_34_869", image_vec_34_869);
+    lv_xml_register_image(NULL, "image_vec_34_872", image_vec_34_872);
+    lv_xml_register_image(NULL, "image_vec_23_372", image_vec_23_372);
+    lv_xml_register_image(NULL, "image_vec_42_877", image_vec_42_877);
+    lv_xml_register_image(NULL, "image_vec_12_212", image_vec_12_212);
+    lv_xml_register_image(NULL, "image_vec_42_862", image_vec_42_862);
+    lv_xml_register_image(NULL, "image_vec_7_1590", image_vec_7_1590);
+    lv_xml_register_image(NULL, "image_vec_46_963", image_vec_46_963);
+    lv_xml_register_image(NULL, "image_vec_46_964", image_vec_46_964);
+    lv_xml_register_image(NULL, "image_vec_46_965", image_vec_46_965);
+    lv_xml_register_image(NULL, "image_vec_46_966", image_vec_46_966);
+    lv_xml_register_image(NULL, "image_vec_46_967", image_vec_46_967);
+    lv_xml_register_image(NULL, "image_vec_46_968", image_vec_46_968);
+    lv_xml_register_image(NULL, "image_vec_46_969", image_vec_46_969);
+    lv_xml_register_image(NULL, "image_vec_46_970", image_vec_46_970);
+    lv_xml_register_image(NULL, "image_vec_46_971", image_vec_46_971);
+    lv_xml_register_image(NULL, "image_vec_46_972", image_vec_46_972);
+    lv_xml_register_image(NULL, "image_vec_46_973", image_vec_46_973);
+    lv_xml_register_image(NULL, "image_vec_46_974", image_vec_46_974);
+    lv_xml_register_image(NULL, "image_vec_46_975", image_vec_46_975);
+    lv_xml_register_image(NULL, "image_vec_46_976", image_vec_46_976);
+    lv_xml_register_image(NULL, "image_vec_46_977", image_vec_46_977);
+    lv_xml_register_image(NULL, "image_vec_46_978", image_vec_46_978);
+    lv_xml_register_image(NULL, "image_vec_46_979", image_vec_46_979);
+    lv_xml_register_image(NULL, "image_vec_46_980", image_vec_46_980);
+    lv_xml_register_image(NULL, "image_vec_46_981", image_vec_46_981);
+    lv_xml_register_image(NULL, "image_vec_46_982", image_vec_46_982);
+    lv_xml_register_image(NULL, "image_vec_46_983", image_vec_46_983);
+    lv_xml_register_image(NULL, "image_vec_46_984", image_vec_46_984);
+    lv_xml_register_image(NULL, "image_vec_46_985", image_vec_46_985);
+    lv_xml_register_image(NULL, "image_vec_46_986", image_vec_46_986);
+    lv_xml_register_image(NULL, "image_vec_46_987", image_vec_46_987);
+    lv_xml_register_image(NULL, "image_vec_46_988", image_vec_46_988);
+    lv_xml_register_image(NULL, "image_vec_46_989", image_vec_46_989);
+    lv_xml_register_image(NULL, "image_vec_46_990", image_vec_46_990);
+    lv_xml_register_image(NULL, "image_vec_46_991", image_vec_46_991);
+    lv_xml_register_image(NULL, "image_vec_46_992", image_vec_46_992);
+    lv_xml_register_image(NULL, "image_vec_46_993", image_vec_46_993);
+    lv_xml_register_image(NULL, "image_vec_46_994", image_vec_46_994);
+    lv_xml_register_image(NULL, "image_vec_46_995", image_vec_46_995);
+    lv_xml_register_image(NULL, "image_vec_46_996", image_vec_46_996);
+    lv_xml_register_image(NULL, "image_vec_46_997", image_vec_46_997);
+    lv_xml_register_image(NULL, "image_vec_46_998", image_vec_46_998);
 #endif
 
 #if !defined(LV_USE_XML) || LV_USE_XML == 0

@@ -471,13 +471,6 @@ extern const void * image_vec_6_2960;
 extern const void * image_vec_6_2963;
 extern const void * image_vec_6_2964;
 extern const void * image_vec_25_1105;
-extern const void * image_vec_34_869;
-extern const void * image_vec_34_872;
-extern const void * image_vec_23_372;
-extern const void * image_vec_42_877;
-extern const void * image_vec_12_212;
-extern const void * image_vec_42_862;
-extern const void * image_vec_7_1590;
 extern const void * image_vec_7_1412;
 extern const void * image_vec_1_241;
 extern const void * image_vec_7_1491;
@@ -486,9 +479,52 @@ extern const void * image_vec_1_790;
 extern const void * image_vec_1_882;
 extern const void * image_vec_25_1004;
 extern const void * image_vec_7_1415;
+extern const void * image_vec_23_214;
 extern const void * image_vec_42_2416;
 extern const void * image_vec_42_2418;
-extern const void * image_vec_23_214;
+extern const void * image_vec_34_869;
+extern const void * image_vec_34_872;
+extern const void * image_vec_23_372;
+extern const void * image_vec_42_877;
+extern const void * image_vec_12_212;
+extern const void * image_vec_42_862;
+extern const void * image_vec_7_1590;
+extern const void * image_vec_46_963;
+extern const void * image_vec_46_964;
+extern const void * image_vec_46_965;
+extern const void * image_vec_46_966;
+extern const void * image_vec_46_967;
+extern const void * image_vec_46_968;
+extern const void * image_vec_46_969;
+extern const void * image_vec_46_970;
+extern const void * image_vec_46_971;
+extern const void * image_vec_46_972;
+extern const void * image_vec_46_973;
+extern const void * image_vec_46_974;
+extern const void * image_vec_46_975;
+extern const void * image_vec_46_976;
+extern const void * image_vec_46_977;
+extern const void * image_vec_46_978;
+extern const void * image_vec_46_979;
+extern const void * image_vec_46_980;
+extern const void * image_vec_46_981;
+extern const void * image_vec_46_982;
+extern const void * image_vec_46_983;
+extern const void * image_vec_46_984;
+extern const void * image_vec_46_985;
+extern const void * image_vec_46_986;
+extern const void * image_vec_46_987;
+extern const void * image_vec_46_988;
+extern const void * image_vec_46_989;
+extern const void * image_vec_46_990;
+extern const void * image_vec_46_991;
+extern const void * image_vec_46_992;
+extern const void * image_vec_46_993;
+extern const void * image_vec_46_994;
+extern const void * image_vec_46_995;
+extern const void * image_vec_46_996;
+extern const void * image_vec_46_997;
+extern const void * image_vec_46_998;
 
 /*----------------
  * Subjects
@@ -556,11 +592,14 @@ void plurality_pin_init_gen(const char * asset_path);
 #include "components/configuration_label_only_state_enabled_selected_false/configuration_label_only_state_enabled_selected_false_gen.h"
 #include "components/configuration_label_only_state_enabled_selected_true/configuration_label_only_state_enabled_selected_true_gen.h"
 #include "components/connect_b/connect_b_gen.h"
+#include "components/connect_to_pin/connect_to_pin_gen.h"
 #include "components/derived/tile_2/tile_2_gen.h"
 #include "components/derived/tile/tile_gen.h"
 #include "components/edit_b/edit_b_gen.h"
+#include "components/edit_members/edit_members_gen.h"
 #include "components/edit/edit_gen.h"
 #include "components/ellipse_2/ellipse_2_gen.h"
+#include "components/frame_5/frame_5_gen.h"
 #include "components/front_history_card/front_history_card_gen.h"
 #include "components/image_b/image_b_gen.h"
 #include "components/ipad_leading_accessories/ipad_leading_accessories_gen.h"
@@ -581,11 +620,15 @@ void plurality_pin_init_gen(const char * asset_path);
 #include "components/settings_c/settings_c_gen.h"
 #include "components/settings_d/settings_d_gen.h"
 #include "components/settings_e/settings_e_gen.h"
+#include "components/settings_f/settings_f_gen.h"
+#include "components/settings_g/settings_g_gen.h"
 #include "components/stars_filled/stars_filled_gen.h"
 #include "components/stars/stars_gen.h"
 #include "components/status_b/status_b_gen.h"
 #include "components/status_bar/status_bar_gen.h"
 #include "components/status_c/status_c_gen.h"
+#include "components/status_d/status_d_gen.h"
+#include "components/status_e/status_e_gen.h"
 #include "components/text_box_b/text_box_b_gen.h"
 #include "components/text_box/text_box_gen.h"
 #include "components/tf_storage/tf_storage_gen.h"
@@ -595,6 +638,7 @@ void plurality_pin_init_gen(const char * asset_path);
 #include "components/type_round_size_small_state_enabled_selected_true/type_round_size_small_state_enabled_selected_true_gen.h"
 #include "components/wi_fi/wi_fi_gen.h"
 #include "components/wifi_card/wifi_card_gen.h"
+#include "screens/boot_screen_gen.h"
 #include "screens/connect_gen.h"
 #include "screens/connect_wi_fi_gen.h"
 #include "screens/front_history_gen.h"

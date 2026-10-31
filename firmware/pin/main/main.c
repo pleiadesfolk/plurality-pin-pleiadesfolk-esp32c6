@@ -26,6 +26,7 @@
 #include "photos.h"
 #include "lvgl.h"
 #include "assets.h"
+#include "boot.h"
 #include "brightness.h"
 #include "connect.h"
 #include "button.h"
@@ -155,11 +156,9 @@ static void memory_report(lv_timer_t *timer)
              (unsigned)heap_caps_get_minimum_free_size(MALLOC_CAP_DEFAULT));
 }
 
-static void lvgl_task(void *arg)
+/* The boot screen has faded in: start the real UI */
+static void boot_done(void)
 {
-    plurality_pin_init("");             /* asset path unused: fonts are built in, images mapped */
-    brightness_init();
-    status_init();
     nav_init(on_screen);
 #if RUN_BENCHMARK
     /* After the SD card is mounted (photos live there) */
@@ -170,6 +169,14 @@ static void lvgl_task(void *arg)
     lv_timer_create(clock_update, 1000, NULL);
     lv_timer_create((lv_timer_cb_t)fronter_poll, 250, NULL);
     lv_timer_create(memory_report, 10000, NULL);
+}
+
+static void lvgl_task(void *arg)
+{
+    plurality_pin_init("");             /* asset path unused: fonts are built in, images mapped */
+    brightness_init();
+    status_init();
+    boot_show(boot_done);
 
     while (1) {
         uint32_t wait_ms = lv_timer_handler();

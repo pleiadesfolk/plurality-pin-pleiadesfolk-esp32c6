@@ -364,13 +364,6 @@
     <data name="image_vec_6_2963" src_path="images/vec_6_2963.png" color_format="rgb565a8" />
     <data name="image_vec_6_2964" src_path="images/vec_6_2964.png" color_format="rgb565a8" />
     <data name="image_vec_25_1105" src_path="images/vec_25_1105.png" color_format="rgb565a8" />
-    <data name="image_vec_34_869" src_path="images/vec_34_869.png" color_format="rgb565a8" />
-    <data name="image_vec_34_872" src_path="images/vec_34_872.png" color_format="rgb565a8" />
-    <data name="image_vec_23_372" src_path="images/vec_23_372.png" color_format="rgb565a8" />
-    <data name="image_vec_42_877" src_path="images/vec_42_877.png" color_format="rgb565a8" />
-    <data name="image_vec_12_212" src_path="images/vec_12_212.png" color_format="rgb565a8" />
-    <data name="image_vec_42_862" src_path="images/vec_42_862.png" color_format="rgb565a8" />
-    <data name="image_vec_7_1590" src_path="images/vec_7_1590.png" color_format="rgb565a8" />
     <data name="image_vec_7_1412" src_path="images/vec_7_1412.png" color_format="rgb565a8" />
     <data name="image_vec_1_241" src_path="images/vec_1_241.png" color_format="rgb565a8" />
     <data name="image_vec_7_1491" src_path="images/vec_7_1491.png" color_format="rgb565a8" />
@@ -379,9 +372,52 @@
     <data name="image_vec_1_882" src_path="images/vec_1_882.png" color_format="rgb565a8" />
     <data name="image_vec_25_1004" src_path="images/vec_25_1004.png" color_format="rgb565a8" />
     <data name="image_vec_7_1415" src_path="images/vec_7_1415.png" color_format="rgb565a8" />
+    <data name="image_vec_23_214" src_path="images/vec_23_214.png" color_format="rgb565a8" />
     <data name="image_vec_42_2416" src_path="images/vec_42_2416.png" color_format="rgb565a8" />
     <data name="image_vec_42_2418" src_path="images/vec_42_2418.png" color_format="rgb565a8" />
-    <data name="image_vec_23_214" src_path="images/vec_23_214.png" color_format="rgb565a8" />
+    <data name="image_vec_34_869" src_path="images/vec_34_869.png" color_format="rgb565a8" />
+    <data name="image_vec_34_872" src_path="images/vec_34_872.png" color_format="rgb565a8" />
+    <data name="image_vec_23_372" src_path="images/vec_23_372.png" color_format="rgb565a8" />
+    <data name="image_vec_42_877" src_path="images/vec_42_877.png" color_format="rgb565a8" />
+    <data name="image_vec_12_212" src_path="images/vec_12_212.png" color_format="rgb565a8" />
+    <data name="image_vec_42_862" src_path="images/vec_42_862.png" color_format="rgb565a8" />
+    <data name="image_vec_7_1590" src_path="images/vec_7_1590.png" color_format="rgb565a8" />
+    <data name="image_vec_46_963" src_path="images/vec_46_963.png" color_format="rgb565a8" />
+    <data name="image_vec_46_964" src_path="images/vec_46_964.png" color_format="rgb565a8" />
+    <data name="image_vec_46_965" src_path="images/vec_46_965.png" color_format="rgb565a8" />
+    <data name="image_vec_46_966" src_path="images/vec_46_966.png" color_format="rgb565a8" />
+    <data name="image_vec_46_967" src_path="images/vec_46_967.png" color_format="rgb565a8" />
+    <data name="image_vec_46_968" src_path="images/vec_46_968.png" color_format="rgb565a8" />
+    <data name="image_vec_46_969" src_path="images/vec_46_969.png" color_format="rgb565a8" />
+    <data name="image_vec_46_970" src_path="images/vec_46_970.png" color_format="rgb565a8" />
+    <data name="image_vec_46_971" src_path="images/vec_46_971.png" color_format="rgb565a8" />
+    <data name="image_vec_46_972" src_path="images/vec_46_972.png" color_format="rgb565a8" />
+    <data name="image_vec_46_973" src_path="images/vec_46_973.png" color_format="rgb565a8" />
+    <data name="image_vec_46_974" src_path="images/vec_46_974.png" color_format="rgb565a8" />
+    <data name="image_vec_46_975" src_path="images/vec_46_975.png" color_format="rgb565a8" />
+    <data name="image_vec_46_976" src_path="images/vec_46_976.png" color_format="rgb565a8" />
+    <data name="image_vec_46_977" src_path="images/vec_46_977.png" color_format="rgb565a8" />
+    <data name="image_vec_46_978" src_path="images/vec_46_978.png" color_format="rgb565a8" />
+    <data name="image_vec_46_979" src_path="images/vec_46_979.png" color_format="rgb565a8" />
+    <data name="image_vec_46_980" src_path="images/vec_46_980.png" color_format="rgb565a8" />
+    <data name="image_vec_46_981" src_path="images/vec_46_981.png" color_format="rgb565a8" />
+    <data name="image_vec_46_982" src_path="images/vec_46_982.png" color_format="rgb565a8" />
+    <data name="image_vec_46_983" src_path="images/vec_46_983.png" color_format="rgb565a8" />
+    <data name="image_vec_46_984" src_path="images/vec_46_984.png" color_format="rgb565a8" />
+    <data name="image_vec_46_985" src_path="images/vec_46_985.png" color_format="rgb565a8" />
+    <data name="image_vec_46_986" src_path="images/vec_46_986.png" color_format="rgb565a8" />
+    <data name="image_vec_46_987" src_path="images/vec_46_987.png" color_format="rgb565a8" />
+    <data name="image_vec_46_988" src_path="images/vec_46_988.png" color_format="rgb565a8" />
+    <data name="image_vec_46_989" src_path="images/vec_46_989.png" color_format="rgb565a8" />
+    <data name="image_vec_46_990" src_path="images/vec_46_990.png" color_format="rgb565a8" />
+    <data name="image_vec_46_991" src_path="images/vec_46_991.png" color_format="rgb565a8" />
+    <data name="image_vec_46_992" src_path="images/vec_46_992.png" color_format="rgb565a8" />
+    <data name="image_vec_46_993" src_path="images/vec_46_993.png" color_format="rgb565a8" />
+    <data name="image_vec_46_994" src_path="images/vec_46_994.png" color_format="rgb565a8" />
+    <data name="image_vec_46_995" src_path="images/vec_46_995.png" color_format="rgb565a8" />
+    <data name="image_vec_46_996" src_path="images/vec_46_996.png" color_format="rgb565a8" />
+    <data name="image_vec_46_997" src_path="images/vec_46_997.png" color_format="rgb565a8" />
+    <data name="image_vec_46_998" src_path="images/vec_46_998.png" color_format="rgb565a8" />
 
     <!-- ─────────────────── <lvgl-figma-flow end="images"/> ──────────────────── -->
   </images>
