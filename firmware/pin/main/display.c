@@ -14,6 +14,8 @@
 #include <string.h>
 #include "display.h"
 #include "esp_timer.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 #include "esp_heap_caps.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_io.h"
@@ -36,6 +38,11 @@ static esp_lcd_panel_handle_t panel;
 static esp_lcd_panel_io_handle_t panel_io;
 static esp_lcd_touch_handle_t touch;
 static uint16_t *rotate_buf;            /* DMA buffer holding the rotated strip */
+/* The SPI bus is shared with the SD card. The SPI driver is meant to take
+ * turns, but an SD command started while a strip is still being sent in the
+ * background crashes it (assert in spi_hal_setup_trans), so each strip holds
+ * this until it's sent, and each SD command takes it too (storage_info.c). */
+static SemaphoreHandle_t bus_free;
 static display_stats_t stats;
 
 /* ---------- display ---------- */
@@ -82,6 +89,7 @@ static void flush_cb(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
     stats.pixels += w * h;
 
     /* Asynchronous: flush_done_cb tells LVGL when the transfer has finished. */
+    xSemaphoreTake(bus_free, portMAX_DELAY);
     esp_lcd_panel_draw_bitmap(panel, px1, py1, px1 + pw, py1 + w, rotate_buf);
 }
 
@@ -94,8 +102,20 @@ display_stats_t display_take_stats(void)
 
 static bool flush_done_cb(esp_lcd_panel_io_handle_t io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
+    BaseType_t woken = pdFALSE;
+    xSemaphoreGiveFromISR(bus_free, &woken);
     lv_display_flush_ready((lv_display_t *)user_ctx);
-    return false;
+    return woken == pdTRUE;
+}
+
+void display_bus_take(void)
+{
+    xSemaphoreTake(bus_free, portMAX_DELAY);
+}
+
+void display_bus_give(void)
+{
+    xSemaphoreGive(bus_free);
 }
 
 /* The panel only accepts windows that start on an even pixel and have an even size. */
@@ -232,6 +252,8 @@ void display_set_brightness(uint8_t percent)
 
 lv_display_t *display_init(void)
 {
+    bus_free = xSemaphoreCreateBinary();
+    xSemaphoreGive(bus_free);
     bsp_display_config_t disp_config = {0};
     ESP_ERROR_CHECK(bsp_display_new(&disp_config, &panel, &panel_io));
 

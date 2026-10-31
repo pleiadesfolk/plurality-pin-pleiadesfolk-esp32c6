@@ -36,5 +36,10 @@ typedef struct {
 /** Drawing statistics since the previous call (for performance testing). */
 display_stats_t display_take_stats(void);
 
+/** Take turns with the display on the SPI bus it shares with the SD card:
+ *  hold it around each SD command. */
+void display_bus_take(void);
+void display_bus_give(void);
+
 /** Panel brightness, 0-100 %. */
 void display_set_brightness(uint8_t percent);

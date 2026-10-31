@@ -30,8 +30,15 @@ void store_init(void);
  * {"system": "...", "members": [{"id","name","card","pronouns","color":"RRGGBB"}]}
  */
 esp_err_t store_set_members_json(const char *json);
-/** {"system","members":[...],"front":[i..],"front_since":t,"switches":n}; free() the result. */
-char *store_get_state_json(void);
+/** Receives JSON text in pieces; returns false to stop. */
+typedef bool (*store_emit_t)(const char *text, size_t len, void *ctx);
+/** Send {"system","members":[...],"front":[i..],"front_since":t,"switches":n,"now":t<extra>}
+ *  in pieces (`extra`: more fields, starting with a comma, or ""). */
+bool store_send_state(store_emit_t emit, void *ctx, const char *extra);
+/** Which members have photos, for the dashboard: {"free_slots", "sd_card",
+ *  "photos": {id: "fs"}} (f = "image" photo, s = "image with name"; capital
+ *  = in a fast flash slot, small = on the SD card). free() it. */
+char *store_photos_json(void);
 
 /* Front history upload: begin, write raw store_switch_t records (any chunking), end. */
 esp_err_t store_switches_begin(void);

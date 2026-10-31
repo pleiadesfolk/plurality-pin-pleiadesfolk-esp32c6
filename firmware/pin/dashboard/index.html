@@ -188,6 +188,13 @@
       <input type="file" id="import-file" accept=".json,application/json">
     </div>
     <div id="import-preview"></div>
+    <div class="box">
+      <h2 style="margin-top:0">Photos from PluralKit</h2>
+      <p style="margin-top:0">Gives every member their PluralKit avatar as their photo, for the image modes. Photos go on the pin's SD card; members marked "Fast photo" in the member editor keep theirs in the pin's own memory instead, so they show straight away.</p>
+      <label class="check" style="margin-top:0"><input type="checkbox" id="pfp-skip" checked> Skip members who already have a photo</label>
+      <button class="primary" id="pfp-go" style="margin-top:12px">Import photos</button>
+      <div id="pfp-progress" style="margin-top:12px"></div>
+    </div>
   </section>
 </main>
 
@@ -217,6 +224,8 @@
       <button id="editor-avatar">Use PluralKit avatar</button>
       <label class="button">Upload a photo<input type="file" id="editor-upload" accept="image/*" hidden></label>
     </div>
+    <label class="check"><input type="checkbox" id="editor-fast"> Fast photo</label>
+    <p class="dim" id="editor-fast-note" style="margin:4px 0 0 28px"></p>
     <label class="field" for="editor-zoom">Zoom <span class="dim">(drag the preview to move the photo)</span></label>
     <input type="range" id="editor-zoom" min="1" max="4" step="0.01" value="1" style="width:100%">
   </div>
@@ -562,6 +571,29 @@ async function photoFromUrl(url) {
   return makePhoto(img);
 }
 
+// Which members have photos on the pin: {free_slots, sd_card, photos: {id: "fs"}}
+// (f/s = "image" / "image with name" photo; capitals = in a fast slot)
+async function photoInfo() {
+  return (await api("GET", "/api/photos")).json();
+}
+
+// Send a member's photos, made from `photo`; "fast" members' go to a flash slot
+async function uploadPhotos(member, photo) {
+  await api("PUT", picturePath(member, "full"), encodeLvgl(renderFull(photo), false));
+  await api("PUT", picturePath(member, "side"), encodeLvgl(renderSide(photo), true));
+}
+
+// Send the photos the pin already has back to it unchanged, so they move
+// between the SD card and a fast slot after "fast" changed
+async function movePhotos(member, have) {
+  for (const kind of ["full", "side"]) {
+    if (!have.toLowerCase().includes(kind[0])) continue;
+    const res = await fetch(picturePath(member, kind));
+    if (!res.ok) throw new Error(`couldn't read ${member.name}'s photo`);
+    await api("PUT", picturePath(member, kind), await res.arrayBuffer());
+  }
+}
+
 async function photoFromFile(file) {
   return makePhoto(await createImageBitmap(file));
 }
@@ -692,10 +724,7 @@ async function uploadPictures(member, photo) {
   if (card.w) await api("PUT", picturePath(member, "card"), encodeCard(card));
   const label = drawText(member.label || member.name, labelSpec(member.style));
   if (label.w) await api("PUT", picturePath(member, "label"), encodeCard(label));
-  if (photo) {
-    await api("PUT", picturePath(member, "full"), encodeLvgl(renderFull(photo), false));
-    await api("PUT", picturePath(member, "side"), encodeLvgl(renderSide(photo), true));
-  }
+  if (photo) await uploadPhotos(member, photo);
 }
 
 /* ---------- Front tab ---------- */
@@ -795,10 +824,30 @@ function openEditor(index) {
   $("editor-delete").hidden = index < 0;
   editorPhoto = null;
   editorStored = null;
+  editorPhotos = { free_slots: null, have: "" };
+  $("editor-fast").checked = !!m.fast;
+  showFastNote();
   if (index >= 0) loadStoredPhotos(m);
+  photoInfo().then(info => {
+    if (state.members[editing]?.id !== m.id && index >= 0) return;
+    editorPhotos = { free_slots: info.free_slots, have: info.photos[m.id] || "" };
+    // Photos already in a slot from before "fast" existed count as fast
+    if (/[FS]/.test(editorPhotos.have)) $("editor-fast").checked = true;
+    showFastNote();
+  }).catch(() => {});
   updateEditorMode();
   $("editor").showModal();
   if (index < 0) $("editor-name").focus();
+}
+
+// What the pin has for the member being edited (from photoInfo)
+let editorPhotos = { free_slots: null, have: "" };
+const wasFast = () => /[FS]/.test(editorPhotos.have) || !!state.members[editing]?.fast;
+
+function showFastNote() {
+  const free = editorPhotos.free_slots;
+  $("editor-fast-note").textContent = "Kept in the pin's own memory, so it shows straight away. Other photos load from the SD card in a couple of seconds."
+    + (free === null ? "" : ` ${free} of 11 fast places free.`);
 }
 
 async function loadStoredPhotos(m) {
@@ -1032,13 +1081,23 @@ $("editor-save").addEventListener("click", async () => {
   m.label = label;
   m.style = styleText(editorStyle);
   m.grad = gradText(editorGrad);
+  m.fast = $("editor-fast").checked;
   m.avatar ??= "";
+  const moving = editing >= 0 && m.fast !== wasFast() && !editorPhoto && /[fs]/i.test(editorPhotos.have);
+  if (m.fast && !wasFast() && editorPhotos.free_slots === 0 && (editorPhoto || moving)) {
+    toast("All 11 fast photo places are in use - untick Fast photo on another member first");
+    return;
+  }
   if (editing < 0) members.push(m);
 
   $("editor-save").disabled = true;
   try {
     await api("PUT", "/api/members", { system: state.system, members });
     await uploadPictures(m, editorPhoto);
+    if (moving) {
+      toast(m.fast ? "Moving the photo into the pin's memory…" : "Moving the photo to the SD card…");
+      await movePhotos(m, editorPhotos.have);
+    }
     $("editor").close();
     toast(editing >= 0 ? "Saved" : `Added ${name}`);
     await loadState();
@@ -1140,6 +1199,7 @@ function convertExport(pk) {
     mode: before.get(m.id)?.mode || "card",
     style: before.get(m.id)?.style || "",
     grad: before.get(m.id)?.grad || "",
+    fast: !!before.get(m.id)?.fast,
     label: before.get(m.id)?.label || m.display_name || m.name || m.id,
     avatar: (m.avatar_url || "").length < 128 ? m.avatar_url || "" : "",   // the pin keeps up to 127
   }));
@@ -1223,6 +1283,38 @@ $("import-file").addEventListener("change", async e => {
   } catch (err) {
     $("import-preview").innerHTML = `<div class="box error">${esc(err.message)}</div>`;
   }
+});
+
+// Import every member's PluralKit avatar as their photo
+$("pfp-go").addEventListener("click", async () => {
+  const progress = $("pfp-progress");
+  const step = (text, value, max) => progress.innerHTML = `<p class="dim">${esc(text)}</p>` + (max ? `<progress value="${value}" max="${max}"></progress>` : "");
+  $("pfp-go").disabled = true;
+  try {
+    step("Checking the pin…");
+    const info = await photoInfo();
+    const skip = $("pfp-skip").checked;
+    const todo = state.members.filter(m => m.avatar && !(skip && info.photos[m.id]));
+    if (!info.sd_card && todo.some(m => !m.fast)) throw new Error("The pin has no SD card in - put one in, or mark members as Fast photo first.");
+    const failed = [];
+    for (let i = 0; i < todo.length; i++) {
+      const m = todo[i];
+      step(`${m.name}… ${i + 1} / ${todo.length}`, i, todo.length);
+      try {
+        await uploadPhotos(m, await photoFromUrl(m.avatar));
+      } catch (e) {
+        failed.push(`${m.name} (${e.message || "couldn't load the avatar"})`);
+      }
+    }
+    const none = state.members.filter(m => !m.avatar).length;
+    progress.innerHTML = `<p>Done: ${todo.length - failed.length} photo${todo.length - failed.length === 1 ? "" : "s"} sent.</p>`
+      + (none ? `<p class="dim">${none} member${none === 1 ? " has" : "s have"} no PluralKit avatar.</p>` : "")
+      + (failed.length ? `<p class="warn">Didn't work for: ${failed.map(esc).join(", ")}</p>` : "");
+    await loadState();
+  } catch (e) {
+    progress.innerHTML = `<p class="error">${esc(e.message)}</p>`;
+  }
+  $("pfp-go").disabled = false;
 });
 
 /* ---------- Wi-Fi tab ---------- */

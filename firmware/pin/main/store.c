@@ -19,6 +19,7 @@
  */
 
 #include <stdio.h>
+#include <errno.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -28,6 +29,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "esp_log.h"
+#include "esp_system.h"
+#include "esp_heap_caps.h"
 #include "esp_vfs_fat.h"
 #include "cJSON.h"
 #include "photos.h"
@@ -37,6 +40,7 @@
 static const char *TAG = "store";
 
 #define MEMBERS_FILE        "/data/members.json"
+#define MEMBERS_TMP_FILE    "/data/members.tmp"
 #define SWITCHES_TMP_FILE   "/data/switches.tmp"
 #define MAX_MEMBERS         128
 #define MAX_SWITCH_BYTES    (2 * 1024 * 1024)
@@ -58,6 +62,7 @@ typedef struct {
     char avatar[128];                   /* PluralKit avatar URL (the dashboard fetches it) */
     char style[24];                     /* text style, for the dashboard: "font,weight,size,align" */
     char grad[64];                      /* background: "dir|RRGGBB,RRGGBB,...|animate" (fronter.c) */
+    bool fast;                          /* photos in a flash slot (photos.c), not on the SD card */
 } member_t;
 
 static const char *const mode_names[] = { "card", "image", "image_text" };
@@ -72,6 +77,8 @@ static bool front_changed = true;       /* tell the UI on first poll */
 
 static FILE *upload;                    /* one upload at a time (the web server is single-threaded) */
 static bool upload_to_slot;             /* this upload goes to photos.c instead of a file */
+static store_picture_t upload_kind;       /* what's being uploaded, and whose */
+static char upload_member[12];
 static size_t upload_bytes;
 static char card_path[64], card_tmp_path[64];
 
@@ -111,6 +118,7 @@ static int members_from_json(const char *json, char *system, size_t system_size,
         copy_string(m->card, sizeof(m->card), cJSON_GetObjectItem(item, "card"));
         copy_string(m->pronouns, sizeof(m->pronouns), cJSON_GetObjectItem(item, "pronouns"));
         m->on_button = cJSON_IsTrue(cJSON_GetObjectItem(item, "button"));
+        m->fast = cJSON_IsTrue(cJSON_GetObjectItem(item, "fast"));
         copy_string(m->label, sizeof(m->label), cJSON_GetObjectItem(item, "label"));
         copy_string(m->avatar, sizeof(m->avatar), cJSON_GetObjectItem(item, "avatar"));
         copy_string(m->style, sizeof(m->style), cJSON_GetObjectItem(item, "style"));
@@ -131,33 +139,56 @@ static int members_from_json(const char *json, char *system, size_t system_size,
     return n;
 }
 
-static char *members_to_json(void)
+static cJSON *member_to_json(const member_t *m)
 {
-    cJSON *root = cJSON_CreateObject();
-    cJSON_AddStringToObject(root, "system", system_name);
-    cJSON *list = cJSON_AddArrayToObject(root, "members");
-    for (int i = 0; i < member_count; i++) {
-        const member_t *m = &members[i];
-        cJSON *item = cJSON_CreateObject();
-        char color[8];
-        snprintf(color, sizeof(color), "%06lX", (unsigned long)(m->color & 0xFFFFFF));
-        cJSON_AddStringToObject(item, "id", m->id);
-        cJSON_AddStringToObject(item, "name", m->name);
-        cJSON_AddStringToObject(item, "card", m->card);
-        cJSON_AddStringToObject(item, "pronouns", m->pronouns);
-        cJSON_AddBoolToObject(item, "button", m->on_button);
-        cJSON_AddNumberToObject(item, "messages", m->messages);
-        cJSON_AddStringToObject(item, "mode", mode_names[m->mode]);
-        cJSON_AddStringToObject(item, "label", m->label);
-        cJSON_AddStringToObject(item, "avatar", m->avatar);
-        cJSON_AddStringToObject(item, "style", m->style);
-        cJSON_AddStringToObject(item, "grad", m->grad);
-        cJSON_AddStringToObject(item, "color", color);
-        cJSON_AddItemToArray(list, item);
+    cJSON *item = cJSON_CreateObject();
+    char color[8];
+    snprintf(color, sizeof(color), "%06lX", (unsigned long)(m->color & 0xFFFFFF));
+    cJSON_AddStringToObject(item, "id", m->id);
+    cJSON_AddStringToObject(item, "name", m->name);
+    cJSON_AddStringToObject(item, "card", m->card);
+    cJSON_AddStringToObject(item, "pronouns", m->pronouns);
+    cJSON_AddBoolToObject(item, "button", m->on_button);
+    cJSON_AddBoolToObject(item, "fast", m->fast);
+    cJSON_AddNumberToObject(item, "messages", m->messages);
+    cJSON_AddStringToObject(item, "mode", mode_names[m->mode]);
+    cJSON_AddStringToObject(item, "label", m->label);
+    cJSON_AddStringToObject(item, "avatar", m->avatar);
+    cJSON_AddStringToObject(item, "style", m->style);
+    cJSON_AddStringToObject(item, "grad", m->grad);
+    cJSON_AddStringToObject(item, "color", color);
+    return item;
+}
+
+/* Hand `item` to emit as JSON text (frees item) */
+static bool emit_json(cJSON *item, store_emit_t emit, void *ctx)
+{
+    char *text = item ? cJSON_PrintUnformatted(item) : NULL;
+    cJSON_Delete(item);
+    bool ok = text && emit(text, strlen(text), ctx);
+    free(text);
+    return ok;
+}
+
+/*
+ * The members as JSON, {"system":"...","members":[...] without the closing
+ * brace, one member at a time: printing it all at once needs one 20+ KB
+ * block of memory, which the pin often doesn't have in one piece.
+ * Caller holds the lock.
+ */
+static bool emit_members(store_emit_t emit, void *ctx)
+{
+    bool ok = emit("{\"system\":", 10, ctx) && emit_json(cJSON_CreateString(system_name), emit, ctx)
+              && emit(",\"members\":[", 12, ctx);
+    for (int i = 0; ok && i < member_count; i++) {
+        ok = (i == 0 || emit(",", 1, ctx)) && emit_json(member_to_json(&members[i]), emit, ctx);
     }
-    char *json = cJSON_PrintUnformatted(root);
-    cJSON_Delete(root);
-    return json;
+    return ok && emit("]", 1, ctx);
+}
+
+static bool emit_to_file(const char *text, size_t len, void *f)
+{
+    return fwrite(text, 1, len, f) == len;
 }
 
 static char *read_file(const char *path)
@@ -198,6 +229,35 @@ static void load_front(void)
     }
 }
 
+/* Save the members (caller holds the lock): a new file, then swapped in, so
+ * a failed write (full storage, out of memory) can't lose them */
+static esp_err_t save_members_file(void)
+{
+    FILE *f = fopen(MEMBERS_TMP_FILE, "wb");
+    esp_err_t err = ESP_FAIL;
+    if (f) {
+        setvbuf(f, NULL, _IOFBF, 1024);
+        err = emit_members(emit_to_file, f) && emit_to_file("}", 1, f) ? ESP_OK : ESP_FAIL;
+        if (fclose(f) != 0) {
+            err = ESP_FAIL;
+        }
+    }
+    int why = errno;
+    if (err == ESP_OK) {
+        unlink(MEMBERS_FILE);
+        err = rename(MEMBERS_TMP_FILE, MEMBERS_FILE) == 0 ? ESP_OK : ESP_FAIL;
+    } else {
+        unlink(MEMBERS_TMP_FILE);
+    }
+    if (err == ESP_OK) {
+        ESP_LOGI(TAG, "saved %d members", member_count);
+    } else {
+        ESP_LOGE(TAG, "couldn't save %d members (errno %d, free heap %u, largest block %u)", member_count,
+                 why, (unsigned)esp_get_free_heap_size(), (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
+    }
+    return err;
+}
+
 /* ---------- public ---------- */
 
 void store_init(void)
@@ -234,44 +294,76 @@ esp_err_t store_set_members_json(const char *json)
 
     xSemaphoreTake(lock, portMAX_DELAY);
     member_t *old = members;
+    int old_count = member_count;
+    char old_system[sizeof(system_name)];
+    strlcpy(old_system, system_name, sizeof(old_system));
     members = parsed;
     member_count = n;
     strlcpy(system_name, system, sizeof(system_name));
+    esp_err_t err = save_members_file();
+    if (err != ESP_OK) {                /* keep what's saved */
+        members = old;
+        member_count = old_count;
+        strlcpy(system_name, old_system, sizeof(system_name));
+        old = parsed;
+    }
     front_changed = true;
-    char *out = members_to_json();
     xSemaphoreGive(lock);
     free(old);
-
-    esp_err_t err = ESP_FAIL;
-    FILE *f = fopen(MEMBERS_FILE, "wb");
-    if (f && out) {
-        err = fwrite(out, 1, strlen(out), f) == strlen(out) ? ESP_OK : ESP_FAIL;
-    }
-    if (f) {
-        fclose(f);
-    }
-    free(out);
-    ESP_LOGI(TAG, "saved %d members", n);
     return err;
 }
 
-char *store_get_state_json(void)
+bool store_send_state(store_emit_t emit, void *ctx, const char *extra)
 {
     xSemaphoreTake(lock, portMAX_DELAY);
-    char *members_json = members_to_json();
-    cJSON *root = cJSON_Parse(members_json);
-    free(members_json);
-    cJSON *list = cJSON_AddArrayToObject(root, "front");
-    for (int i = 0; i < STORE_FRONT_MAX && front.time; i++) {
+    bool ok = emit_members(emit, ctx);
+    char text[160];
+    int n = snprintf(text, sizeof(text), ",\"front\":[");
+    for (int i = 0, first = 1; i < STORE_FRONT_MAX && front.time; i++) {
         if (front.members[i] != STORE_NO_MEMBER) {
-            cJSON_AddItemToArray(list, cJSON_CreateNumber(front.members[i]));
+            n += snprintf(text + n, sizeof(text) - n, "%s%u", first ? "" : ",", front.members[i]);
+            first = 0;
         }
     }
-    cJSON_AddNumberToObject(root, "front_since", front.time);
-    cJSON_AddNumberToObject(root, "switches", switch_count);
-    cJSON_AddNumberToObject(root, "now", (double)time(NULL));
+    snprintf(text + n, sizeof(text) - n, "],\"front_since\":%lu,\"switches\":%lu,\"now\":%lld%s}",
+             (unsigned long)front.time, (unsigned long)switch_count, (long long)time(NULL), extra);
     xSemaphoreGive(lock);
+    return ok && emit(text, strlen(text), ctx);
+}
 
+char *store_photos_json(void)
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    int n = member_count;
+    char (*ids)[12] = malloc(n * sizeof(*ids) + 1);
+    for (int i = 0; ids && i < n; i++) {
+        strlcpy(ids[i], members[i].id, sizeof(ids[i]));
+    }
+    xSemaphoreGive(lock);
+    if (!ids) {
+        return NULL;
+    }
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "free_slots", photos_free_slots());
+    cJSON_AddBoolToObject(root, "sd_card", storage_info_sd_ready());
+    cJSON *list = cJSON_AddObjectToObject(root, "photos");
+    for (int i = 0; i < n; i++) {
+        char have[4] = "", path[64];
+        if (photos_has(ids[i], PHOTO_FULL)) {
+            strcat(have, "F");
+        } else if (store_picture_file(ids[i], STORE_PICTURE_FULL, path, sizeof(path))) {
+            strcat(have, "f");
+        }
+        if (photos_has(ids[i], PHOTO_SIDE)) {
+            strcat(have, "S");
+        } else if (store_picture_file(ids[i], STORE_PICTURE_SIDE, path, sizeof(path))) {
+            strcat(have, "s");
+        }
+        if (have[0]) {
+            cJSON_AddStringToObject(list, ids[i], have);
+        }
+    }
+    free(ids);
     char *json = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);
     return json;
@@ -413,20 +505,12 @@ esp_err_t store_delete_member(int index)
     member_count--;
     load_front();
     front_changed = true;
-    char *json = members_to_json();
+    err = save_members_file();
     xSemaphoreGive(lock);
 
     if (id[0]) {
         delete_pictures(id);
     }
-    FILE *f = fopen(MEMBERS_FILE, "wb");
-    if (!f || !json || fwrite(json, 1, strlen(json), f) != strlen(json)) {
-        err = ESP_FAIL;
-    }
-    if (f) {
-        fclose(f);
-    }
-    free(json);
     ESP_LOGI(TAG, "deleted member %d, %d left", index, member_count);
     return err;
 }
@@ -516,22 +600,49 @@ static void picture_path(const char *id, store_picture_t kind, bool writing, cha
     }
 }
 
+static bool member_is_fast(const char *id)
+{
+    bool fast = false;
+    xSemaphoreTake(lock, portMAX_DELAY);
+    for (int i = 0; i < member_count; i++) {
+        if (strcmp(members[i].id, id) == 0) {
+            fast = members[i].fast;
+        }
+    }
+    xSemaphoreGive(lock);
+    return fast;
+}
+
+/* Delete a member's photo files of `kind` (SD card and pin storage) */
+static void delete_photo_files(const char *id, store_picture_t kind)
+{
+    static const char *const suffix[] = { "", "", "-f.bin", "-s.bin" };
+    char path[64];
+    snprintf(path, sizeof(path), SD_IMAGES_DIR "/%s%s", id, suffix[kind]);
+    unlink(path);
+    snprintf(path, sizeof(path), DATA_IMAGES_DIR "/%s%s", id, suffix[kind]);
+    unlink(path);
+}
+
 esp_err_t store_picture_begin(const char *id, store_picture_t kind)
 {
     if (!valid_id(id) || kind < 0 || kind > STORE_PICTURE_SIDE) {
         return ESP_ERR_INVALID_ARG;
     }
-    upload_to_slot = kind >= STORE_PICTURE_FULL
-                     && photos_begin(id, kind == STORE_PICTURE_SIDE ? PHOTO_SIDE : PHOTO_FULL) == ESP_OK;
+    upload_kind = kind;
+    strlcpy(upload_member, id, sizeof(upload_member));
+    /* Photos of "fast" members go to a flash slot, everyone else's to the SD card */
+    upload_to_slot = kind >= STORE_PICTURE_FULL && member_is_fast(id);
     if (upload_to_slot) {
-        /* a copy left in a file from before would never be used again */
-        picture_path(id, kind, false, card_path, sizeof(card_path));
-        unlink(card_path);
-        return ESP_OK;
+        return photos_begin(id, kind == STORE_PICTURE_SIDE ? PHOTO_SIDE : PHOTO_FULL) == ESP_OK
+               ? ESP_OK : ESP_ERR_NO_MEM;
     }
     picture_path(id, kind, true, card_path, sizeof(card_path));
     snprintf(card_tmp_path, sizeof(card_tmp_path), "%.*s.tmp", (int)strlen(card_path) - 4, card_path);
     upload = fopen(card_tmp_path, "wb");
+    if (upload) {
+        setvbuf(upload, NULL, _IOFBF, 8192);    /* the default 128 bytes makes SD writes very slow */
+    }
     upload_bytes = 0;
     return upload ? ESP_OK : ESP_FAIL;
 }
@@ -553,6 +664,10 @@ esp_err_t store_picture_end(bool ok)
     if (upload_to_slot) {
         upload_to_slot = false;
         esp_err_t err = photos_end(ok);
+        if (err == ESP_OK) {            /* moved from the SD card: drop the old copy */
+            delete_photo_files(upload_member, upload_kind);
+            photos_unstage(upload_member);
+        }
         xSemaphoreTake(lock, portMAX_DELAY);
         front_changed = true;
         xSemaphoreGive(lock);
@@ -566,6 +681,11 @@ esp_err_t store_picture_end(bool ok)
         unlink(card_tmp_path);
         return ESP_ERR_INVALID_SIZE;
     }
+    if (upload_kind >= STORE_PICTURE_FULL) {
+        /* moved out of a flash slot, or a new photo: the old copies are stale */
+        photos_delete_kind(upload_member, upload_kind == STORE_PICTURE_SIDE ? PHOTO_SIDE : PHOTO_FULL);
+        photos_unstage(upload_member);
+    }
     xSemaphoreTake(lock, portMAX_DELAY);
     unlink(card_path);
     int err = rename(card_tmp_path, card_path);
@@ -578,6 +698,7 @@ esp_err_t store_picture_end(bool ok)
 static void delete_pictures(const char *id)
 {
     photos_delete(id);
+    photos_unstage(id);
     char path[64];
     for (store_picture_t kind = STORE_PICTURE_CARD; kind <= STORE_PICTURE_SIDE; kind++) {
         picture_path(id, kind, false, path, sizeof(path));

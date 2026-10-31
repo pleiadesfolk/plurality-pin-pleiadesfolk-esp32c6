@@ -4,7 +4,7 @@
  *   GET  /                 the dashboard page (dashboard/index.html, built in)
  *   GET  /fonts/NAME.ttf   fonts for drawing text pictures in the browser
  *                          (served by the pin, so they work without internet)
- *   GET  /api/state        system, members, current front (store_get_state_json)
+ *   GET  /api/state        system, members, current front (store_send_state)
  *   PUT  /api/members      replace the member list (JSON)
  *   PUT  /api/switches     replace front history (raw store_switch_t records)
  *   GET  /api/switches     front history, same format
@@ -12,6 +12,7 @@
  *   PUT  /api/card?id=ID&kind=K  picture for member ID; K = card (default),
  *                          label, full or side (see store_picture_t)
  *   GET  /api/card?id=ID&kind=K  the same picture back (for the dashboard's previews)
+ *   GET  /api/photos       which members have photos, free fast slots (store_photos_json)
  *   DELETE /api/member?index=N  delete member N (also from front history)
  *   GET  /api/wifi         saved Wi-Fi networks (no passwords) and the pin's address
  *   PUT  /api/wifi         replace the saved networks (see wifi_set_networks_json)
@@ -144,26 +145,49 @@ static esp_err_t get_font(httpd_req_t *req)
     return send_error(req, "404 Not Found", "no such font");
 }
 
+/* Collects small pieces into CHUNK-sized chunks of a chunked response */
+typedef struct {
+    httpd_req_t *req;
+    char *buf;
+    size_t used;
+} chunker_t;
+
+static bool chunk_out(const char *text, size_t len, void *ctx)
+{
+    chunker_t *c = ctx;
+    while (len) {
+        size_t n = len < CHUNK - c->used ? len : CHUNK - c->used;
+        memcpy(c->buf + c->used, text, n);
+        c->used += n;
+        text += n;
+        len -= n;
+        if (c->used == CHUNK) {
+            if (httpd_resp_send_chunk(c->req, c->buf, c->used) != ESP_OK) {
+                return false;
+            }
+            c->used = 0;
+        }
+    }
+    return true;
+}
+
 static esp_err_t get_state(httpd_req_t *req)
 {
-    char *state = store_get_state_json();
-    if (!state) {
+    chunker_t c = { .req = req, .buf = malloc(CHUNK) };
+    if (!c.buf) {
         return send_error(req, "500 Internal Server Error", "out of memory");
     }
-    /* Add device readings (battery voltage, for checking the battery reading) */
-    cJSON *root = cJSON_Parse(state);
-    free(state);
-    cJSON_AddNumberToObject(root, "battery_volts", (int)(status_battery_volts() * 1000) / 1000.0);
-    char *json = cJSON_PrintUnformatted(root);
-    cJSON_Delete(root);
-    if (!json) {
-        return send_error(req, "500 Internal Server Error", "out of memory");
-    }
+    /* Plus device readings (battery voltage, for checking the battery reading) */
+    char extra[40];
+    snprintf(extra, sizeof(extra), ",\"battery_volts\":%.3f", status_battery_volts());
     httpd_resp_set_type(req, "application/json");
     httpd_resp_set_hdr(req, "Cache-Control", "no-store");
-    esp_err_t err = httpd_resp_sendstr(req, json);
-    free(json);
-    return err;
+    bool ok = store_send_state(chunk_out, &c, extra);
+    if (ok && c.used) {
+        ok = httpd_resp_send_chunk(req, c.buf, c.used) == ESP_OK;
+    }
+    free(c.buf);
+    return ok ? httpd_resp_send_chunk(req, NULL, 0) : ESP_FAIL;
 }
 
 static esp_err_t put_members(httpd_req_t *req)
@@ -174,7 +198,10 @@ static esp_err_t put_members(httpd_req_t *req)
     }
     esp_err_t err = store_set_members_json(body);
     free(body);
-    return err == ESP_OK ? send_ok(req) : send_error(req, "400 Bad Request", "invalid member list");
+    if (err == ESP_ERR_INVALID_ARG) {
+        return send_error(req, "400 Bad Request", "invalid member list");
+    }
+    return err == ESP_OK ? send_ok(req) : send_error(req, "500 Internal Server Error", "couldn't save the members - nothing was changed");
 }
 
 static esp_err_t put_switches(httpd_req_t *req)
@@ -291,10 +318,29 @@ static esp_err_t put_card(httpd_req_t *req)
 {
     char id[16];
     store_picture_t kind;
-    if (!picture_query(req, id, sizeof(id), &kind) || store_picture_begin(id, kind) != ESP_OK) {
+    if (!picture_query(req, id, sizeof(id), &kind)) {
         return send_error(req, "400 Bad Request", "invalid id or kind");
     }
+    esp_err_t err = store_picture_begin(id, kind);
+    if (err == ESP_ERR_NO_MEM) {
+        return send_error(req, "507 Insufficient Storage", "all the fast photo slots are in use");
+    } else if (err != ESP_OK) {
+        return send_error(req, "400 Bad Request", "couldn't store that picture");
+    }
     return receive_stream(req, store_picture_write, store_picture_end);
+}
+
+static esp_err_t get_photos(httpd_req_t *req)
+{
+    char *json = store_photos_json();
+    if (!json) {
+        return send_error(req, "500 Internal Server Error", "out of memory");
+    }
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_set_hdr(req, "Cache-Control", "no-store");
+    esp_err_t err = httpd_resp_sendstr(req, json);
+    free(json);
+    return err;
 }
 
 static esp_err_t delete_member(httpd_req_t *req)
@@ -373,6 +419,7 @@ void web_start(void)
         { .uri = "/api/front",     .method = HTTP_POST, .handler = post_front },
         { .uri = "/api/card",      .method = HTTP_PUT,  .handler = put_card },
         { .uri = "/api/card",      .method = HTTP_GET,  .handler = get_card },
+        { .uri = "/api/photos",    .method = HTTP_GET,  .handler = get_photos },
         { .uri = "/api/member",    .method = HTTP_DELETE, .handler = delete_member },
         { .uri = "/api/wifi",      .method = HTTP_GET,  .handler = get_wifi },
         { .uri = "/api/wifi",      .method = HTTP_PUT,  .handler = put_wifi },

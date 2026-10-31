@@ -1,8 +1,8 @@
 /*
  * Storage gauges for the Status screen.
  *
- * The microSD slot shares its SPI wires with the display (the SPI driver
- * takes turns between them). Mounting a card or counting its free space can
+ * The microSD slot shares its SPI wires with the display; every SD command
+ * waits for the display to finish sending (sd_command, display_bus_take). Mounting a card or counting its free space can
  * take a while, so it happens in this low-priority task, never in the LVGL
  * task. The board's DIP switch JP8 pin 2 must be ON for the slot to work.
  */
@@ -13,6 +13,8 @@
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
 #include "bsp/esp-bsp.h"
+#include "driver/sdspi_host.h"
+#include "display.h"
 #include "storage_info.h"
 
 static const char *TAG = "storage";
@@ -33,12 +35,29 @@ static void measure(const char *path, storage_usage_t *out)
     taskEXIT_CRITICAL(&lock);
 }
 
+/* The SD driver's command function, taking turns with the display */
+static esp_err_t sd_command(int slot, sdmmc_command_t *cmd)
+{
+    display_bus_take();
+    esp_err_t err = sdspi_host_do_transaction(slot, cmd);
+    display_bus_give();
+    return err;
+}
+
+static esp_err_t sd_mount(void)
+{
+    static sdmmc_host_t host = SDSPI_HOST_DEFAULT();
+    host.do_transaction = sd_command;
+    bsp_sdcard_cfg_t cfg = { .host = &host };
+    return bsp_sdcard_sdspi_mount(&cfg);
+}
+
 static void task(void *arg)
 {
     bool logged_missing = false;
     while (1) {
         if (!sd_mounted) {
-            sd_mounted = bsp_sdcard_mount() == ESP_OK;
+            sd_mounted = sd_mount() == ESP_OK;
             if (sd_mounted) {
                 ESP_LOGI(TAG, "SD card mounted");
                 logged_missing = false;

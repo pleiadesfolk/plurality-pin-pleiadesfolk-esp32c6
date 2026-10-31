@@ -58,6 +58,8 @@ typedef struct {
     lv_grad_dsc_t grad;                 /* referenced by the panel's style */
     lv_timer_t *drift;
     uint32_t phase;                     /* drift position, 0..65535 = one cycle */
+    bool waiting;                       /* for the photo to be copied from the SD card */
+    uint32_t stage_count;               /* photos_stage_count() when it was asked for */
 } fronter_t;
 
 #define DRIFT_MS        200             /* 5 updates/s; each redraws the screen (~90 ms) */
@@ -229,14 +231,22 @@ static void photo_free(void)
 }
 
 /* Show the current fronter's photo of `kind` in fr.photo; false if there's none */
-static bool photo_load(store_picture_t kind)
+/* Show the current fronter's photo: from its flash slot, or, for photos on the
+ * SD card, from the staging area once it's been copied there. Returns NULL
+ * when shown, else why not. */
+static const char *photo_load(store_picture_t kind)
 {
     photo_free();
-    char id[16], src[64];
+    fr.waiting = false;
+    char id[16], path[64];
+    photo_kind_t pk = kind == STORE_PICTURE_SIDE ? PHOTO_SIDE : PHOTO_FULL;
+    if (!store_front_id(id, sizeof(id))) {
+        return "No image yet - add one on the dashboard";
+    }
     size_t len;
-    const uint8_t *p = NULL;
-    if (store_front_id(id, sizeof(id))) {
-        p = photos_map(id, kind == STORE_PICTURE_SIDE ? PHOTO_SIDE : PHOTO_FULL, &len, &fr.map);
+    const uint8_t *p = photos_map(id, pk, &len, &fr.map);
+    if (!p) {
+        p = photos_map_staged(id, pk, &len, &fr.map);
     }
     if (p) {
         lv_image_header_t h;
@@ -246,15 +256,19 @@ static bool photo_load(store_picture_t kind)
             fr.mapped = true;
             fr.photo_dsc = (lv_image_dsc_t) { .header = h, .data = p + sizeof(h), .data_size = bytes };
             lv_image_set_src(fr.photo, &fr.photo_dsc);
-            return true;
+            return NULL;
         }
-        photos_unmap(fr.map);           /* damaged slot */
+        photos_unmap(fr.map);           /* damaged */
     }
-    if (store_front_image_src(kind, src, sizeof(src))) {
-        lv_image_set_src(fr.photo, src);   /* in a file: slow */
-        return true;
+    if (!store_front_picture_file(kind, path, sizeof(path))) {
+        return "No image yet - add one on the dashboard";
     }
-    return false;
+    /* On the SD card: copy it to flash in the background; fronter_poll()
+     * redraws when that's done */
+    fr.waiting = true;
+    fr.stage_count = photos_stage_count();
+    photos_stage(id, pk, path);
+    return "Loading photo...";
 }
 
 /* ---------- screens ---------- */
@@ -280,14 +294,16 @@ static void refresh(void)
         text_or_label(STORE_PICTURE_CARD, text);
         break;
 
-    case STORE_MODE_IMAGE:
-        if (photo_load(STORE_PICTURE_FULL)) {
+    case STORE_MODE_IMAGE: {
+        const char *why = photo_load(STORE_PICTURE_FULL);
+        if (!why) {
             lv_obj_add_flag(fr.label, LV_OBJ_FLAG_HIDDEN);
         } else {
-            lv_label_set_text(fr.label, "No image yet - add one on the dashboard");
+            lv_label_set_text(fr.label, why);
             lv_obj_remove_flag(fr.label, LV_OBJ_FLAG_HIDDEN);
         }
         break;
+    }
 
     case STORE_MODE_IMAGE_TEXT: {
         grad_set(color, true);
@@ -364,6 +380,9 @@ void fronter_poll(void)
     bool changed;
     /* Always called, so the change flag is consumed even while no fronter screen is shown */
     store_get_front_card(text, sizeof(text), &color, &changed);
+    if (fr.shown && fr.waiting && photos_stage_count() != fr.stage_count) {
+        changed = true;                 /* a photo finished copying from the SD card */
+    }
     if (!changed || !fr.shown) {
         return;
     }
