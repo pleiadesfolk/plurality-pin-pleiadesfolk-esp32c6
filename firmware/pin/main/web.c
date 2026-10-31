@@ -2,7 +2,8 @@
  * Web server for the dashboard.
  *
  *   GET  /                 the dashboard page (dashboard/index.html, built in)
- *   GET  /playwrite.ttf    namecard font, for drawing cards in the browser
+ *   GET  /fonts/NAME.ttf   fonts for drawing text pictures in the browser
+ *                          (served by the pin, so they work without internet)
  *   GET  /api/state        system, members, current front (store_get_state_json)
  *   PUT  /api/members      replace the member list (JSON)
  *   PUT  /api/switches     replace front history (raw store_switch_t records)
@@ -37,8 +38,29 @@ static const char *TAG = "web";
 
 extern const char index_html_start[] asm("_binary_index_html_start");
 extern const char index_html_end[]   asm("_binary_index_html_end");
-extern const uint8_t font_start[]    asm("_binary_PlaywriteUSTrad_Regular_ttf_start");
-extern const uint8_t font_end[]      asm("_binary_PlaywriteUSTrad_Regular_ttf_end");
+#define FONT(sym) extern const uint8_t sym##_start[] asm("_binary_" #sym "_start"); \
+                  extern const uint8_t sym##_end[] asm("_binary_" #sym "_end");
+FONT(PlaywriteUSTrad_Regular_ttf)
+FONT(Inter_Medium_ttf)
+FONT(Inter_SemiBold_ttf)
+FONT(Inter_Bold_ttf)
+FONT(IBMPlexMono_Regular_ttf)
+FONT(IBMPlexMono_Medium_ttf)
+FONT(IBMPlexMono_SemiBold_ttf)
+
+static const struct {
+    const char *uri;
+    const uint8_t *start, *end;
+} fonts[] = {
+#define FONT_FILE(name, sym) { "/fonts/" name, sym##_start, sym##_end }
+    FONT_FILE("PlaywriteUSTrad-Regular.ttf", PlaywriteUSTrad_Regular_ttf),
+    FONT_FILE("Inter-Medium.ttf", Inter_Medium_ttf),
+    FONT_FILE("Inter-SemiBold.ttf", Inter_SemiBold_ttf),
+    FONT_FILE("Inter-Bold.ttf", Inter_Bold_ttf),
+    FONT_FILE("IBMPlexMono-Regular.ttf", IBMPlexMono_Regular_ttf),
+    FONT_FILE("IBMPlexMono-Medium.ttf", IBMPlexMono_Medium_ttf),
+    FONT_FILE("IBMPlexMono-SemiBold.ttf", IBMPlexMono_SemiBold_ttf),
+};
 
 /* ---------- helpers ---------- */
 
@@ -112,9 +134,14 @@ static esp_err_t get_index(httpd_req_t *req)
 
 static esp_err_t get_font(httpd_req_t *req)
 {
-    httpd_resp_set_type(req, "font/ttf");
-    httpd_resp_set_hdr(req, "Cache-Control", "max-age=86400");
-    return httpd_resp_send(req, (const char *)font_start, font_end - font_start);
+    for (int i = 0; i < sizeof(fonts) / sizeof(fonts[0]); i++) {
+        if (strcmp(req->uri, fonts[i].uri) == 0) {
+            httpd_resp_set_type(req, "font/ttf");
+            httpd_resp_set_hdr(req, "Cache-Control", "max-age=86400");
+            return httpd_resp_send(req, (const char *)fonts[i].start, fonts[i].end - fonts[i].start);
+        }
+    }
+    return send_error(req, "404 Not Found", "no such font");
 }
 
 static esp_err_t get_state(httpd_req_t *req)
@@ -327,6 +354,7 @@ void web_start(void)
     config.stack_size = 8192;           /* JSON handling needs more than the default */
     config.max_uri_handlers = 16;
     config.lru_purge_enable = true;     /* phones keep connections open; recycle them */
+    config.uri_match_fn = httpd_uri_match_wildcard;   /* for the fonts route */
     config.recv_wait_timeout = 10;
 
     httpd_handle_t server;
@@ -337,7 +365,7 @@ void web_start(void)
 
     static const httpd_uri_t routes[] = {
         { .uri = "/",              .method = HTTP_GET,  .handler = get_index },
-        { .uri = "/playwrite.ttf", .method = HTTP_GET,  .handler = get_font },
+        { .uri = "/fonts/*",       .method = HTTP_GET,  .handler = get_font },
         { .uri = "/api/state",     .method = HTTP_GET,  .handler = get_state },
         { .uri = "/api/members",   .method = HTTP_PUT,  .handler = put_members },
         { .uri = "/api/switches",  .method = HTTP_PUT,  .handler = put_switches },

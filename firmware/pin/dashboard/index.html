@@ -16,7 +16,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400&display=swap">
 <style>
-  @font-face { font-family: "PlaywritePin"; src: url("/playwrite.ttf") format("truetype"); }
+  /* Fonts for drawing text pictures, served by the pin (work without internet) */
+  @font-face { font-family: "PlaywritePin"; font-weight: 400; src: url("/fonts/PlaywriteUSTrad-Regular.ttf"); }
+  @font-face { font-family: "InterPin"; font-weight: 500; src: url("/fonts/Inter-Medium.ttf"); }
+  @font-face { font-family: "InterPin"; font-weight: 600; src: url("/fonts/Inter-SemiBold.ttf"); }
+  @font-face { font-family: "InterPin"; font-weight: 700; src: url("/fonts/Inter-Bold.ttf"); }
+  @font-face { font-family: "PlexPin"; font-weight: 400; src: url("/fonts/IBMPlexMono-Regular.ttf"); }
+  @font-face { font-family: "PlexPin"; font-weight: 500; src: url("/fonts/IBMPlexMono-Medium.ttf"); }
+  @font-face { font-family: "PlexPin"; font-weight: 600; src: url("/fonts/IBMPlexMono-SemiBold.ttf"); }
 
   :root {
     --bg: #1c1c1e; --card: #2c2c2e; --line: #3a3a3c; --text: #f2f2f7; --dim: #9a9aa0;
@@ -215,6 +222,16 @@
   </div>
   <label class="field" for="editor-card">Namecard text</label>
   <textarea id="editor-card"></textarea>
+  <div class="row" style="gap:8px">
+    <div class="grow"><label class="field" for="editor-font">Font</label><select id="editor-font"></select></div>
+    <div class="grow"><label class="field" for="editor-weight">Weight</label><select id="editor-weight"></select></div>
+  </div>
+  <label class="field" for="editor-size">Largest text size: <span id="editor-size-value"></span> px <span class="dim">(long text still shrinks to fit)</span></label>
+  <input type="range" id="editor-size" min="20" max="80" step="2" style="width:100%">
+  <label class="field">Alignment</label>
+  <div class="seg" id="editor-align">
+    <button data-align="left">Left</button><button data-align="center">Centre</button><button data-align="right">Right</button>
+  </div>
   <label class="field" for="editor-pronouns">Pronouns</label>
   <input type="text" id="editor-pronouns">
   <label class="field" for="editor-color">Colour</label>
@@ -296,22 +313,62 @@ function darken(color, percent) {
 
 /* ---------- drawing for the pin (must match firmware/pin/main/fronter.c) ---------- */
 
-// Text boxes on the pin's 456 x 280 screens, with the Playwrite size range that fits them:
-//  CARD:  namecard_mode.xml text box, 416 x 260 at (20, 11), left-aligned, placed LEFT_MID
+// Text boxes on the pin's 456 x 280 screens. Text pictures keep the box's full
+// width (only empty rows are cropped), so the alignment comes out right on the pin.
+//  CARD:  namecard_mode.xml text box, 416 x 260 at (20, 11), placed LEFT_MID
 //  LABEL: image_mode_with_text.xml column, 202 x 256 centred at (119, 140), lines centred
-const CARD = { x: 20, y: 11, w: 416, h: 260, max: 52, min: 26, pitch: 70 / 52, align: "left" };
-const LABEL = { x: 18, y: 12, w: 202, h: 256, max: 40, min: 22, pitch: 59 / 40, align: "center" };
+const CARD_BOX = { x: 20, y: 11, w: 416, h: 260 };
+const LABEL_BOX = { x: 18, y: 12, w: 202, h: 256 };
+
+// Fonts members can use. pitch = line spacing per px of size; Playwrite's are the
+// pin design's (its line box is very tall), separately for the namecard and the label.
+const FONT_FAMILIES = {
+  playwrite: { name: "Playwrite", css: "PlaywritePin", weights: [400], pitch: 70 / 52, labelPitch: 59 / 40 },
+  inter: { name: "Inter", css: "InterPin", weights: [500, 600, 700], pitch: 1.22, labelPitch: 1.22 },
+  plex: { name: "IBM Plex Mono", css: "PlexPin", weights: [400, 500, 600], pitch: 1.25, labelPitch: 1.25 },
+};
+const WEIGHT_NAMES = { 400: "Regular", 500: "Medium", 600: "SemiBold", 700: "Bold" };
+
+// A member's text style, stored on the pin as "font,weight,size,align" (one string
+// keeps the pin's memory use down). Empty = the original design: Playwrite 52, left.
+function parseStyle(text) {
+  const [font, weight, size, align] = (text || "").split(",");
+  const family = FONT_FAMILIES[font] ? font : "playwrite";
+  const weights = FONT_FAMILIES[family].weights;
+  return {
+    font: family,
+    weight: weights.includes(+weight) ? +weight : weights[0],
+    size: Math.min(80, Math.max(20, +size || 52)),
+    align: ["left", "center", "right"].includes(align) ? align : "left",
+  };
+}
+const styleText = st => `${st.font},${st.weight},${st.size},${st.align}`;
+
+// Text-drawing specs for a member's namecard text and image label
+function cardSpec(style) {
+  const st = parseStyle(style), f = FONT_FAMILIES[st.font];
+  return { ...CARD_BOX, max: st.size, min: Math.max(16, Math.round(st.size / 2)), pitch: f.pitch,
+           align: st.align, css: f.css, weight: st.weight };
+}
+function labelSpec(style) {
+  const st = parseStyle(style), f = FONT_FAMILIES[st.font];
+  const max = Math.round(st.size * 40 / 52);   // the label's design size is 40 to the card's 52
+  return { ...LABEL_BOX, max, min: Math.max(14, Math.round(max / 2)), pitch: f.labelPitch,
+           align: "center", css: f.css, weight: st.weight };
+}
 // Photos: "image" is 280 x 280 centred; "image with name" is a 350 px circle centred at
 // (403, 140), of which only x >= 228 is on screen, so only that 228 x 280 part is stored.
 const FULL = { x: 88, y: 0, size: 280 };
 const SIDE = { x: 228, w: 228, h: 280, cx: 175, cy: 140, r: 175 };
-const FONTS = (size) => `${size}px PlaywritePin, "Noto Sans HK", "PingFang HK", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+// CJK and emoji fall back to Noto Sans HK (if reachable) or the phone's own fonts
+const FONTS = (spec, size) => `${spec.weight} ${size}px ${spec.css}, "Noto Sans HK", "PingFang HK", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
 
 let fontsReady = null;
 function loadFonts() {
   fontsReady ??= Promise.all([
-    document.fonts.load(FONTS(52), "Aa"),
-    document.fonts.load(FONTS(52), "系").catch(() => {}),
+    ...Object.values(FONT_FAMILIES).flatMap(f => f.weights.map(w =>
+      document.fonts.load(`${w} 52px ${f.css}`, "Aa").catch(() => {}))),
+    document.fonts.load(`52px "Noto Sans HK"`, "系").catch(() => {}),
   ]);
   return fontsReady;
 }
@@ -344,27 +401,27 @@ function wrap(ctx, text, box) {
 // Returns { size, lines, fits }.
 function layout(ctx, text, box) {
   for (let size = box.max; size >= box.min; size -= 2) {
-    ctx.font = FONTS(size);
+    ctx.font = FONTS(box, size);
     const { lines, split } = wrap(ctx, text, box);
     const height = (lines.length - 1) * Math.round(size * box.pitch) + size * 1.3;
     if (height <= box.h && (!split || size === box.min)) return { size, lines, fits: true };
   }
-  ctx.font = FONTS(box.min);
+  ctx.font = FONTS(box, box.min);
   return { size: box.min, lines: wrap(ctx, text, box).lines, fits: false };
 }
 
-// Draw `text` white on a transparent canvas the size of `box`; crop to the ink.
+// Draw `text` white on a transparent canvas the size of `box`; crop empty rows.
 function drawText(text, box) {
   const canvas = document.createElement("canvas");
   canvas.width = box.w; canvas.height = box.h;
   const ctx = canvas.getContext("2d");
   const { size, lines, fits } = layout(ctx, text, box);
   const pitch = Math.round(size * box.pitch);
-  ctx.font = FONTS(size);
+  ctx.font = FONTS(box, size);
   ctx.fillStyle = "#fff";
   ctx.textBaseline = "alphabetic";
   ctx.textAlign = box.align;
-  const x = box.align === "center" ? box.w / 2 : 0;
+  const x = box.align === "center" ? box.w / 2 : box.align === "right" ? box.w : 0;
   lines.forEach((line, i) => ctx.fillText(line, x, size * 1.05 + i * pitch));
 
   // Crop to the drawn pixels
@@ -376,8 +433,9 @@ function drawText(text, box) {
     }
   }
   if (x1 < 0) return { w: 0, h: 0, data: null, fits, size, box };
-  const w = x1 - x0 + 1, h = y1 - y0 + 1;
-  return { w, h, data: ctx.getImageData(x0, y0, w, h).data, fits, size, box };
+  // Full width, so the pin can place every alignment at the box's left edge
+  const w = box.w, h = y1 - y0 + 1;
+  return { w, h, data: ctx.getImageData(0, y0, w, h).data, fits, size, box };
 }
 
 /*
@@ -526,8 +584,8 @@ function drawPreview(canvas, m, photo, stored) {
   if (m.mode === "image_text") {
     ctx.fillStyle = color;
     ctx.fillRect(0, 0, 456, 280);
-    const t = drawText(m.label || m.name, LABEL);
-    if (t.w) ctx.drawImage(textCanvas(t), LABEL.x + Math.round((LABEL.w - t.w) / 2), LABEL.y + Math.round((LABEL.h - t.h) / 2));
+    const t = drawText(m.label || m.name, labelSpec(m.style));
+    if (t.w) ctx.drawImage(textCanvas(t), LABEL_BOX.x, LABEL_BOX.y + Math.round((LABEL_BOX.h - t.h) / 2));
     if (photo) ctx.drawImage(renderSide(photo), SIDE.x, 0);
     else if (stored?.side) ctx.drawImage(stored.side, SIDE.x, 0);
     else placeholder("Add a photo", 342, 145);
@@ -539,8 +597,8 @@ function drawPreview(canvas, m, photo, stored) {
   grad.addColorStop(1, color);
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 456, 280);
-  const t = drawText(m.card || m.name, CARD);
-  if (t.w) ctx.drawImage(textCanvas(t), CARD.x, CARD.y + Math.round((CARD.h - t.h) / 2));   // LEFT_MID, as on the pin
+  const t = drawText(m.card || m.name, cardSpec(m.style));
+  if (t.w) ctx.drawImage(textCanvas(t), CARD_BOX.x, CARD_BOX.y + Math.round((CARD_BOX.h - t.h) / 2));   // LEFT_MID, as on the pin
   return t;
 }
 
@@ -578,9 +636,9 @@ const picturePath = (m, kind) => `/api/card?id=${encodeURIComponent(m.id)}&kind=
 // Send a member's pictures: always the text ones; the photos too when `photo` is given
 async function uploadPictures(member, photo) {
   await loadFonts();
-  const card = drawText(member.card || member.name, CARD);
+  const card = drawText(member.card || member.name, cardSpec(member.style));
   if (card.w) await api("PUT", picturePath(member, "card"), encodeCard(card));
-  const label = drawText(member.label || member.name, LABEL);
+  const label = drawText(member.label || member.name, labelSpec(member.style));
   if (label.w) await api("PUT", picturePath(member, "label"), encodeCard(label));
   if (photo) {
     await api("PUT", picturePath(member, "full"), encodeLvgl(renderFull(photo), false));
@@ -675,6 +733,8 @@ function openEditor(index) {
   $("editor-color").value = hex(m.color);
   $("editor-button").checked = !!m.button;
   $("editor-mode").value = m.mode || "card";
+  editorStyle = parseStyle(m.style);
+  showEditorStyle();
   $("editor-label").value = m.label || m.name;
   $("editor-avatar").hidden = !m.avatar;
   $("editor-zoom").value = 1;
@@ -703,8 +763,41 @@ function editorMember() {
     card: $("editor-card").value.trim() || name,
     label: $("editor-label").value.trim() || name,
     color: $("editor-color").value,
+    style: styleText(editorStyle),
   };
 }
+
+// The text style being edited (parseStyle form)
+let editorStyle = parseStyle("");
+
+function showEditorStyle() {
+  const f = FONT_FAMILIES[editorStyle.font];
+  $("editor-font").value = editorStyle.font;
+  $("editor-weight").innerHTML = f.weights.map(w => `<option value="${w}">${WEIGHT_NAMES[w]}</option>`).join("");
+  $("editor-weight").value = editorStyle.weight;
+  $("editor-weight").disabled = f.weights.length < 2;
+  $("editor-size").value = editorStyle.size;
+  $("editor-size-value").textContent = editorStyle.size;
+  $("editor-align").querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.align === editorStyle.align));
+}
+
+$("editor-font").innerHTML = Object.entries(FONT_FAMILIES).map(([k, f]) => `<option value="${k}">${f.name}</option>`).join("");
+$("editor-font").addEventListener("change", () => {
+  editorStyle = parseStyle(`${$("editor-font").value},${editorStyle.weight},${editorStyle.size},${editorStyle.align}`);
+  showEditorStyle(); updateEditorPreview();
+});
+$("editor-weight").addEventListener("change", () => { editorStyle.weight = +$("editor-weight").value; updateEditorPreview(); });
+$("editor-size").addEventListener("input", () => {
+  editorStyle.size = +$("editor-size").value;
+  $("editor-size-value").textContent = editorStyle.size;
+  updateEditorPreview();
+});
+$("editor-align").addEventListener("click", e => {
+  const b = e.target.closest("[data-align]");
+  if (!b) return;
+  editorStyle.align = b.dataset.align;
+  showEditorStyle(); updateEditorPreview();
+});
 
 function updateEditorMode() {
   const mode = $("editor-mode").value;
@@ -820,6 +913,7 @@ $("editor-save").addEventListener("click", async () => {
   m.button = $("editor-button").checked;
   m.mode = $("editor-mode").value;
   m.label = label;
+  m.style = styleText(editorStyle);
   m.avatar ??= "";
   if (editing < 0) members.push(m);
 
@@ -926,6 +1020,8 @@ function convertExport(pk) {
     messages: m.message_count || 0,
     button: !!before.get(m.id)?.button,
     mode: before.get(m.id)?.mode || "card",
+    style: before.get(m.id)?.style || "",
+    grad: before.get(m.id)?.grad || "",
     label: before.get(m.id)?.label || m.display_name || m.name || m.id,
     avatar: (m.avatar_url || "").length < 128 ? m.avatar_url || "" : "",   // the pin keeps up to 127
   }));

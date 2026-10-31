@@ -56,6 +56,8 @@ typedef struct {
     uint8_t mode;                       /* store_mode_t */
     char label[64];                     /* text on the "image with name" screen */
     char avatar[128];                   /* PluralKit avatar URL (the dashboard fetches it) */
+    char style[24];                     /* text style, for the dashboard: "font,weight,size,align" */
+    char grad[64];                      /* background: "dir|RRGGBB,RRGGBB,...|animate" (fronter.c) */
 } member_t;
 
 static const char *const mode_names[] = { "card", "image", "image_text" };
@@ -111,6 +113,8 @@ static int members_from_json(const char *json, char *system, size_t system_size,
         m->on_button = cJSON_IsTrue(cJSON_GetObjectItem(item, "button"));
         copy_string(m->label, sizeof(m->label), cJSON_GetObjectItem(item, "label"));
         copy_string(m->avatar, sizeof(m->avatar), cJSON_GetObjectItem(item, "avatar"));
+        copy_string(m->style, sizeof(m->style), cJSON_GetObjectItem(item, "style"));
+        copy_string(m->grad, sizeof(m->grad), cJSON_GetObjectItem(item, "grad"));
         const cJSON *mode = cJSON_GetObjectItem(item, "mode");
         m->mode = STORE_MODE_CARD;
         for (int k = 0; k < 3 && cJSON_IsString(mode); k++) {
@@ -146,6 +150,8 @@ static char *members_to_json(void)
         cJSON_AddStringToObject(item, "mode", mode_names[m->mode]);
         cJSON_AddStringToObject(item, "label", m->label);
         cJSON_AddStringToObject(item, "avatar", m->avatar);
+        cJSON_AddStringToObject(item, "style", m->style);
+        cJSON_AddStringToObject(item, "grad", m->grad);
         cJSON_AddStringToObject(item, "color", color);
         cJSON_AddItemToArray(list, item);
     }
