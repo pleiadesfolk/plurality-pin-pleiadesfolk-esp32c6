@@ -18,6 +18,11 @@
  *   PUT  /api/wifi         replace the saved networks (see wifi_set_networks_json)
  *   GET  /api/wifi/scan    networks in range (see wifi_scan_json)
  *   GET/PUT /api/pk        PluralKit sync status / settings (see pksync.h)
+ *   GET  /api/pk/switches?before=T&limit=N  PluralKit's switches before unix time T
+ *                          (newest first, as PluralKit sends them), asked with the pin's token
+ *   POST /api/pk/switches  {"timestamp": unix, "members": [PluralKit ids]}: log a
+ *                          switch in PluralKit (needs the token; for "Sync with PluralKit")
+ *   DELETE /api/pk/switches?id=ID  delete switch ID in PluralKit (needs the token)
  *   GET  /api/battery      battery log (raw status_log_entry_t records, oldest first)
  *   DELETE /api/battery    clear the battery log
  *
@@ -31,8 +36,10 @@
  * The page itself and the fonts are always served (the page shows the login).
  */
 
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include "esp_log.h"
 #include "esp_http_server.h"
 #include "cJSON.h"
@@ -438,6 +445,101 @@ static esp_err_t put_pk(httpd_req_t *req)
                         "expected a system ID (5-6 letters) or token, addresses starting http:// or https://, no spaces");
 }
 
+/* Passing PluralKit's answer on: same status, same body */
+static bool pk_answered;                /* PluralKit's status has been passed on */
+
+static esp_err_t pk_status(int status, void *req)
+{
+    static char text[32];
+    pk_answered = true;
+    snprintf(text, sizeof(text), "%d PluralKit", status);
+    httpd_resp_set_status(req, text);
+    httpd_resp_set_type(req, "application/json");
+    return ESP_OK;
+}
+
+static esp_err_t pk_data(const char *data, int len, void *req)
+{
+    return httpd_resp_send_chunk(req, data, len);
+}
+
+static esp_err_t pk_failed(httpd_req_t *req, esp_err_t err)
+{
+    return send_error(req, err == ESP_ERR_INVALID_STATE ? "409 Conflict" : err == ESP_ERR_NOT_SUPPORTED ? "403 Forbidden"
+                      : "502 Bad Gateway",
+                      err == ESP_ERR_INVALID_STATE ? "save your PluralKit token on the Import tab first"
+                      : err == ESP_ERR_NOT_SUPPORTED ? "changing PluralKit needs your token, not just the system ID"
+                      : "couldn't reach PluralKit");
+}
+
+/* "2026-11-01T02:00:00Z" for unix time t */
+static void iso_time(time_t t, char *buf, size_t size)
+{
+    struct tm tm;
+    gmtime_r(&t, &tm);
+    strftime(buf, size, "%Y-%m-%dT%H:%M:%SZ", &tm);
+}
+
+static esp_err_t get_pk_switches(httpd_req_t *req)
+{
+    char query[64] = "", value[16], path[96], when[24] = "";
+    httpd_req_get_url_query_str(req, query, sizeof(query));
+    int limit = httpd_query_key_value(query, "limit", value, sizeof(value)) == ESP_OK ? atoi(value) : 100;
+    limit = limit < 1 ? 1 : limit > 100 ? 100 : limit;
+    if (httpd_query_key_value(query, "before", value, sizeof(value)) == ESP_OK && atoll(value) > 0) {
+        iso_time((time_t)atoll(value), when, sizeof(when));
+    }
+    snprintf(path, sizeof(path), "/switches?limit=%d%s%s", limit, when[0] ? "&before=" : "", when);
+    pk_answered = false;
+    esp_err_t err = pksync_pk_request("GET", path, NULL, pk_status, pk_data, req);
+    return pk_answered ? httpd_resp_send_chunk(req, NULL, 0) : pk_failed(req, err);
+}
+
+static esp_err_t post_pk_switch(httpd_req_t *req)
+{
+    char *body = read_body(req);
+    cJSON *root = body ? cJSON_Parse(body) : NULL;
+    free(body);
+    const cJSON *when = cJSON_GetObjectItem(root, "timestamp");
+    const cJSON *members = cJSON_GetObjectItem(root, "members");
+    if (!cJSON_IsNumber(when) || !cJSON_IsArray(members)) {
+        cJSON_Delete(root);
+        return send_error(req, "400 Bad Request", "expected {\"timestamp\": unix time, \"members\": [ids]}");
+    }
+    char iso[24];
+    iso_time((time_t)when->valuedouble, iso, sizeof(iso));
+    cJSON *out = cJSON_CreateObject();
+    cJSON_AddStringToObject(out, "timestamp", iso);
+    cJSON_AddItemToObject(out, "members", cJSON_Duplicate(members, true));
+    char *json = cJSON_PrintUnformatted(out);
+    cJSON_Delete(out);
+    cJSON_Delete(root);
+    if (!json) {
+        return send_error(req, "500 Internal Server Error", "out of memory");
+    }
+    pk_answered = false;
+    esp_err_t err = pksync_pk_request("POST", "/switches", json, pk_status, pk_data, req);
+    free(json);
+    return pk_answered ? httpd_resp_send_chunk(req, NULL, 0) : pk_failed(req, err);
+}
+
+static esp_err_t delete_pk_switch(httpd_req_t *req)
+{
+    char query[80] = "", id[48], path[64];
+    httpd_req_get_url_query_str(req, query, sizeof(query));
+    bool ok = httpd_query_key_value(query, "id", id, sizeof(id)) == ESP_OK && id[0];
+    for (char *c = id; ok && *c; c++) {
+        ok = isalnum((unsigned char)*c) || *c == '-';   /* PluralKit switch ids are UUIDs */
+    }
+    if (!ok) {
+        return send_error(req, "400 Bad Request", "expected ?id=<switch id>");
+    }
+    snprintf(path, sizeof(path), "/switches/%s", id);
+    pk_answered = false;
+    esp_err_t err = pksync_pk_request("DELETE", path, NULL, pk_status, pk_data, req);
+    return pk_answered ? httpd_resp_send_chunk(req, NULL, 0) : pk_failed(req, err);
+}
+
 /* ---------- login ---------- */
 
 #define COOKIE_NAME     "pin_session"
@@ -555,7 +657,7 @@ void web_start(void)
 {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.stack_size = 8192;           /* JSON handling needs more than the default */
-    config.max_uri_handlers = 24;
+    config.max_uri_handlers = 30;
     config.lru_purge_enable = true;     /* phones keep connections open; recycle them */
     config.uri_match_fn = httpd_uri_match_wildcard;   /* for the fonts route */
     config.recv_wait_timeout = 10;
@@ -583,6 +685,9 @@ void web_start(void)
         { .uri = "/api/wifi/scan", .method = HTTP_GET,  .handler = guarded, .user_ctx = get_wifi_scan },
         { .uri = "/api/pk",        .method = HTTP_GET,  .handler = guarded, .user_ctx = get_pk },
         { .uri = "/api/pk",        .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_pk },
+        { .uri = "/api/pk/switches", .method = HTTP_GET, .handler = guarded, .user_ctx = get_pk_switches },
+        { .uri = "/api/pk/switches", .method = HTTP_POST, .handler = guarded, .user_ctx = post_pk_switch },
+        { .uri = "/api/pk/switches", .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_pk_switch },
         { .uri = "/api/battery",   .method = HTTP_GET,  .handler = guarded, .user_ctx = get_battery },
         { .uri = "/api/battery",   .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_battery },
         { .uri = "/api/auth",      .method = HTTP_GET,  .handler = get_auth },

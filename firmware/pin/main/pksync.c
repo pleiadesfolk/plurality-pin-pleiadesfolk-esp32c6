@@ -31,6 +31,7 @@
 #include "esp_http_client.h"
 #include "esp_crt_bundle.h"
 #include "esp_event.h"
+#include "esp_timer.h"
 #include "esp_netif.h"
 #include "nvs.h"
 #include "cJSON.h"
@@ -234,6 +235,127 @@ static void check_direct(void)
     }
 }
 
+/* ---------- on behalf of the dashboard ---------- */
+
+/* One connection to PluralKit, kept open between the dashboard's requests (a
+ * sync sends many in a row; a new TLS session each time takes seconds) and
+ * closed once they stop, as it holds ~40 KB */
+#define PK_IDLE_US      (15 * 1000000)
+
+static SemaphoreHandle_t pk_lock;
+static esp_http_client_handle_t pk_client;
+static esp_timer_handle_t pk_idle;
+
+typedef struct {
+    pksync_status_cb_t on_status;
+    pksync_data_cb_t on_data;
+    void *ctx;
+    bool status_sent;
+    esp_err_t err;
+} pk_request_t;
+
+static void pk_close(void *arg)
+{
+    if (xSemaphoreTake(pk_lock, 0) == pdTRUE) {     /* busy: it'll be closed after the next one */
+        if (pk_client) {
+            esp_http_client_cleanup(pk_client);
+            pk_client = NULL;
+        }
+        xSemaphoreGive(pk_lock);
+    }
+}
+
+static void pk_send_status(pk_request_t *r, esp_http_client_handle_t client)
+{
+    if (!r->status_sent) {
+        r->status_sent = true;
+        r->err = r->on_status(esp_http_client_get_status_code(client), r->ctx);
+    }
+}
+
+static esp_err_t pk_event(esp_http_client_event_t *e)
+{
+    pk_request_t *r = e->user_data;
+    if (e->event_id == HTTP_EVENT_ON_DATA && r) {
+        pk_send_status(r, e->client);
+        if (r->err == ESP_OK) {
+            r->err = r->on_data(e->data, e->data_len, r->ctx);
+        }
+    }
+    return ESP_OK;
+}
+
+esp_err_t pksync_pk_request(const char *method, const char *path, const char *body,
+                            pksync_status_cb_t on_status, pksync_data_cb_t on_data, void *ctx)
+{
+    char my_ref[REF_MAX];
+    xSemaphoreTake(lock, portMAX_DELAY);
+    strlcpy(my_ref, ref, sizeof(my_ref));
+    xSemaphoreGive(lock);
+    if (!my_ref[0]) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    bool token = !is_system_id(my_ref);
+    esp_http_client_method_t how = strcmp(method, "POST") == 0 ? HTTP_METHOD_POST
+                                   : strcmp(method, "DELETE") == 0 ? HTTP_METHOD_DELETE : HTTP_METHOD_GET;
+    if (how != HTTP_METHOD_GET && !token) {
+        return ESP_ERR_NOT_SUPPORTED;   /* changing anything needs the token */
+    }
+    char url[160];
+    snprintf(url, sizeof(url), "https://api.pluralkit.me/v2/systems/%s%s", token ? "@me" : my_ref, path);
+
+    xSemaphoreTake(pk_lock, portMAX_DELAY);
+    esp_timer_stop(pk_idle);
+    pk_request_t r = { .on_status = on_status, .on_data = on_data, .ctx = ctx };
+    esp_err_t err = ESP_FAIL;
+    for (int attempt = 0; attempt < 2 && err != ESP_OK && !r.status_sent; attempt++) {
+        bool fresh = !pk_client;
+        if (fresh) {
+            esp_http_client_config_t config = {
+                .url = url,
+                .crt_bundle_attach = esp_crt_bundle_attach,
+                .timeout_ms = 20000,
+                .user_agent = USER_AGENT,
+                .event_handler = pk_event,
+                .keep_alive_enable = true,
+            };
+            pk_client = esp_http_client_init(&config);
+            if (!pk_client) {
+                err = ESP_ERR_NO_MEM;
+                break;
+            }
+        }
+        esp_http_client_set_url(pk_client, url);
+        esp_http_client_set_method(pk_client, how);
+        esp_http_client_set_user_data(pk_client, &r);
+        if (token) {
+            esp_http_client_set_header(pk_client, "Authorization", my_ref);
+        }
+        if (body) {
+            esp_http_client_set_header(pk_client, "Content-Type", "application/json");
+        } else {
+            esp_http_client_delete_header(pk_client, "Content-Type");
+        }
+        esp_http_client_set_post_field(pk_client, body, body ? strlen(body) : 0);
+        err = esp_http_client_perform(pk_client);
+        esp_http_client_set_post_field(pk_client, NULL, 0);
+        esp_http_client_set_user_data(pk_client, NULL);
+        if (err != ESP_OK) {
+            esp_http_client_cleanup(pk_client);     /* start afresh; a kept connection may have gone stale */
+            pk_client = NULL;
+            if (fresh) {
+                break;
+            }
+        }
+    }
+    if (err == ESP_OK && pk_client) {
+        pk_send_status(&r, pk_client);  /* answers without a body (e.g. 204) */
+        esp_timer_start_once(pk_idle, PK_IDLE_US);
+    }
+    xSemaphoreGive(pk_lock);
+    return err != ESP_OK ? err : r.err;
+}
+
 /* ---------- through the relay ---------- */
 
 static void relay_close(route_t route)
@@ -434,6 +556,9 @@ void pksync_start(void)
     /* TLS needs a big stack. Lowest priority: setting up a TLS session is
      * seconds of maths, which mustn't hold up anything else (or the watchdog) */
     xTaskCreate(sync_task, "pksync", 8192, NULL, tskIDLE_PRIORITY, &task);
+    pk_lock = xSemaphoreCreateMutex();
+    const esp_timer_create_args_t idle = { .callback = pk_close, .name = "pk_idle" };
+    esp_timer_create(&idle, &pk_idle);
     esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, on_got_ip, NULL);
 }
 

@@ -71,6 +71,7 @@
   .tag { font-size: 12px; color: var(--accent); }
   .dot { width: 14px; height: 14px; border-radius: 50%; flex: none; }
   .whos { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+  .list .item select.choice { width: auto; flex: none; }
   .who { display: inline-flex; align-items: center; gap: 6px; }
   .who .dot { width: 10px; height: 10px; }
   .warn { color: var(--accent); font-size: 14px; }
@@ -147,16 +148,24 @@
       <input type="search" id="member-search" placeholder="Search members" class="grow">
       <button class="primary" id="member-add">Add member</button>
     </div>
-    <label class="check" id="system-tag-box"><input type="checkbox" id="system-tag"> <span id="system-tag-text"></span></label>
-    <p class="dim" id="system-tag-progress"></p>
     <div class="box list" id="nobody-row" style="margin-top:12px"></div>
     <div class="box list" id="member-list" style="margin-top:12px"></div>
   </section>
 
   <!-- History: recent switches, time fronting per member, battery log -->
   <section id="tab-history">
-    <h2 style="margin-top:0">Recent switches</h2>
-    <div class="box list" id="history-recent"></div>
+    <div class="row" style="align-items:center">
+      <h2 class="grow" style="margin:0">Recent switches</h2>
+      <div class="seg" id="recent-source">
+        <button data-src="pin" class="active">Pin</button><button data-src="pk">PluralKit</button>
+      </div>
+    </div>
+    <div class="box list" id="history-recent" style="margin-top:12px"></div>
+    <div class="box">
+      <p style="margin-top:0">The pin and PluralKit each keep a front history. Switches made on the pin (side button, dashboard) are only on the pin until you sync; switches PluralKit made while the pin was off can be missing on the pin.</p>
+      <button id="pk-sync">Sync with PluralKit…</button>
+      <div id="sync-preview"></div>
+    </div>
     <h2>Time fronting</h2>
     <div class="seg" id="history-range">
       <button data-days="1">24 h</button>
@@ -974,32 +983,7 @@ function renderMembers() {
       </div>
       <span class="dim">Edit</span>
     </div>`;
-  $("system-tag-box").style.display = state.system ? "" : "none";   // .check sets display, so hidden would not work
-  $("system-tag-text").textContent = `Add "${systemTag().trim()}" to card text`;
-  $("system-tag").checked = systemTagOn();
 }
-
-// Add or take off " of <system>" on every card, then redraw the cards that changed
-$("system-tag").addEventListener("change", async e => {
-  const on = e.target.checked, box = e.target, progress = $("system-tag-progress");
-  const members = state.members.map(m => ({ ...m, card: withTag(m.card, on) }));
-  const changed = members.filter((m, i) => m.card !== state.members[i].card);
-  box.disabled = true;
-  try {
-    await api("PUT", "/api/members", { system: state.system, members });
-    for (let i = 0; i < changed.length; i++) {
-      progress.textContent = `Redrawing namecards… ${i + 1} / ${changed.length}`;
-      await uploadPictures(changed[i], null);
-    }
-    progress.textContent = "";
-    toast(`${changed.length} card${changed.length === 1 ? "" : "s"} updated`);
-  } catch (err) {
-    progress.textContent = "";
-    toast("Couldn't update the cards: " + err.message);
-  }
-  box.disabled = false;
-  await loadState();
-});
 
 const NOBODY = -2;                      // "editing" value for the nobody-fronting card
 let editing = -1;                       // member index, -1 for a new member, or NOBODY
@@ -1007,15 +991,7 @@ let cardFollowsName = false;            // new member: card text tracks the name
 let editorPhoto = null;                 // a new photo to crop and send (makePhoto), or null
 let editorStored = null;                // photos the pin already has for this member: {full, side}
 
-// " of <system>" at the end of card text: on while most cards have it (or no members yet)
-const systemTag = (system = state.system) => system ? " of " + system : "";
-const systemTagOn = () => !state.members.length ||
-  state.members.filter(m => systemTag() && m.card.endsWith(systemTag())).length * 2 > state.members.length;
-const withTag = (card, on, system) => {
-  const tag = systemTag(system), has = !!tag && card.endsWith(tag);
-  return on && !has ? card + tag : !on && has ? card.slice(0, -tag.length) : card;
-};
-const defaultCard = name => withTag(name, systemTagOn());
+const defaultCard = name => name;
 
 // What "nobody fronting" looks like before it's set up: the system name on a namecard
 const defaultNobody = () => ({ id: "nobody0", name: "Nobody fronting", card: state.system || "Nobody fronting",
@@ -1381,8 +1357,9 @@ async function renderHistory() {
     const members = [0, 1, 2, 3].map(k => view.getUint16(i * 12 + 4 + k * 2, true)).filter(x => x !== 0xFFFF);
     const seconds = Math.max(0, end - Math.max(start, from));
     if (end > from) for (const idx of members) totals.set(idx, (totals.get(idx) || 0) + seconds);
-    if (i >= count - 15) recent.unshift({ start, members });
+    if (i >= count - RECENT) recent.unshift({ time: start, ids: members.map(idx => state.members[idx]?.id ?? "?") });
   }
+  recentPin = recent;
 
   const sorted = [...totals].filter(([idx]) => state.members[idx]).sort((a, b) => b[1] - a[1]);
   const max = sorted.length ? sorted[0][1] : 1;
@@ -1396,13 +1373,241 @@ async function renderHistory() {
       </div></div>`;
   }).join("") || `<p class="dim">No fronting in this period.</p>`;
 
-  $("history-recent").innerHTML = recent.map(({ start, members }) => {
-    const who = members.map(i => state.members[i]).map(m => m
-      ? `<span class="who"><span class="dot" style="background:${pkHex(m)}"></span>${esc(m.name)}</span>`
-      : `<span class="who">?</span>`).join("") || `<span class="who dim">Nobody</span>`;
-    const when = new Date((start - clockOffset) * 1000).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
-    return `<div class="item"><span class="grow whos">${who}</span><span class="dim">${when}</span></div>`;
+  renderRecent();
+}
+
+/* ---------- pin vs PluralKit front history ---------- */
+
+// A switch, either side: {time (unix s), ids: [PluralKit member ids]}
+const RECENT = 15;
+const SAME_WITHIN = 60;                 // seconds: the same switch if this close, with the same members
+const SYNC_DAYS = 1;                    // "Sync with PluralKit" compares this far back
+let recentSource = "pin";
+let recentPin = [], recentPk = null;    // newest first; recentPk: null until fetched
+
+const byId = id => state.members.find(m => m.id === id);
+const sameMembers = (a, b) => a.length === b.length && a.every(id => b.includes(id));
+const sameSwitch = (a, b) => Math.abs(a.time - b.time) <= SAME_WITHIN && sameMembers(a.ids, b.ids);
+// "1 Nov, 07:18" (with the year when it isn't this year), for narrow lists
+const shortTime = t => {
+  const d = new Date((t - clockOffset) * 1000);
+  return d.toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+    year: d.getFullYear() === new Date().getFullYear() ? undefined : "numeric" });
+};
+const showTime = t => new Date((t - clockOffset) * 1000).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+
+function whoHtml(ids) {
+  return ids.map(id => {
+    const m = byId(id);
+    return m ? `<span class="who"><span class="dot" style="background:${pkHex(m)}"></span>${esc(m.name)}</span>`
+      : `<span class="who dim">${esc(id)}</span>`;
+  }).join("") || `<span class="who dim">Nobody</span>`;
+}
+
+// PluralKit's switches before `before` (unix s, 0 = now), newest first, through the pin
+async function fetchPk(before, limit) {
+  const list = await (await api("GET", `/api/pk/switches?limit=${limit}${before ? "&before=" + before : ""}`)).json();
+  return list.map(s => ({ time: Math.floor(Date.parse(s.timestamp) / 1000), ids: s.members || [], pkId: s.id }));
+}
+
+// The local switches as {time, ids}, oldest first, plus the raw records
+async function loadLocalSwitches() {
+  const view = new DataView(await (await api("GET", "/api/switches")).arrayBuffer());
+  const list = [];
+  for (let i = 0; i + 12 <= view.byteLength; i += 12) {
+    const idx = [0, 1, 2, 3].map(k => view.getUint16(i + 4 + k * 2, true)).filter(x => x !== 0xFFFF);
+    list.push({ time: view.getUint32(i, true), idx, ids: idx.map(x => state.members[x]?.id ?? "?") });
+  }
+  return list;
+}
+
+function renderRecent() {
+  $("recent-source").querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.src === recentSource));
+  const shown = recentSource === "pin" ? recentPin : recentPk;
+  const other = recentSource === "pin" ? recentPk : recentPin;
+  if (!shown) { $("history-recent").innerHTML = `<p class="dim">Asking PluralKit…</p>`; return; }
+  // Only switches within the other side's list can be compared
+  const oldest = other?.length ? other[other.length - 1].time : Infinity;
+  $("history-recent").innerHTML = shown.map(s => {
+    const missing = other && s.time >= oldest - SAME_WITHIN && !other.some(o => sameSwitch(s, o));
+    const tag = missing ? ` <span class="tag">${recentSource === "pin" ? "not in PluralKit" : "not on the pin"}</span>` : "";
+    return `<div class="item"><span class="grow whos">${whoHtml(s.ids)}${tag}</span><span class="dim">${showTime(s.time)}</span></div>`;
   }).join("") || `<p class="dim">No switches yet.</p>`;
+}
+
+$("recent-source").addEventListener("click", async e => {
+  const b = e.target.closest("[data-src]");
+  if (!b) return;
+  recentSource = b.dataset.src;
+  renderRecent();
+  if (recentSource === "pk" && !recentPk) {
+    try { recentPk = await fetchPk(0, RECENT); }
+    catch (err) { recentSource = "pin"; toast("Couldn't get PluralKit's history: " + err.message.replace(/^.*: \d+ /, "")); }
+    renderRecent();
+  }
+});
+
+// Sync: find the differences over the last SYNC_DAYS, show them, apply what's chosen
+let syncPlan = null;
+
+$("pk-sync").addEventListener("click", async () => {
+  const button = $("pk-sync"), out = $("sync-preview");
+  button.disabled = true;
+  out.innerHTML = `<p class="dim">Comparing with PluralKit…</p>`;
+  try {
+    const local = await loadLocalSwitches();
+    const from = Date.now() / 1000 + clockOffset - SYNC_DAYS * 86400;
+    let pk = [], before = 0, start = from;
+    for (let page = 0; page < 20; page++) {
+      const got = await fetchPk(before, 100);
+      pk.push(...got);
+      out.innerHTML = `<p class="dim">Reading PluralKit's history… ${pk.length} switches</p>`;
+      if (got.length < 100 || got[got.length - 1].time < from) break;
+      before = got[got.length - 1].time;
+      if (page === 19) start = Math.max(from, before);    // more than PluralKit gave: compare what was read
+    }
+    pk = pk.filter(s => s.time >= start);
+    const mine = local.filter(s => s.time >= start);
+    const used = new Set();
+    const pinOnly = mine.filter(s => {
+      const k = pk.findIndex((p, i) => !used.has(i) && sameSwitch(s, p));
+      if (k >= 0) { used.add(k); return false; }
+      return true;
+    });
+    const pkOnly = pk.filter((p, i) => !used.has(i));
+    recentPk = pk.slice(0, RECENT);
+    renderRecent();
+    syncPlan = { pinOnly, pkOnly };
+    showSyncPlan(start);
+  } catch (err) {
+    out.innerHTML = `<p class="error">${esc(err.message.replace(/^.*: \d+ /, ""))}</p>`;
+  }
+  button.disabled = false;
+});
+
+function showSyncPlan(start) {
+  const { pinOnly, pkOnly } = syncPlan;
+  const out = $("sync-preview");
+  if (!pinOnly.length && !pkOnly.length) {
+    out.innerHTML = `<p>The pin and PluralKit match since ${esc(showTime(start))}.</p>`;
+    return;
+  }
+  const unknown = s => s.ids.filter(id => !byId(id));
+  const noneKnown = s => s.ids.length && unknown(s).length === s.ids.length;
+  out.innerHTML = `
+    <p class="dim">Since ${esc(showTime(start))}: ${pinOnly.length} only on the pin, ${pkOnly.length} only in PluralKit.
+      Choose for all of them, or one by one below. Nothing changes until you press Apply.</p>
+    <div class="row" style="flex-wrap:wrap; gap:8px">
+      <button id="sync-pin-wins">Overwrite PluralKit</button>
+      <button id="sync-pk-wins">Overwrite the pin</button>
+      <button id="sync-cancel">Do nothing</button>
+    </div>
+    <p class="dim" id="sync-summary"></p>
+    ${pinOnly.length ? `<h3>Only on the pin (${pinOnly.length})</h3><div class="list">${pinOnly.map((s, i) => `
+      <div class="item"><div class="grow"><div class="whos">${whoHtml(s.ids)}</div><div class="dim">${esc(shortTime(s.time))}</div></div>
+        <select class="choice" data-pin="${i}">
+          <option value="send">Add to PluralKit</option>
+          <option value="remove">Remove from the pin</option>
+          <option value="leave">Leave</option>
+        </select></div>`).join("")}</div>` : ""}
+    ${pkOnly.length ? `<h3>Only in PluralKit (${pkOnly.length})</h3><div class="list">${pkOnly.map((s, i) => `
+      <div class="item"><div class="grow"><div class="whos">${whoHtml(s.ids)}</div><div class="dim">${esc(shortTime(s.time))}${unknown(s).length ? ` · ${noneKnown(s) ? "members not on the pin" : "some members not on the pin"}` : ""}</div></div>
+        <select class="choice" data-pk="${i}">
+          <option value="add" ${noneKnown(s) ? "disabled" : ""}>Add to the pin</option>
+          <option value="delete">Delete from PluralKit</option>
+          <option value="leave" ${noneKnown(s) ? "selected" : ""}>Leave</option>
+        </select></div>`).join("")}</div>` : ""}
+    <div class="row" style="margin-top:12px">
+      <button class="primary" id="sync-apply">Apply</button>
+    </div>
+    <div id="sync-progress"></div>`;
+  const selects = kind => [...out.querySelectorAll(`[data-${kind}]`)];
+  const summarise = () => {
+    const count = (kind, v) => selects(kind).filter(x => x.value === v).length;
+    const parts = [count("pin", "send") && `${count("pin", "send")} added to PluralKit`,
+      count("pk", "delete") && `${count("pk", "delete")} deleted from PluralKit`,
+      count("pk", "add") && `${count("pk", "add")} added to the pin`,
+      count("pin", "remove") && `${count("pin", "remove")} removed from the pin`].filter(Boolean);
+    $("sync-summary").textContent = "Apply will: " + (parts.join(", ") || "change nothing") + ".";
+  };
+  const setAll = (pin, pk) => {
+    selects("pin").forEach(x => x.value = pin);
+    selects("pk").forEach(x => x.value = x.querySelector(`[value="${pk}"]`).disabled ? "leave" : pk);
+    summarise();
+  };
+  out.addEventListener("change", summarise);
+  summarise();
+  $("sync-pin-wins").addEventListener("click", () => setAll("send", "delete"));
+  $("sync-pk-wins").addEventListener("click", () => setAll("remove", "add"));
+  $("sync-cancel").addEventListener("click", () => { out.innerHTML = ""; syncPlan = null; });
+  $("sync-apply").addEventListener("click", applySync);
+}
+
+// A PluralKit change through the pin, spaced out and retried if PluralKit says
+// "too many requests" (it allows a few writes a second)
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function pkWrite(method, path, body) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const res = await api(method, path, body);
+      await sleep(250);
+      return res;
+    } catch (err) {
+      if (!/: 429 /.test(err.message) || attempt >= 4) throw err;
+      await sleep(2000 * (attempt + 1));
+    }
+  }
+}
+
+async function applySync() {
+  const { pinOnly, pkOnly } = syncPlan;
+  const progress = $("sync-progress"), out = $("sync-preview");
+  const choice = (kind, i) => out.querySelector(`[data-${kind}="${i}"]`).value;
+  const send = pinOnly.filter((s, i) => choice("pin", i) === "send");
+  const remove = pinOnly.filter((s, i) => choice("pin", i) === "remove");
+  const add = pkOnly.filter((s, i) => choice("pk", i) === "add");
+  const del = pkOnly.filter((s, i) => choice("pk", i) === "delete");
+  if (del.length && !confirm(`Delete ${del.length} switch${del.length === 1 ? "" : "es"} from PluralKit? This can't be undone from here.`)) return;
+  $("sync-apply").disabled = true;
+  out.querySelectorAll("#sync-pin-wins, #sync-pk-wins, #sync-cancel").forEach(x => x.disabled = true);
+  const failed = [];
+  const reason = err => err.message.replace(/^.*: \d+ /, "");
+  let backup = null;                    // the pin's history before, for Undo
+  try {
+    for (let i = 0; i < del.length; i++) {
+      progress.innerHTML = `<p class="dim">Deleting from PluralKit… ${i + 1} / ${del.length}</p>`;
+      try { await pkWrite("DELETE", `/api/pk/switches?id=${encodeURIComponent(del[i].pkId)}`); }
+      catch (err) { failed.push(`${showTime(del[i].time)}: ${reason(err)}`); }
+    }
+    const deleted = del.length - failed.length;
+    for (let i = 0; i < send.length; i++) {
+      progress.innerHTML = `<p class="dim">Adding to PluralKit… ${i + 1} / ${send.length}</p>`;
+      try { await pkWrite("POST", "/api/pk/switches", { timestamp: send[i].time, members: send[i].ids }); }
+      catch (err) { failed.push(`${showTime(send[i].time)}: ${reason(err)}`); }
+    }
+    const sent = send.length - (failed.length - (del.length - deleted));
+    const done = [deleted && `${deleted} deleted from PluralKit`, sent && `${sent} added to PluralKit`,
+      add.length && `${add.length} added to the pin`, remove.length && `${remove.length} removed from the pin`].filter(Boolean);
+    out.innerHTML = `<p>${esc(done.join(", ") || "Nothing changed")}.</p>` +
+      (failed.length ? `<p class="error">PluralKit refused ${failed.length}:</p>${failed.map(f => `<p class="dim">${esc(f)}</p>`).join("")}` : "") +
+      (backup ? `<button id="sync-undo">Undo the pin's changes</button>` : "");
+    if (backup) $("sync-undo").addEventListener("click", async () => {
+      if (!confirm("Put the pin's history back as it was before this sync? (PluralKit's changes stay.)")) return;
+      try {
+        await api("PUT", "/api/switches", backup);
+        out.innerHTML = `<p>The pin's history is back as it was.</p>`;
+        await loadState();
+        await renderHistory();
+      } catch (err) { toast("Couldn't undo: " + err.message); }
+    });
+    syncPlan = null;
+    recentPk = null;
+    await loadState();
+    await renderHistory();
+  } catch (err) {
+    progress.innerHTML = `<p class="error">${esc(reason(err))}</p>`;
+    $("sync-apply").disabled = false;
+  }
 }
 
 /* ---------- battery log (History tab) ---------- */
@@ -1479,7 +1684,6 @@ function convertExport(pk) {
     throw new Error("This doesn't look like a PluralKit export (no members or switches).");
   }
   const system = pk.name || "";
-  const tagOn = systemTagOn();
   const list = [...pk.members].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
   // Keep what was set on the dashboard (Quick Switch, display mode, card colour, image text)
   // for members that are already on the pin; their photos stay on the pin too
@@ -1487,7 +1691,7 @@ function convertExport(pk) {
   const members = list.map(m => ({
     id: m.id,
     name: m.name || m.id,
-    card: withTag(m.display_name || m.name, tagOn, system),
+    card: m.display_name || m.name,
     color: before.get(m.id)?.color || (m.color || "468DC3").toUpperCase(),
     pk_color: (m.color || "").toUpperCase(),
     messages: m.message_count || 0,
