@@ -264,6 +264,73 @@ void status_wifi_icon(lv_obj_t *icon, bool tinted)
     lv_subject_add_observer_obj(&wifi_state, wifi_icon_update, icon, tinted ? (void *)1 : NULL);
 }
 
+/* ---------- battery icons ---------- */
+
+#define BATTERY_BARS    4
+#define BATTERY_RED     0xFF453A
+
+static void battery_icon_update(lv_observer_t *observer, lv_subject_t *subject)
+{
+    /* One bar per quarter: 76-100 % four, 51-75 % three, 26-50 % two, else one (red when low) */
+    lv_obj_t *bars = lv_observer_get_target_obj(observer);
+    int percent = lv_subject_get_int(subject);
+    int count = percent > 75 ? 4 : percent > 50 ? 3 : percent > 25 ? 2 : 1;
+    lv_color_t colour = percent <= LOW_BATTERY_PERCENT ? lv_color_hex(BATTERY_RED)
+                                                       : lv_color_hex((uint32_t)(uintptr_t)lv_observer_get_user_data(observer));
+    for (int i = 0; i < BATTERY_BARS; i++) {
+        lv_obj_t *bar = lv_obj_get_child(bars, i);
+        lv_obj_set_flag(bar, LV_OBJ_FLAG_HIDDEN, i >= count);
+        lv_obj_set_style_bg_color(bar, colour, 0);
+    }
+}
+
+static lv_obj_t *battery_part(lv_obj_t *parent, int x, int y, int w, int h)
+{
+    lv_obj_t *part = lv_obj_create(parent);
+    lv_obj_remove_style_all(part);
+    lv_obj_remove_flag(part, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_pos(part, x, y);
+    lv_obj_set_size(part, w, h);
+    return part;
+}
+
+void status_battery_icon(lv_obj_t *icon, bool solid)
+{
+    /* The status bar's filled 48x23 battery (the Editor's image) is faded and
+     * gets bars on top, left to right. The cards' battery is drawn here
+     * instead of the small 21x13 image: upright, 1.75 times the size, an outline
+     * with the tip on top and bars filling from the bottom. */
+    int x, y, w, h, dx, dy;
+    uint32_t colour;
+    if (solid) {
+        x = 4, y = 4, w = 7, h = 15, dx = 9, dy = 0, colour = 0xF2F2F7;
+        lv_obj_set_style_image_opa(icon, LV_OPA_40, 0);
+        /* The picture is centred in the image widget */
+        lv_obj_update_layout(icon);
+        x += (lv_obj_get_width(icon) - lv_image_get_src_width(icon)) / 2;
+        y += (lv_obj_get_height(icon) - lv_image_get_src_height(icon)) / 2;
+    } else {
+        x = 4, y = 29, w = 14, h = 5, dx = 0, dy = -7, colour = 0xFFFFFF;
+        lv_obj_set_style_image_opa(icon, LV_OPA_TRANSP, 0);
+        lv_obj_set_size(icon, 22, 38);
+        lv_obj_t *tip = battery_part(icon, 6, 0, 10, 3);
+        lv_obj_set_style_bg_opa(tip, LV_OPA_COVER, 0);
+        lv_obj_set_style_bg_color(tip, lv_color_hex(colour), 0);
+        lv_obj_set_style_radius(tip, 1, 0);
+        lv_obj_t *body = battery_part(icon, 0, 4, 22, 34);
+        lv_obj_set_style_border_width(body, 2, 0);
+        lv_obj_set_style_border_color(body, lv_color_hex(colour), 0);
+        lv_obj_set_style_radius(body, 4, 0);
+    }
+    lv_obj_t *bars = battery_part(icon, 0, 0, LV_PCT(100), LV_PCT(100));
+    for (int i = 0; i < BATTERY_BARS; i++) {
+        lv_obj_t *bar = battery_part(bars, x + i * dx, y + i * dy, w, h);
+        lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
+        lv_obj_set_style_radius(bar, solid ? 2 : 1, 0);
+    }
+    lv_subject_add_observer_obj(&battery_percent, battery_icon_update, bars, (void *)(uintptr_t)colour);
+}
+
 static void wifi_card_tapped(lv_event_t *e)
 {
     char ssid[33], text[64];
@@ -297,6 +364,8 @@ void status_attach(lv_obj_t *scr)
     lv_obj_t *column = lv_obj_get_child(lv_obj_get_child(scr, 0), 1);
     lv_obj_t *card = lv_obj_get_child(lv_obj_get_child(column, 0), 1);
     status_wifi_icon(lv_obj_get_child(lv_obj_get_child(lv_obj_get_child(card, 0), 0), 0), true);
+    /* battery card > [card > icon, column] */
+    status_battery_icon(lv_obj_get_child(lv_obj_get_child(lv_obj_get_child(lv_obj_get_child(column, 0), 0), 0), 0), false);
 
     make_unclickable(card);
     lv_obj_add_flag(card, LV_OBJ_FLAG_CLICKABLE);
@@ -304,13 +373,32 @@ void status_attach(lv_obj_t *scr)
     lv_obj_add_event_cb(card, wifi_card_tapped, LV_EVENT_CLICKED, NULL);
 }
 
-/* "19.8 / 32 GB", "0.3 / 4.4 MB": both numbers in the unit that suits the total */
+/* Bytes in the unit that suits them: "19.8 GB", "4.4 MB", "12 KB" */
+static void format_size(char *buf, size_t size, uint64_t bytes, bool whole)
+{
+    static const struct { double scale; const char *unit; } units[] = {
+        { 1e9, "GB" }, { 1e6, "MB" }, { 1e3, "KB" },
+    };
+    int i = 0;
+    while (i < 2 && bytes < units[i].scale) {
+        i++;
+    }
+    double n = bytes / units[i].scale;
+    snprintf(buf, size, whole || n >= 100 ? "%.0f %s" : "%.1f %s", n, units[i].unit);
+}
+
+/* "19.8 / 32 GB", "0.3 / 4.4 MB"; a small amount used in its own unit: "12 MB / 32 GB" */
 static void format_usage(char *buf, size_t size, const storage_usage_t *u)
 {
-    double scale = u->total >= 1000000000ULL ? 1e9 : 1e6;
-    const char *unit = scale == 1e9 ? "GB" : "MB";
-    double used = u->used / scale, total = u->total / scale;
-    snprintf(buf, size, total >= 10 ? "%.1f / %.0f %s" : "%.1f / %.1f %s", used, total, unit);
+    char used[12], total[12];
+    format_size(used, sizeof(used), u->used, false);
+    format_size(total, sizeof(total), u->total, u->total >= 10e9);
+    const char *used_unit = strchr(used, ' '), *total_unit = strchr(total, ' ');
+    if (strcmp(used_unit, total_unit) == 0) {
+        snprintf(buf, size, "%.*s / %s", (int)(used_unit - used), used, total);
+    } else {
+        snprintf(buf, size, "%s / %s", used, total);
+    }
 }
 
 static void storage_update(void)

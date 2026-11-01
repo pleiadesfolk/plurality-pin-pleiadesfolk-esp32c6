@@ -136,6 +136,7 @@ static void wire_menu(lv_obj_t *scr)
     /* status bar > [row > [Wi-Fi icon, battery %, battery icon], row] */
     lv_obj_t *status_bar = lv_obj_get_child(lv_obj_get_child(scr, 1), 0);
     status_wifi_icon(lv_obj_get_child(lv_obj_get_child(status_bar, 0), 0), false);
+    status_battery_icon(lv_obj_get_child(lv_obj_get_child(status_bar, 0), 2), true);
 }
 
 /* ---------- switching ---------- */

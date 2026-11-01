@@ -51,4 +51,6 @@ void settings_attach(lv_obj_t *scr)
     /* Wi-Fi card > column > [column > icon, ...] */
     status_wifi_icon(lv_obj_get_child(lv_obj_get_child(lv_obj_get_child(lv_obj_get_child(cards, 0), 0), 0), 0), true);
     make_button(lv_obj_get_child(cards, 1), bluetooth_tapped);
+    /* battery card > [card > icon, column] */
+    status_battery_icon(lv_obj_get_child(lv_obj_get_child(lv_obj_get_child(cards, 2), 0), 0), false);
 }

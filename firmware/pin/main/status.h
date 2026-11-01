@@ -35,3 +35,10 @@ void status_attach(lv_obj_t *status_screen);
  * coloured (green) and turns grey when not connected.
  */
 void status_wifi_icon(lv_obj_t *icon, bool tinted);
+
+/**
+ * Make a battery icon show battery_percent as four bars (one per quarter; a
+ * single red bar when low). `solid`: the status bar's filled battery, which
+ * is faded behind the bars; otherwise the cards' battery, drawn upright.
+ */
+void status_battery_icon(lv_obj_t *icon, bool solid);
