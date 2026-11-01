@@ -7,6 +7,20 @@ phone, served by the pin itself over Wi-Fi. No app or account needed.
 
 New to the pin? Start with the **[User guide](docs/USER_GUIDE.md)**.
 
+## Screenshots
+
+| | |
+|---|---|
+| ![Fronter: a namecard with the member's name on a blue gradient](docs/images/fronter.png) | ![Clock: 09:41, Sunday 01/11/26](docs/images/clock.png) |
+| **Fronter** (namecard mode) | **Clock** |
+| ![Menu: status bar with Status, Settings and Connect to pin buttons](docs/images/menu.png) | ![Status: battery, Wi-Fi, SD card and pin storage](docs/images/status.png) |
+| **Menu** (swipe down on the fronter) | **Status** |
+| ![Settings: Wi-Fi, Bluetooth, battery and brightness slider](docs/images/settings.png) | |
+| **Settings** | |
+
+*Rendered from the pin's screen code at its real 456×280 size, with example
+values for the time, battery and Wi-Fi.*
+
 ## What it does
 
 - **Shows the current fronter** in one of three styles, chosen per member:
