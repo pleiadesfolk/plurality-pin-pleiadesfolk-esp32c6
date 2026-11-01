@@ -31,6 +31,7 @@
 #include "esp_log.h"
 #include "bsp/esp-bsp.h"
 #include "nav.h"
+#include "power.h"
 #include "status.h"
 #include "storage_info.h"
 #include "wifi.h"
@@ -44,7 +45,7 @@ static const char *TAG = "status";
 #define BATTERY_SETTLE      3           /* measurements after unplugging before it only goes down */
 /* A Li-ion cell never goes above ~4.2 V. Higher means we're on USB power and
  * reading the charger's output (measured 4.84-4.90 V, with or without a battery). */
-#define USB_POWER_VOLTS     4.4f
+#define USB_POWER_VOLTS     POWER_USB_VOLTS
 #define LOW_BATTERY_PERCENT 15
 #define LOG_EVERY           6           /* battery updates per log entry: once a minute */
 #define LOG_MAX_ENTRIES     (4 * 24 * 60)   /* 4 days; then the older half is dropped */
@@ -173,6 +174,7 @@ static void battery_update(lv_timer_t *timer)
         }
         measured = true;
     }
+    power_battery_update(usb, smooth, on_battery > 1);
     int percent = lv_subject_get_int(&battery_percent);
 
     bool low = !usb && percent <= LOW_BATTERY_PERCENT;
@@ -355,8 +357,7 @@ static void clock_update(lv_timer_t *timer)
 
 void status_init(void)
 {
-    ESP_ERROR_CHECK(bat_adc_init());
-    battery_update(NULL);
+    battery_update(NULL);               /* the ADC is set up by power_boot_check() */
     if (last_volts > USB_POWER_VOLTS) {
         ESP_LOGI(TAG, "on USB power (%.2f V)", last_volts);
     } else {

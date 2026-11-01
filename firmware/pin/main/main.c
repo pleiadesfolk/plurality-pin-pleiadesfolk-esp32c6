@@ -39,6 +39,7 @@
 #include "textpic.h"
 #include "nav.h"
 #include "pksync.h"
+#include "power.h"
 #include "store.h"
 #include "web.h"
 #include "wifi.h"
@@ -172,6 +173,7 @@ static void boot_done(void)
     lv_timer_set_repeat_count(bench, 1);
 #endif
     button_init();
+    power_after_boot();                 /* charging bolt if USB woke it from a low-battery sleep */
     lv_timer_create(clock_update, 1000, NULL);
     lv_timer_create((lv_timer_cb_t)fronter_poll, 250, NULL);
     lv_timer_create(memory_report, 10000, NULL);
@@ -208,6 +210,7 @@ static void nvs_init(void)
 
 void app_main(void)
 {
+    power_boot_check();                 /* asleep on a flat battery: back to sleep before starting anything */
     setenv("TZ", TIME_ZONE, 1);
     tzset();
     set_time_from_build();              /* the build time is local time */

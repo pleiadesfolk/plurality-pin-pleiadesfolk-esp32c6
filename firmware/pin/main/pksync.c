@@ -35,6 +35,7 @@
 #include "esp_netif.h"
 #include "nvs.h"
 #include "cJSON.h"
+#include "lvgl.h"
 #include "pksync.h"
 #include "store.h"
 #include "wifi.h"
@@ -116,20 +117,29 @@ static uint32_t parse_time(const char *s)
  * with "id") if it's newer than the pin's own front, has someone the pin knows
  * (or nobody at all), and differs from what's shown.
  */
-static void apply(uint32_t when, const cJSON *members_json)
+/* PluralKit member ids (strings, or objects with "id") -> the pin's indexes */
+static int member_indexes(const cJSON *members_json, uint16_t *members, int *unknown)
 {
-    uint16_t members[STORE_FRONT_MAX];
-    int count = 0, unknown = 0;
+    int count = 0;
+    *unknown = 0;
     const cJSON *m;
     cJSON_ArrayForEach(m, members_json) {
         const char *id = cJSON_IsString(m) ? m->valuestring : cJSON_GetStringValue(cJSON_GetObjectItem(m, "id"));
         int index = store_member_index(id ?: "");
         if (index < 0) {
-            unknown++;
+            (*unknown)++;
         } else if (count < STORE_FRONT_MAX) {
             members[count++] = (uint16_t)index;
         }
     }
+    return count;
+}
+
+static void apply(uint32_t when, const cJSON *members_json)
+{
+    uint16_t members[STORE_FRONT_MAX];
+    int unknown;
+    int count = member_indexes(members_json, members, &unknown);
     if (!when || when <= store_front_time() || (count == 0 && unknown > 0) || store_front_is(members, count)) {
         return;
     }
@@ -170,6 +180,101 @@ static esp_err_t on_event(esp_http_client_event_t *e)
         r->body[r->len] = 0;
     }
     return ESP_OK;
+}
+
+/* ---------- "check now" (double tap) ---------- */
+
+static void (*refresh_done)(pksync_refresh_t);
+static volatile bool refreshing;
+
+static void refresh_report(void *result)
+{
+    refreshing = false;
+    refresh_done((pksync_refresh_t)(intptr_t)result);
+}
+
+/* The relay's answer {"time","members",...}: make it the pin's front */
+static pksync_refresh_t match_front(const char *body)
+{
+    cJSON *root = cJSON_Parse(body);
+    uint32_t when = (uint32_t)cJSON_GetNumberValue(cJSON_GetObjectItem(root, "time"));
+    uint16_t members[STORE_FRONT_MAX];
+    int unknown;
+    int count = member_indexes(cJSON_GetObjectItem(root, "members"), members, &unknown);
+    cJSON_Delete(root);
+    if (!when) {
+        return PKSYNC_REFRESH_SAME;     /* PluralKit has no switches */
+    }
+    if (count == 0 && unknown > 0) {
+        return PKSYNC_REFRESH_UNKNOWN;
+    }
+    int dropped;
+    bool added;
+    if (store_match_front(when, members, count, &dropped, &added) != ESP_OK) {
+        return PKSYNC_REFRESH_FAILED;
+    }
+    return dropped || added ? PKSYNC_REFRESH_CHANGED : PKSYNC_REFRESH_SAME;
+}
+
+/* Its own connection: the sync task's one is busy waiting at the relay */
+static void refresh_task(void *arg)
+{
+    char base[URL_MAX], secret[REF_MAX], url[URL_MAX + 16], auth[REF_MAX + 8];
+    xSemaphoreTake(lock, portMAX_DELAY);
+    route_t route = relay_via >= 0 ? (route_t)relay_via : relay_url[ROUTE_HOME][0] ? ROUTE_HOME : ROUTE_NET;
+    strlcpy(base, relay_url[route], sizeof(base));
+    strlcpy(secret, relay_secret, sizeof(secret));
+    xSemaphoreGive(lock);
+    size_t n = strlen(base);
+    while (n && base[n - 1] == '/') {
+        base[--n] = 0;
+    }
+    snprintf(url, sizeof(url), "%s/refresh", base);
+    snprintf(auth, sizeof(auth), "Bearer %s", secret);
+
+    pksync_refresh_t result = PKSYNC_REFRESH_FAILED;
+    response_t r = { 0 };
+    esp_http_client_config_t config = {
+        .url = url,
+        .method = HTTP_METHOD_POST,
+        .crt_bundle_attach = esp_crt_bundle_attach,
+        .timeout_ms = 30000,            /* through the internet the TLS set-up alone takes ~20 s */
+        .user_agent = USER_AGENT,
+        .event_handler = on_event,
+        .user_data = &r,
+    };
+    esp_http_client_handle_t c = esp_http_client_init(&config);
+    if (c) {
+        esp_http_client_set_header(c, "Authorization", auth);
+        if (esp_http_client_perform(c) == ESP_OK && esp_http_client_get_status_code(c) == 200 && r.body) {
+            result = match_front(r.body);
+        } else {
+            ESP_LOGW(TAG, "check now: the relay (%s) answered %d", ROUTE_NAMES[route], esp_http_client_get_status_code(c));
+        }
+        esp_http_client_cleanup(c);
+    }
+    free(r.body);
+    lv_async_call(refresh_report, (void *)(intptr_t)result);
+    vTaskDelete(NULL);
+}
+
+void pksync_refresh_now(void (*done)(pksync_refresh_t result))
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    bool relay = relay_secret[0] && (relay_url[ROUTE_HOME][0] || relay_url[ROUTE_NET][0]);
+    xSemaphoreGive(lock);
+    if (!relay) {
+        done(PKSYNC_REFRESH_NO_RELAY);
+    } else if (refreshing) {
+        done(PKSYNC_REFRESH_BUSY);
+    } else {
+        refreshing = true;
+        refresh_done = done;
+        if (xTaskCreate(refresh_task, "pk_refresh", 8192, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS) {
+            refreshing = false;
+            done(PKSYNC_REFRESH_FAILED);
+        }
+    }
 }
 
 /* ---------- direct from PluralKit ---------- */

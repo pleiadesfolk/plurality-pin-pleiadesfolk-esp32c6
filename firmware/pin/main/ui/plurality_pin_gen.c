@@ -917,6 +917,16 @@ const void * image_vec_46_997 = NULL;
 extern const void * image_vec_46_997_data;
 const void * image_vec_46_998 = NULL;
 extern const void * image_vec_46_998_data;
+const void * image_vec_49_900 = NULL;
+extern const void * image_vec_49_900_data;
+const void * image_vec_49_901 = NULL;
+extern const void * image_vec_49_901_data;
+const void * image_vec_49_913 = NULL;
+extern const void * image_vec_49_913_data;
+const void * image_vec_49_914 = NULL;
+extern const void * image_vec_49_914_data;
+const void * image_vec_49_912 = NULL;
+extern const void * image_vec_49_912_data;
 
 /*----------------
  * Global styles
@@ -1116,1391 +1126,1391 @@ void plurality_pin_init_gen(const char * asset_path)
         }
         /* image_vec_6_2604 */
         if (!image_vec_6_2604) {
-            image_vec_6_2604 = assets_image(61);  /* vec_6_2604 */
+            image_vec_6_2604 = assets_image(66);  /* vec_6_2604 */
         }
         /* image_vec_6_2605 */
         if (!image_vec_6_2605) {
-            image_vec_6_2605 = assets_image(62);  /* vec_6_2605 */
+            image_vec_6_2605 = assets_image(67);  /* vec_6_2605 */
         }
         /* image_vec_6_2608 */
         if (!image_vec_6_2608) {
-            image_vec_6_2608 = assets_image(63);  /* vec_6_2608 */
+            image_vec_6_2608 = assets_image(68);  /* vec_6_2608 */
         }
         /* image_vec_6_2609 */
         if (!image_vec_6_2609) {
-            image_vec_6_2609 = assets_image(64);  /* vec_6_2609 */
+            image_vec_6_2609 = assets_image(69);  /* vec_6_2609 */
         }
         /* image_vec_6_2610 */
         if (!image_vec_6_2610) {
-            image_vec_6_2610 = assets_image(65);  /* vec_6_2610 */
+            image_vec_6_2610 = assets_image(70);  /* vec_6_2610 */
         }
         /* image_vec_6_2611 */
         if (!image_vec_6_2611) {
-            image_vec_6_2611 = assets_image(66);  /* vec_6_2611 */
+            image_vec_6_2611 = assets_image(71);  /* vec_6_2611 */
         }
         /* image_vec_6_2612 */
         if (!image_vec_6_2612) {
-            image_vec_6_2612 = assets_image(67);  /* vec_6_2612 */
+            image_vec_6_2612 = assets_image(72);  /* vec_6_2612 */
         }
         /* image_vec_6_2613 */
         if (!image_vec_6_2613) {
-            image_vec_6_2613 = assets_image(68);  /* vec_6_2613 */
+            image_vec_6_2613 = assets_image(73);  /* vec_6_2613 */
         }
         /* image_vec_6_2614 */
         if (!image_vec_6_2614) {
-            image_vec_6_2614 = assets_image(69);  /* vec_6_2614 */
+            image_vec_6_2614 = assets_image(74);  /* vec_6_2614 */
         }
         /* image_vec_6_2615 */
         if (!image_vec_6_2615) {
-            image_vec_6_2615 = assets_image(70);  /* vec_6_2615 */
+            image_vec_6_2615 = assets_image(75);  /* vec_6_2615 */
         }
         /* image_vec_6_2616 */
         if (!image_vec_6_2616) {
-            image_vec_6_2616 = assets_image(71);  /* vec_6_2616 */
+            image_vec_6_2616 = assets_image(76);  /* vec_6_2616 */
         }
         /* image_vec_6_2617 */
         if (!image_vec_6_2617) {
-            image_vec_6_2617 = assets_image(72);  /* vec_6_2617 */
+            image_vec_6_2617 = assets_image(77);  /* vec_6_2617 */
         }
         /* image_vec_6_2618 */
         if (!image_vec_6_2618) {
-            image_vec_6_2618 = assets_image(73);  /* vec_6_2618 */
+            image_vec_6_2618 = assets_image(78);  /* vec_6_2618 */
         }
         /* image_vec_6_2619 */
         if (!image_vec_6_2619) {
-            image_vec_6_2619 = assets_image(74);  /* vec_6_2619 */
+            image_vec_6_2619 = assets_image(79);  /* vec_6_2619 */
         }
         /* image_vec_6_2620 */
         if (!image_vec_6_2620) {
-            image_vec_6_2620 = assets_image(75);  /* vec_6_2620 */
+            image_vec_6_2620 = assets_image(80);  /* vec_6_2620 */
         }
         /* image_vec_6_2621 */
         if (!image_vec_6_2621) {
-            image_vec_6_2621 = assets_image(76);  /* vec_6_2621 */
+            image_vec_6_2621 = assets_image(81);  /* vec_6_2621 */
         }
         /* image_vec_6_2622 */
         if (!image_vec_6_2622) {
-            image_vec_6_2622 = assets_image(77);  /* vec_6_2622 */
+            image_vec_6_2622 = assets_image(82);  /* vec_6_2622 */
         }
         /* image_vec_6_2623 */
         if (!image_vec_6_2623) {
-            image_vec_6_2623 = assets_image(78);  /* vec_6_2623 */
+            image_vec_6_2623 = assets_image(83);  /* vec_6_2623 */
         }
         /* image_vec_6_2624 */
         if (!image_vec_6_2624) {
-            image_vec_6_2624 = assets_image(79);  /* vec_6_2624 */
+            image_vec_6_2624 = assets_image(84);  /* vec_6_2624 */
         }
         /* image_vec_6_2625 */
         if (!image_vec_6_2625) {
-            image_vec_6_2625 = assets_image(80);  /* vec_6_2625 */
+            image_vec_6_2625 = assets_image(85);  /* vec_6_2625 */
         }
         /* image_vec_6_2626 */
         if (!image_vec_6_2626) {
-            image_vec_6_2626 = assets_image(81);  /* vec_6_2626 */
+            image_vec_6_2626 = assets_image(86);  /* vec_6_2626 */
         }
         /* image_vec_6_2627 */
         if (!image_vec_6_2627) {
-            image_vec_6_2627 = assets_image(82);  /* vec_6_2627 */
+            image_vec_6_2627 = assets_image(87);  /* vec_6_2627 */
         }
         /* image_vec_6_2628 */
         if (!image_vec_6_2628) {
-            image_vec_6_2628 = assets_image(83);  /* vec_6_2628 */
+            image_vec_6_2628 = assets_image(88);  /* vec_6_2628 */
         }
         /* image_vec_6_2629 */
         if (!image_vec_6_2629) {
-            image_vec_6_2629 = assets_image(84);  /* vec_6_2629 */
+            image_vec_6_2629 = assets_image(89);  /* vec_6_2629 */
         }
         /* image_vec_6_2630 */
         if (!image_vec_6_2630) {
-            image_vec_6_2630 = assets_image(85);  /* vec_6_2630 */
+            image_vec_6_2630 = assets_image(90);  /* vec_6_2630 */
         }
         /* image_vec_6_2631 */
         if (!image_vec_6_2631) {
-            image_vec_6_2631 = assets_image(86);  /* vec_6_2631 */
+            image_vec_6_2631 = assets_image(91);  /* vec_6_2631 */
         }
         /* image_vec_6_2632 */
         if (!image_vec_6_2632) {
-            image_vec_6_2632 = assets_image(87);  /* vec_6_2632 */
+            image_vec_6_2632 = assets_image(92);  /* vec_6_2632 */
         }
         /* image_vec_6_2633 */
         if (!image_vec_6_2633) {
-            image_vec_6_2633 = assets_image(88);  /* vec_6_2633 */
+            image_vec_6_2633 = assets_image(93);  /* vec_6_2633 */
         }
         /* image_vec_6_2634 */
         if (!image_vec_6_2634) {
-            image_vec_6_2634 = assets_image(89);  /* vec_6_2634 */
+            image_vec_6_2634 = assets_image(94);  /* vec_6_2634 */
         }
         /* image_vec_6_2635 */
         if (!image_vec_6_2635) {
-            image_vec_6_2635 = assets_image(90);  /* vec_6_2635 */
+            image_vec_6_2635 = assets_image(95);  /* vec_6_2635 */
         }
         /* image_vec_6_2636 */
         if (!image_vec_6_2636) {
-            image_vec_6_2636 = assets_image(91);  /* vec_6_2636 */
+            image_vec_6_2636 = assets_image(96);  /* vec_6_2636 */
         }
         /* image_vec_6_2637 */
         if (!image_vec_6_2637) {
-            image_vec_6_2637 = assets_image(92);  /* vec_6_2637 */
+            image_vec_6_2637 = assets_image(97);  /* vec_6_2637 */
         }
         /* image_vec_6_2638 */
         if (!image_vec_6_2638) {
-            image_vec_6_2638 = assets_image(93);  /* vec_6_2638 */
+            image_vec_6_2638 = assets_image(98);  /* vec_6_2638 */
         }
         /* image_vec_6_2639 */
         if (!image_vec_6_2639) {
-            image_vec_6_2639 = assets_image(94);  /* vec_6_2639 */
+            image_vec_6_2639 = assets_image(99);  /* vec_6_2639 */
         }
         /* image_vec_6_2640 */
         if (!image_vec_6_2640) {
-            image_vec_6_2640 = assets_image(95);  /* vec_6_2640 */
+            image_vec_6_2640 = assets_image(100);  /* vec_6_2640 */
         }
         /* image_vec_6_2641 */
         if (!image_vec_6_2641) {
-            image_vec_6_2641 = assets_image(96);  /* vec_6_2641 */
+            image_vec_6_2641 = assets_image(101);  /* vec_6_2641 */
         }
         /* image_vec_6_2642 */
         if (!image_vec_6_2642) {
-            image_vec_6_2642 = assets_image(97);  /* vec_6_2642 */
+            image_vec_6_2642 = assets_image(102);  /* vec_6_2642 */
         }
         /* image_vec_6_2643 */
         if (!image_vec_6_2643) {
-            image_vec_6_2643 = assets_image(98);  /* vec_6_2643 */
+            image_vec_6_2643 = assets_image(103);  /* vec_6_2643 */
         }
         /* image_vec_6_2644 */
         if (!image_vec_6_2644) {
-            image_vec_6_2644 = assets_image(99);  /* vec_6_2644 */
+            image_vec_6_2644 = assets_image(104);  /* vec_6_2644 */
         }
         /* image_vec_6_2645 */
         if (!image_vec_6_2645) {
-            image_vec_6_2645 = assets_image(100);  /* vec_6_2645 */
+            image_vec_6_2645 = assets_image(105);  /* vec_6_2645 */
         }
         /* image_vec_6_2646 */
         if (!image_vec_6_2646) {
-            image_vec_6_2646 = assets_image(101);  /* vec_6_2646 */
+            image_vec_6_2646 = assets_image(106);  /* vec_6_2646 */
         }
         /* image_vec_6_2647 */
         if (!image_vec_6_2647) {
-            image_vec_6_2647 = assets_image(102);  /* vec_6_2647 */
+            image_vec_6_2647 = assets_image(107);  /* vec_6_2647 */
         }
         /* image_vec_6_2648 */
         if (!image_vec_6_2648) {
-            image_vec_6_2648 = assets_image(103);  /* vec_6_2648 */
+            image_vec_6_2648 = assets_image(108);  /* vec_6_2648 */
         }
         /* image_vec_6_2649 */
         if (!image_vec_6_2649) {
-            image_vec_6_2649 = assets_image(104);  /* vec_6_2649 */
+            image_vec_6_2649 = assets_image(109);  /* vec_6_2649 */
         }
         /* image_vec_6_2650 */
         if (!image_vec_6_2650) {
-            image_vec_6_2650 = assets_image(105);  /* vec_6_2650 */
+            image_vec_6_2650 = assets_image(110);  /* vec_6_2650 */
         }
         /* image_vec_6_2651 */
         if (!image_vec_6_2651) {
-            image_vec_6_2651 = assets_image(106);  /* vec_6_2651 */
+            image_vec_6_2651 = assets_image(111);  /* vec_6_2651 */
         }
         /* image_vec_6_2652 */
         if (!image_vec_6_2652) {
-            image_vec_6_2652 = assets_image(107);  /* vec_6_2652 */
+            image_vec_6_2652 = assets_image(112);  /* vec_6_2652 */
         }
         /* image_vec_6_2653 */
         if (!image_vec_6_2653) {
-            image_vec_6_2653 = assets_image(108);  /* vec_6_2653 */
+            image_vec_6_2653 = assets_image(113);  /* vec_6_2653 */
         }
         /* image_vec_6_2654 */
         if (!image_vec_6_2654) {
-            image_vec_6_2654 = assets_image(109);  /* vec_6_2654 */
+            image_vec_6_2654 = assets_image(114);  /* vec_6_2654 */
         }
         /* image_vec_6_2655 */
         if (!image_vec_6_2655) {
-            image_vec_6_2655 = assets_image(110);  /* vec_6_2655 */
+            image_vec_6_2655 = assets_image(115);  /* vec_6_2655 */
         }
         /* image_vec_6_2656 */
         if (!image_vec_6_2656) {
-            image_vec_6_2656 = assets_image(111);  /* vec_6_2656 */
+            image_vec_6_2656 = assets_image(116);  /* vec_6_2656 */
         }
         /* image_vec_6_2657 */
         if (!image_vec_6_2657) {
-            image_vec_6_2657 = assets_image(112);  /* vec_6_2657 */
+            image_vec_6_2657 = assets_image(117);  /* vec_6_2657 */
         }
         /* image_vec_6_2658 */
         if (!image_vec_6_2658) {
-            image_vec_6_2658 = assets_image(113);  /* vec_6_2658 */
+            image_vec_6_2658 = assets_image(118);  /* vec_6_2658 */
         }
         /* image_vec_6_2659 */
         if (!image_vec_6_2659) {
-            image_vec_6_2659 = assets_image(114);  /* vec_6_2659 */
+            image_vec_6_2659 = assets_image(119);  /* vec_6_2659 */
         }
         /* image_vec_6_2660 */
         if (!image_vec_6_2660) {
-            image_vec_6_2660 = assets_image(115);  /* vec_6_2660 */
+            image_vec_6_2660 = assets_image(120);  /* vec_6_2660 */
         }
         /* image_vec_6_2661 */
         if (!image_vec_6_2661) {
-            image_vec_6_2661 = assets_image(116);  /* vec_6_2661 */
+            image_vec_6_2661 = assets_image(121);  /* vec_6_2661 */
         }
         /* image_vec_6_2662 */
         if (!image_vec_6_2662) {
-            image_vec_6_2662 = assets_image(117);  /* vec_6_2662 */
+            image_vec_6_2662 = assets_image(122);  /* vec_6_2662 */
         }
         /* image_vec_6_2663 */
         if (!image_vec_6_2663) {
-            image_vec_6_2663 = assets_image(118);  /* vec_6_2663 */
+            image_vec_6_2663 = assets_image(123);  /* vec_6_2663 */
         }
         /* image_vec_6_2664 */
         if (!image_vec_6_2664) {
-            image_vec_6_2664 = assets_image(119);  /* vec_6_2664 */
+            image_vec_6_2664 = assets_image(124);  /* vec_6_2664 */
         }
         /* image_vec_6_2665 */
         if (!image_vec_6_2665) {
-            image_vec_6_2665 = assets_image(120);  /* vec_6_2665 */
+            image_vec_6_2665 = assets_image(125);  /* vec_6_2665 */
         }
         /* image_vec_6_2666 */
         if (!image_vec_6_2666) {
-            image_vec_6_2666 = assets_image(121);  /* vec_6_2666 */
+            image_vec_6_2666 = assets_image(126);  /* vec_6_2666 */
         }
         /* image_vec_6_2667 */
         if (!image_vec_6_2667) {
-            image_vec_6_2667 = assets_image(122);  /* vec_6_2667 */
+            image_vec_6_2667 = assets_image(127);  /* vec_6_2667 */
         }
         /* image_vec_6_2668 */
         if (!image_vec_6_2668) {
-            image_vec_6_2668 = assets_image(123);  /* vec_6_2668 */
+            image_vec_6_2668 = assets_image(128);  /* vec_6_2668 */
         }
         /* image_vec_6_2669 */
         if (!image_vec_6_2669) {
-            image_vec_6_2669 = assets_image(124);  /* vec_6_2669 */
+            image_vec_6_2669 = assets_image(129);  /* vec_6_2669 */
         }
         /* image_vec_6_2670 */
         if (!image_vec_6_2670) {
-            image_vec_6_2670 = assets_image(125);  /* vec_6_2670 */
+            image_vec_6_2670 = assets_image(130);  /* vec_6_2670 */
         }
         /* image_vec_6_2671 */
         if (!image_vec_6_2671) {
-            image_vec_6_2671 = assets_image(126);  /* vec_6_2671 */
+            image_vec_6_2671 = assets_image(131);  /* vec_6_2671 */
         }
         /* image_vec_6_2672 */
         if (!image_vec_6_2672) {
-            image_vec_6_2672 = assets_image(127);  /* vec_6_2672 */
+            image_vec_6_2672 = assets_image(132);  /* vec_6_2672 */
         }
         /* image_vec_6_2673 */
         if (!image_vec_6_2673) {
-            image_vec_6_2673 = assets_image(128);  /* vec_6_2673 */
+            image_vec_6_2673 = assets_image(133);  /* vec_6_2673 */
         }
         /* image_vec_6_2674 */
         if (!image_vec_6_2674) {
-            image_vec_6_2674 = assets_image(129);  /* vec_6_2674 */
+            image_vec_6_2674 = assets_image(134);  /* vec_6_2674 */
         }
         /* image_vec_6_2675 */
         if (!image_vec_6_2675) {
-            image_vec_6_2675 = assets_image(130);  /* vec_6_2675 */
+            image_vec_6_2675 = assets_image(135);  /* vec_6_2675 */
         }
         /* image_vec_6_2676 */
         if (!image_vec_6_2676) {
-            image_vec_6_2676 = assets_image(131);  /* vec_6_2676 */
+            image_vec_6_2676 = assets_image(136);  /* vec_6_2676 */
         }
         /* image_vec_6_2677 */
         if (!image_vec_6_2677) {
-            image_vec_6_2677 = assets_image(132);  /* vec_6_2677 */
+            image_vec_6_2677 = assets_image(137);  /* vec_6_2677 */
         }
         /* image_vec_6_2678 */
         if (!image_vec_6_2678) {
-            image_vec_6_2678 = assets_image(133);  /* vec_6_2678 */
+            image_vec_6_2678 = assets_image(138);  /* vec_6_2678 */
         }
         /* image_vec_6_2679 */
         if (!image_vec_6_2679) {
-            image_vec_6_2679 = assets_image(134);  /* vec_6_2679 */
+            image_vec_6_2679 = assets_image(139);  /* vec_6_2679 */
         }
         /* image_vec_6_2680 */
         if (!image_vec_6_2680) {
-            image_vec_6_2680 = assets_image(135);  /* vec_6_2680 */
+            image_vec_6_2680 = assets_image(140);  /* vec_6_2680 */
         }
         /* image_vec_6_2681 */
         if (!image_vec_6_2681) {
-            image_vec_6_2681 = assets_image(136);  /* vec_6_2681 */
+            image_vec_6_2681 = assets_image(141);  /* vec_6_2681 */
         }
         /* image_vec_6_2682 */
         if (!image_vec_6_2682) {
-            image_vec_6_2682 = assets_image(137);  /* vec_6_2682 */
+            image_vec_6_2682 = assets_image(142);  /* vec_6_2682 */
         }
         /* image_vec_6_2683 */
         if (!image_vec_6_2683) {
-            image_vec_6_2683 = assets_image(138);  /* vec_6_2683 */
+            image_vec_6_2683 = assets_image(143);  /* vec_6_2683 */
         }
         /* image_vec_6_2684 */
         if (!image_vec_6_2684) {
-            image_vec_6_2684 = assets_image(139);  /* vec_6_2684 */
+            image_vec_6_2684 = assets_image(144);  /* vec_6_2684 */
         }
         /* image_vec_6_2685 */
         if (!image_vec_6_2685) {
-            image_vec_6_2685 = assets_image(140);  /* vec_6_2685 */
+            image_vec_6_2685 = assets_image(145);  /* vec_6_2685 */
         }
         /* image_vec_6_2686 */
         if (!image_vec_6_2686) {
-            image_vec_6_2686 = assets_image(141);  /* vec_6_2686 */
+            image_vec_6_2686 = assets_image(146);  /* vec_6_2686 */
         }
         /* image_vec_6_2687 */
         if (!image_vec_6_2687) {
-            image_vec_6_2687 = assets_image(142);  /* vec_6_2687 */
+            image_vec_6_2687 = assets_image(147);  /* vec_6_2687 */
         }
         /* image_vec_6_2688 */
         if (!image_vec_6_2688) {
-            image_vec_6_2688 = assets_image(143);  /* vec_6_2688 */
+            image_vec_6_2688 = assets_image(148);  /* vec_6_2688 */
         }
         /* image_vec_6_2689 */
         if (!image_vec_6_2689) {
-            image_vec_6_2689 = assets_image(144);  /* vec_6_2689 */
+            image_vec_6_2689 = assets_image(149);  /* vec_6_2689 */
         }
         /* image_vec_6_2690 */
         if (!image_vec_6_2690) {
-            image_vec_6_2690 = assets_image(145);  /* vec_6_2690 */
+            image_vec_6_2690 = assets_image(150);  /* vec_6_2690 */
         }
         /* image_vec_6_2691 */
         if (!image_vec_6_2691) {
-            image_vec_6_2691 = assets_image(146);  /* vec_6_2691 */
+            image_vec_6_2691 = assets_image(151);  /* vec_6_2691 */
         }
         /* image_vec_6_2692 */
         if (!image_vec_6_2692) {
-            image_vec_6_2692 = assets_image(147);  /* vec_6_2692 */
+            image_vec_6_2692 = assets_image(152);  /* vec_6_2692 */
         }
         /* image_vec_6_2693 */
         if (!image_vec_6_2693) {
-            image_vec_6_2693 = assets_image(148);  /* vec_6_2693 */
+            image_vec_6_2693 = assets_image(153);  /* vec_6_2693 */
         }
         /* image_vec_6_2694 */
         if (!image_vec_6_2694) {
-            image_vec_6_2694 = assets_image(149);  /* vec_6_2694 */
+            image_vec_6_2694 = assets_image(154);  /* vec_6_2694 */
         }
         /* image_vec_6_2695 */
         if (!image_vec_6_2695) {
-            image_vec_6_2695 = assets_image(150);  /* vec_6_2695 */
+            image_vec_6_2695 = assets_image(155);  /* vec_6_2695 */
         }
         /* image_vec_6_2696 */
         if (!image_vec_6_2696) {
-            image_vec_6_2696 = assets_image(151);  /* vec_6_2696 */
+            image_vec_6_2696 = assets_image(156);  /* vec_6_2696 */
         }
         /* image_vec_6_2697 */
         if (!image_vec_6_2697) {
-            image_vec_6_2697 = assets_image(152);  /* vec_6_2697 */
+            image_vec_6_2697 = assets_image(157);  /* vec_6_2697 */
         }
         /* image_vec_6_2698 */
         if (!image_vec_6_2698) {
-            image_vec_6_2698 = assets_image(153);  /* vec_6_2698 */
+            image_vec_6_2698 = assets_image(158);  /* vec_6_2698 */
         }
         /* image_vec_6_2699 */
         if (!image_vec_6_2699) {
-            image_vec_6_2699 = assets_image(154);  /* vec_6_2699 */
+            image_vec_6_2699 = assets_image(159);  /* vec_6_2699 */
         }
         /* image_vec_6_2700 */
         if (!image_vec_6_2700) {
-            image_vec_6_2700 = assets_image(155);  /* vec_6_2700 */
+            image_vec_6_2700 = assets_image(160);  /* vec_6_2700 */
         }
         /* image_vec_6_2701 */
         if (!image_vec_6_2701) {
-            image_vec_6_2701 = assets_image(156);  /* vec_6_2701 */
+            image_vec_6_2701 = assets_image(161);  /* vec_6_2701 */
         }
         /* image_vec_6_2702 */
         if (!image_vec_6_2702) {
-            image_vec_6_2702 = assets_image(157);  /* vec_6_2702 */
+            image_vec_6_2702 = assets_image(162);  /* vec_6_2702 */
         }
         /* image_vec_6_2703 */
         if (!image_vec_6_2703) {
-            image_vec_6_2703 = assets_image(158);  /* vec_6_2703 */
+            image_vec_6_2703 = assets_image(163);  /* vec_6_2703 */
         }
         /* image_vec_6_2704 */
         if (!image_vec_6_2704) {
-            image_vec_6_2704 = assets_image(159);  /* vec_6_2704 */
+            image_vec_6_2704 = assets_image(164);  /* vec_6_2704 */
         }
         /* image_vec_6_2705 */
         if (!image_vec_6_2705) {
-            image_vec_6_2705 = assets_image(160);  /* vec_6_2705 */
+            image_vec_6_2705 = assets_image(165);  /* vec_6_2705 */
         }
         /* image_vec_6_2706 */
         if (!image_vec_6_2706) {
-            image_vec_6_2706 = assets_image(161);  /* vec_6_2706 */
+            image_vec_6_2706 = assets_image(166);  /* vec_6_2706 */
         }
         /* image_vec_6_2707 */
         if (!image_vec_6_2707) {
-            image_vec_6_2707 = assets_image(162);  /* vec_6_2707 */
+            image_vec_6_2707 = assets_image(167);  /* vec_6_2707 */
         }
         /* image_vec_6_2708 */
         if (!image_vec_6_2708) {
-            image_vec_6_2708 = assets_image(163);  /* vec_6_2708 */
+            image_vec_6_2708 = assets_image(168);  /* vec_6_2708 */
         }
         /* image_vec_6_2709 */
         if (!image_vec_6_2709) {
-            image_vec_6_2709 = assets_image(164);  /* vec_6_2709 */
+            image_vec_6_2709 = assets_image(169);  /* vec_6_2709 */
         }
         /* image_vec_6_2710 */
         if (!image_vec_6_2710) {
-            image_vec_6_2710 = assets_image(165);  /* vec_6_2710 */
+            image_vec_6_2710 = assets_image(170);  /* vec_6_2710 */
         }
         /* image_vec_6_2711 */
         if (!image_vec_6_2711) {
-            image_vec_6_2711 = assets_image(166);  /* vec_6_2711 */
+            image_vec_6_2711 = assets_image(171);  /* vec_6_2711 */
         }
         /* image_vec_6_2712 */
         if (!image_vec_6_2712) {
-            image_vec_6_2712 = assets_image(167);  /* vec_6_2712 */
+            image_vec_6_2712 = assets_image(172);  /* vec_6_2712 */
         }
         /* image_vec_6_2713 */
         if (!image_vec_6_2713) {
-            image_vec_6_2713 = assets_image(168);  /* vec_6_2713 */
+            image_vec_6_2713 = assets_image(173);  /* vec_6_2713 */
         }
         /* image_vec_6_2714 */
         if (!image_vec_6_2714) {
-            image_vec_6_2714 = assets_image(169);  /* vec_6_2714 */
+            image_vec_6_2714 = assets_image(174);  /* vec_6_2714 */
         }
         /* image_vec_6_2715 */
         if (!image_vec_6_2715) {
-            image_vec_6_2715 = assets_image(170);  /* vec_6_2715 */
+            image_vec_6_2715 = assets_image(175);  /* vec_6_2715 */
         }
         /* image_vec_6_2716 */
         if (!image_vec_6_2716) {
-            image_vec_6_2716 = assets_image(171);  /* vec_6_2716 */
+            image_vec_6_2716 = assets_image(176);  /* vec_6_2716 */
         }
         /* image_vec_6_2717 */
         if (!image_vec_6_2717) {
-            image_vec_6_2717 = assets_image(172);  /* vec_6_2717 */
+            image_vec_6_2717 = assets_image(177);  /* vec_6_2717 */
         }
         /* image_vec_6_2718 */
         if (!image_vec_6_2718) {
-            image_vec_6_2718 = assets_image(173);  /* vec_6_2718 */
+            image_vec_6_2718 = assets_image(178);  /* vec_6_2718 */
         }
         /* image_vec_6_2719 */
         if (!image_vec_6_2719) {
-            image_vec_6_2719 = assets_image(174);  /* vec_6_2719 */
+            image_vec_6_2719 = assets_image(179);  /* vec_6_2719 */
         }
         /* image_vec_6_2720 */
         if (!image_vec_6_2720) {
-            image_vec_6_2720 = assets_image(175);  /* vec_6_2720 */
+            image_vec_6_2720 = assets_image(180);  /* vec_6_2720 */
         }
         /* image_vec_6_2721 */
         if (!image_vec_6_2721) {
-            image_vec_6_2721 = assets_image(176);  /* vec_6_2721 */
+            image_vec_6_2721 = assets_image(181);  /* vec_6_2721 */
         }
         /* image_vec_6_2722 */
         if (!image_vec_6_2722) {
-            image_vec_6_2722 = assets_image(177);  /* vec_6_2722 */
+            image_vec_6_2722 = assets_image(182);  /* vec_6_2722 */
         }
         /* image_vec_6_2723 */
         if (!image_vec_6_2723) {
-            image_vec_6_2723 = assets_image(178);  /* vec_6_2723 */
+            image_vec_6_2723 = assets_image(183);  /* vec_6_2723 */
         }
         /* image_vec_6_2724 */
         if (!image_vec_6_2724) {
-            image_vec_6_2724 = assets_image(179);  /* vec_6_2724 */
+            image_vec_6_2724 = assets_image(184);  /* vec_6_2724 */
         }
         /* image_vec_6_2725 */
         if (!image_vec_6_2725) {
-            image_vec_6_2725 = assets_image(180);  /* vec_6_2725 */
+            image_vec_6_2725 = assets_image(185);  /* vec_6_2725 */
         }
         /* image_vec_6_2726 */
         if (!image_vec_6_2726) {
-            image_vec_6_2726 = assets_image(181);  /* vec_6_2726 */
+            image_vec_6_2726 = assets_image(186);  /* vec_6_2726 */
         }
         /* image_vec_6_2727 */
         if (!image_vec_6_2727) {
-            image_vec_6_2727 = assets_image(182);  /* vec_6_2727 */
+            image_vec_6_2727 = assets_image(187);  /* vec_6_2727 */
         }
         /* image_vec_6_2728 */
         if (!image_vec_6_2728) {
-            image_vec_6_2728 = assets_image(183);  /* vec_6_2728 */
+            image_vec_6_2728 = assets_image(188);  /* vec_6_2728 */
         }
         /* image_vec_6_2729 */
         if (!image_vec_6_2729) {
-            image_vec_6_2729 = assets_image(184);  /* vec_6_2729 */
+            image_vec_6_2729 = assets_image(189);  /* vec_6_2729 */
         }
         /* image_vec_6_2730 */
         if (!image_vec_6_2730) {
-            image_vec_6_2730 = assets_image(185);  /* vec_6_2730 */
+            image_vec_6_2730 = assets_image(190);  /* vec_6_2730 */
         }
         /* image_vec_6_2731 */
         if (!image_vec_6_2731) {
-            image_vec_6_2731 = assets_image(186);  /* vec_6_2731 */
+            image_vec_6_2731 = assets_image(191);  /* vec_6_2731 */
         }
         /* image_vec_6_2732 */
         if (!image_vec_6_2732) {
-            image_vec_6_2732 = assets_image(187);  /* vec_6_2732 */
+            image_vec_6_2732 = assets_image(192);  /* vec_6_2732 */
         }
         /* image_vec_6_2733 */
         if (!image_vec_6_2733) {
-            image_vec_6_2733 = assets_image(188);  /* vec_6_2733 */
+            image_vec_6_2733 = assets_image(193);  /* vec_6_2733 */
         }
         /* image_vec_6_2734 */
         if (!image_vec_6_2734) {
-            image_vec_6_2734 = assets_image(189);  /* vec_6_2734 */
+            image_vec_6_2734 = assets_image(194);  /* vec_6_2734 */
         }
         /* image_vec_6_2735 */
         if (!image_vec_6_2735) {
-            image_vec_6_2735 = assets_image(190);  /* vec_6_2735 */
+            image_vec_6_2735 = assets_image(195);  /* vec_6_2735 */
         }
         /* image_vec_6_2736 */
         if (!image_vec_6_2736) {
-            image_vec_6_2736 = assets_image(191);  /* vec_6_2736 */
+            image_vec_6_2736 = assets_image(196);  /* vec_6_2736 */
         }
         /* image_vec_6_2737 */
         if (!image_vec_6_2737) {
-            image_vec_6_2737 = assets_image(192);  /* vec_6_2737 */
+            image_vec_6_2737 = assets_image(197);  /* vec_6_2737 */
         }
         /* image_vec_6_2738 */
         if (!image_vec_6_2738) {
-            image_vec_6_2738 = assets_image(193);  /* vec_6_2738 */
+            image_vec_6_2738 = assets_image(198);  /* vec_6_2738 */
         }
         /* image_vec_6_2739 */
         if (!image_vec_6_2739) {
-            image_vec_6_2739 = assets_image(194);  /* vec_6_2739 */
+            image_vec_6_2739 = assets_image(199);  /* vec_6_2739 */
         }
         /* image_vec_6_2740 */
         if (!image_vec_6_2740) {
-            image_vec_6_2740 = assets_image(195);  /* vec_6_2740 */
+            image_vec_6_2740 = assets_image(200);  /* vec_6_2740 */
         }
         /* image_vec_6_2741 */
         if (!image_vec_6_2741) {
-            image_vec_6_2741 = assets_image(196);  /* vec_6_2741 */
+            image_vec_6_2741 = assets_image(201);  /* vec_6_2741 */
         }
         /* image_vec_6_2742 */
         if (!image_vec_6_2742) {
-            image_vec_6_2742 = assets_image(197);  /* vec_6_2742 */
+            image_vec_6_2742 = assets_image(202);  /* vec_6_2742 */
         }
         /* image_vec_6_2743 */
         if (!image_vec_6_2743) {
-            image_vec_6_2743 = assets_image(198);  /* vec_6_2743 */
+            image_vec_6_2743 = assets_image(203);  /* vec_6_2743 */
         }
         /* image_vec_6_2744 */
         if (!image_vec_6_2744) {
-            image_vec_6_2744 = assets_image(199);  /* vec_6_2744 */
+            image_vec_6_2744 = assets_image(204);  /* vec_6_2744 */
         }
         /* image_vec_6_2745 */
         if (!image_vec_6_2745) {
-            image_vec_6_2745 = assets_image(200);  /* vec_6_2745 */
+            image_vec_6_2745 = assets_image(205);  /* vec_6_2745 */
         }
         /* image_vec_6_2746 */
         if (!image_vec_6_2746) {
-            image_vec_6_2746 = assets_image(201);  /* vec_6_2746 */
+            image_vec_6_2746 = assets_image(206);  /* vec_6_2746 */
         }
         /* image_vec_6_2747 */
         if (!image_vec_6_2747) {
-            image_vec_6_2747 = assets_image(202);  /* vec_6_2747 */
+            image_vec_6_2747 = assets_image(207);  /* vec_6_2747 */
         }
         /* image_vec_6_2748 */
         if (!image_vec_6_2748) {
-            image_vec_6_2748 = assets_image(203);  /* vec_6_2748 */
+            image_vec_6_2748 = assets_image(208);  /* vec_6_2748 */
         }
         /* image_vec_6_2749 */
         if (!image_vec_6_2749) {
-            image_vec_6_2749 = assets_image(204);  /* vec_6_2749 */
+            image_vec_6_2749 = assets_image(209);  /* vec_6_2749 */
         }
         /* image_vec_6_2750 */
         if (!image_vec_6_2750) {
-            image_vec_6_2750 = assets_image(205);  /* vec_6_2750 */
+            image_vec_6_2750 = assets_image(210);  /* vec_6_2750 */
         }
         /* image_vec_6_2751 */
         if (!image_vec_6_2751) {
-            image_vec_6_2751 = assets_image(206);  /* vec_6_2751 */
+            image_vec_6_2751 = assets_image(211);  /* vec_6_2751 */
         }
         /* image_vec_6_2752 */
         if (!image_vec_6_2752) {
-            image_vec_6_2752 = assets_image(207);  /* vec_6_2752 */
+            image_vec_6_2752 = assets_image(212);  /* vec_6_2752 */
         }
         /* image_vec_6_2753 */
         if (!image_vec_6_2753) {
-            image_vec_6_2753 = assets_image(208);  /* vec_6_2753 */
+            image_vec_6_2753 = assets_image(213);  /* vec_6_2753 */
         }
         /* image_vec_6_2754 */
         if (!image_vec_6_2754) {
-            image_vec_6_2754 = assets_image(209);  /* vec_6_2754 */
+            image_vec_6_2754 = assets_image(214);  /* vec_6_2754 */
         }
         /* image_vec_6_2755 */
         if (!image_vec_6_2755) {
-            image_vec_6_2755 = assets_image(210);  /* vec_6_2755 */
+            image_vec_6_2755 = assets_image(215);  /* vec_6_2755 */
         }
         /* image_vec_6_2756 */
         if (!image_vec_6_2756) {
-            image_vec_6_2756 = assets_image(211);  /* vec_6_2756 */
+            image_vec_6_2756 = assets_image(216);  /* vec_6_2756 */
         }
         /* image_vec_6_2757 */
         if (!image_vec_6_2757) {
-            image_vec_6_2757 = assets_image(212);  /* vec_6_2757 */
+            image_vec_6_2757 = assets_image(217);  /* vec_6_2757 */
         }
         /* image_vec_6_2758 */
         if (!image_vec_6_2758) {
-            image_vec_6_2758 = assets_image(213);  /* vec_6_2758 */
+            image_vec_6_2758 = assets_image(218);  /* vec_6_2758 */
         }
         /* image_vec_6_2759 */
         if (!image_vec_6_2759) {
-            image_vec_6_2759 = assets_image(214);  /* vec_6_2759 */
+            image_vec_6_2759 = assets_image(219);  /* vec_6_2759 */
         }
         /* image_vec_6_2760 */
         if (!image_vec_6_2760) {
-            image_vec_6_2760 = assets_image(215);  /* vec_6_2760 */
+            image_vec_6_2760 = assets_image(220);  /* vec_6_2760 */
         }
         /* image_vec_6_2761 */
         if (!image_vec_6_2761) {
-            image_vec_6_2761 = assets_image(216);  /* vec_6_2761 */
+            image_vec_6_2761 = assets_image(221);  /* vec_6_2761 */
         }
         /* image_vec_6_2762 */
         if (!image_vec_6_2762) {
-            image_vec_6_2762 = assets_image(217);  /* vec_6_2762 */
+            image_vec_6_2762 = assets_image(222);  /* vec_6_2762 */
         }
         /* image_vec_6_2763 */
         if (!image_vec_6_2763) {
-            image_vec_6_2763 = assets_image(218);  /* vec_6_2763 */
+            image_vec_6_2763 = assets_image(223);  /* vec_6_2763 */
         }
         /* image_vec_6_2764 */
         if (!image_vec_6_2764) {
-            image_vec_6_2764 = assets_image(219);  /* vec_6_2764 */
+            image_vec_6_2764 = assets_image(224);  /* vec_6_2764 */
         }
         /* image_vec_6_2765 */
         if (!image_vec_6_2765) {
-            image_vec_6_2765 = assets_image(220);  /* vec_6_2765 */
+            image_vec_6_2765 = assets_image(225);  /* vec_6_2765 */
         }
         /* image_vec_6_2766 */
         if (!image_vec_6_2766) {
-            image_vec_6_2766 = assets_image(221);  /* vec_6_2766 */
+            image_vec_6_2766 = assets_image(226);  /* vec_6_2766 */
         }
         /* image_vec_6_2767 */
         if (!image_vec_6_2767) {
-            image_vec_6_2767 = assets_image(222);  /* vec_6_2767 */
+            image_vec_6_2767 = assets_image(227);  /* vec_6_2767 */
         }
         /* image_vec_6_2768 */
         if (!image_vec_6_2768) {
-            image_vec_6_2768 = assets_image(223);  /* vec_6_2768 */
+            image_vec_6_2768 = assets_image(228);  /* vec_6_2768 */
         }
         /* image_vec_6_2769 */
         if (!image_vec_6_2769) {
-            image_vec_6_2769 = assets_image(224);  /* vec_6_2769 */
+            image_vec_6_2769 = assets_image(229);  /* vec_6_2769 */
         }
         /* image_vec_6_2770 */
         if (!image_vec_6_2770) {
-            image_vec_6_2770 = assets_image(225);  /* vec_6_2770 */
+            image_vec_6_2770 = assets_image(230);  /* vec_6_2770 */
         }
         /* image_vec_6_2771 */
         if (!image_vec_6_2771) {
-            image_vec_6_2771 = assets_image(226);  /* vec_6_2771 */
+            image_vec_6_2771 = assets_image(231);  /* vec_6_2771 */
         }
         /* image_vec_6_2772 */
         if (!image_vec_6_2772) {
-            image_vec_6_2772 = assets_image(227);  /* vec_6_2772 */
+            image_vec_6_2772 = assets_image(232);  /* vec_6_2772 */
         }
         /* image_vec_6_2773 */
         if (!image_vec_6_2773) {
-            image_vec_6_2773 = assets_image(228);  /* vec_6_2773 */
+            image_vec_6_2773 = assets_image(233);  /* vec_6_2773 */
         }
         /* image_vec_6_2774 */
         if (!image_vec_6_2774) {
-            image_vec_6_2774 = assets_image(229);  /* vec_6_2774 */
+            image_vec_6_2774 = assets_image(234);  /* vec_6_2774 */
         }
         /* image_vec_6_2775 */
         if (!image_vec_6_2775) {
-            image_vec_6_2775 = assets_image(230);  /* vec_6_2775 */
+            image_vec_6_2775 = assets_image(235);  /* vec_6_2775 */
         }
         /* image_vec_6_2776 */
         if (!image_vec_6_2776) {
-            image_vec_6_2776 = assets_image(231);  /* vec_6_2776 */
+            image_vec_6_2776 = assets_image(236);  /* vec_6_2776 */
         }
         /* image_vec_6_2777 */
         if (!image_vec_6_2777) {
-            image_vec_6_2777 = assets_image(232);  /* vec_6_2777 */
+            image_vec_6_2777 = assets_image(237);  /* vec_6_2777 */
         }
         /* image_vec_6_2778 */
         if (!image_vec_6_2778) {
-            image_vec_6_2778 = assets_image(233);  /* vec_6_2778 */
+            image_vec_6_2778 = assets_image(238);  /* vec_6_2778 */
         }
         /* image_vec_6_2779 */
         if (!image_vec_6_2779) {
-            image_vec_6_2779 = assets_image(234);  /* vec_6_2779 */
+            image_vec_6_2779 = assets_image(239);  /* vec_6_2779 */
         }
         /* image_vec_6_2780 */
         if (!image_vec_6_2780) {
-            image_vec_6_2780 = assets_image(235);  /* vec_6_2780 */
+            image_vec_6_2780 = assets_image(240);  /* vec_6_2780 */
         }
         /* image_vec_6_2781 */
         if (!image_vec_6_2781) {
-            image_vec_6_2781 = assets_image(236);  /* vec_6_2781 */
+            image_vec_6_2781 = assets_image(241);  /* vec_6_2781 */
         }
         /* image_vec_6_2782 */
         if (!image_vec_6_2782) {
-            image_vec_6_2782 = assets_image(237);  /* vec_6_2782 */
+            image_vec_6_2782 = assets_image(242);  /* vec_6_2782 */
         }
         /* image_vec_6_2783 */
         if (!image_vec_6_2783) {
-            image_vec_6_2783 = assets_image(238);  /* vec_6_2783 */
+            image_vec_6_2783 = assets_image(243);  /* vec_6_2783 */
         }
         /* image_vec_6_2784 */
         if (!image_vec_6_2784) {
-            image_vec_6_2784 = assets_image(239);  /* vec_6_2784 */
+            image_vec_6_2784 = assets_image(244);  /* vec_6_2784 */
         }
         /* image_vec_6_2785 */
         if (!image_vec_6_2785) {
-            image_vec_6_2785 = assets_image(240);  /* vec_6_2785 */
+            image_vec_6_2785 = assets_image(245);  /* vec_6_2785 */
         }
         /* image_vec_6_2786 */
         if (!image_vec_6_2786) {
-            image_vec_6_2786 = assets_image(241);  /* vec_6_2786 */
+            image_vec_6_2786 = assets_image(246);  /* vec_6_2786 */
         }
         /* image_vec_6_2787 */
         if (!image_vec_6_2787) {
-            image_vec_6_2787 = assets_image(242);  /* vec_6_2787 */
+            image_vec_6_2787 = assets_image(247);  /* vec_6_2787 */
         }
         /* image_vec_6_2788 */
         if (!image_vec_6_2788) {
-            image_vec_6_2788 = assets_image(243);  /* vec_6_2788 */
+            image_vec_6_2788 = assets_image(248);  /* vec_6_2788 */
         }
         /* image_vec_6_2789 */
         if (!image_vec_6_2789) {
-            image_vec_6_2789 = assets_image(244);  /* vec_6_2789 */
+            image_vec_6_2789 = assets_image(249);  /* vec_6_2789 */
         }
         /* image_vec_6_2790 */
         if (!image_vec_6_2790) {
-            image_vec_6_2790 = assets_image(245);  /* vec_6_2790 */
+            image_vec_6_2790 = assets_image(250);  /* vec_6_2790 */
         }
         /* image_vec_6_2791 */
         if (!image_vec_6_2791) {
-            image_vec_6_2791 = assets_image(246);  /* vec_6_2791 */
+            image_vec_6_2791 = assets_image(251);  /* vec_6_2791 */
         }
         /* image_vec_6_2792 */
         if (!image_vec_6_2792) {
-            image_vec_6_2792 = assets_image(247);  /* vec_6_2792 */
+            image_vec_6_2792 = assets_image(252);  /* vec_6_2792 */
         }
         /* image_vec_6_2793 */
         if (!image_vec_6_2793) {
-            image_vec_6_2793 = assets_image(248);  /* vec_6_2793 */
+            image_vec_6_2793 = assets_image(253);  /* vec_6_2793 */
         }
         /* image_vec_6_2794 */
         if (!image_vec_6_2794) {
-            image_vec_6_2794 = assets_image(249);  /* vec_6_2794 */
+            image_vec_6_2794 = assets_image(254);  /* vec_6_2794 */
         }
         /* image_vec_6_2795 */
         if (!image_vec_6_2795) {
-            image_vec_6_2795 = assets_image(250);  /* vec_6_2795 */
+            image_vec_6_2795 = assets_image(255);  /* vec_6_2795 */
         }
         /* image_vec_6_2796 */
         if (!image_vec_6_2796) {
-            image_vec_6_2796 = assets_image(251);  /* vec_6_2796 */
+            image_vec_6_2796 = assets_image(256);  /* vec_6_2796 */
         }
         /* image_vec_6_2797 */
         if (!image_vec_6_2797) {
-            image_vec_6_2797 = assets_image(252);  /* vec_6_2797 */
+            image_vec_6_2797 = assets_image(257);  /* vec_6_2797 */
         }
         /* image_vec_6_2798 */
         if (!image_vec_6_2798) {
-            image_vec_6_2798 = assets_image(253);  /* vec_6_2798 */
+            image_vec_6_2798 = assets_image(258);  /* vec_6_2798 */
         }
         /* image_vec_6_2799 */
         if (!image_vec_6_2799) {
-            image_vec_6_2799 = assets_image(254);  /* vec_6_2799 */
+            image_vec_6_2799 = assets_image(259);  /* vec_6_2799 */
         }
         /* image_vec_6_2800 */
         if (!image_vec_6_2800) {
-            image_vec_6_2800 = assets_image(255);  /* vec_6_2800 */
+            image_vec_6_2800 = assets_image(260);  /* vec_6_2800 */
         }
         /* image_vec_6_2801 */
         if (!image_vec_6_2801) {
-            image_vec_6_2801 = assets_image(256);  /* vec_6_2801 */
+            image_vec_6_2801 = assets_image(261);  /* vec_6_2801 */
         }
         /* image_vec_6_2802 */
         if (!image_vec_6_2802) {
-            image_vec_6_2802 = assets_image(257);  /* vec_6_2802 */
+            image_vec_6_2802 = assets_image(262);  /* vec_6_2802 */
         }
         /* image_vec_6_2803 */
         if (!image_vec_6_2803) {
-            image_vec_6_2803 = assets_image(258);  /* vec_6_2803 */
+            image_vec_6_2803 = assets_image(263);  /* vec_6_2803 */
         }
         /* image_vec_6_2804 */
         if (!image_vec_6_2804) {
-            image_vec_6_2804 = assets_image(259);  /* vec_6_2804 */
+            image_vec_6_2804 = assets_image(264);  /* vec_6_2804 */
         }
         /* image_vec_6_2805 */
         if (!image_vec_6_2805) {
-            image_vec_6_2805 = assets_image(260);  /* vec_6_2805 */
+            image_vec_6_2805 = assets_image(265);  /* vec_6_2805 */
         }
         /* image_vec_6_2806 */
         if (!image_vec_6_2806) {
-            image_vec_6_2806 = assets_image(261);  /* vec_6_2806 */
+            image_vec_6_2806 = assets_image(266);  /* vec_6_2806 */
         }
         /* image_vec_6_2807 */
         if (!image_vec_6_2807) {
-            image_vec_6_2807 = assets_image(262);  /* vec_6_2807 */
+            image_vec_6_2807 = assets_image(267);  /* vec_6_2807 */
         }
         /* image_vec_6_2808 */
         if (!image_vec_6_2808) {
-            image_vec_6_2808 = assets_image(263);  /* vec_6_2808 */
+            image_vec_6_2808 = assets_image(268);  /* vec_6_2808 */
         }
         /* image_vec_6_2809 */
         if (!image_vec_6_2809) {
-            image_vec_6_2809 = assets_image(264);  /* vec_6_2809 */
+            image_vec_6_2809 = assets_image(269);  /* vec_6_2809 */
         }
         /* image_vec_6_2810 */
         if (!image_vec_6_2810) {
-            image_vec_6_2810 = assets_image(265);  /* vec_6_2810 */
+            image_vec_6_2810 = assets_image(270);  /* vec_6_2810 */
         }
         /* image_vec_6_2811 */
         if (!image_vec_6_2811) {
-            image_vec_6_2811 = assets_image(266);  /* vec_6_2811 */
+            image_vec_6_2811 = assets_image(271);  /* vec_6_2811 */
         }
         /* image_vec_6_2812 */
         if (!image_vec_6_2812) {
-            image_vec_6_2812 = assets_image(267);  /* vec_6_2812 */
+            image_vec_6_2812 = assets_image(272);  /* vec_6_2812 */
         }
         /* image_vec_6_2813 */
         if (!image_vec_6_2813) {
-            image_vec_6_2813 = assets_image(268);  /* vec_6_2813 */
+            image_vec_6_2813 = assets_image(273);  /* vec_6_2813 */
         }
         /* image_vec_6_2814 */
         if (!image_vec_6_2814) {
-            image_vec_6_2814 = assets_image(269);  /* vec_6_2814 */
+            image_vec_6_2814 = assets_image(274);  /* vec_6_2814 */
         }
         /* image_vec_6_2815 */
         if (!image_vec_6_2815) {
-            image_vec_6_2815 = assets_image(270);  /* vec_6_2815 */
+            image_vec_6_2815 = assets_image(275);  /* vec_6_2815 */
         }
         /* image_vec_6_2816 */
         if (!image_vec_6_2816) {
-            image_vec_6_2816 = assets_image(271);  /* vec_6_2816 */
+            image_vec_6_2816 = assets_image(276);  /* vec_6_2816 */
         }
         /* image_vec_6_2817 */
         if (!image_vec_6_2817) {
-            image_vec_6_2817 = assets_image(272);  /* vec_6_2817 */
+            image_vec_6_2817 = assets_image(277);  /* vec_6_2817 */
         }
         /* image_vec_6_2818 */
         if (!image_vec_6_2818) {
-            image_vec_6_2818 = assets_image(273);  /* vec_6_2818 */
+            image_vec_6_2818 = assets_image(278);  /* vec_6_2818 */
         }
         /* image_vec_6_2819 */
         if (!image_vec_6_2819) {
-            image_vec_6_2819 = assets_image(274);  /* vec_6_2819 */
+            image_vec_6_2819 = assets_image(279);  /* vec_6_2819 */
         }
         /* image_vec_6_2820 */
         if (!image_vec_6_2820) {
-            image_vec_6_2820 = assets_image(275);  /* vec_6_2820 */
+            image_vec_6_2820 = assets_image(280);  /* vec_6_2820 */
         }
         /* image_vec_6_2821 */
         if (!image_vec_6_2821) {
-            image_vec_6_2821 = assets_image(276);  /* vec_6_2821 */
+            image_vec_6_2821 = assets_image(281);  /* vec_6_2821 */
         }
         /* image_vec_6_2822 */
         if (!image_vec_6_2822) {
-            image_vec_6_2822 = assets_image(277);  /* vec_6_2822 */
+            image_vec_6_2822 = assets_image(282);  /* vec_6_2822 */
         }
         /* image_vec_6_2823 */
         if (!image_vec_6_2823) {
-            image_vec_6_2823 = assets_image(278);  /* vec_6_2823 */
+            image_vec_6_2823 = assets_image(283);  /* vec_6_2823 */
         }
         /* image_vec_6_2824 */
         if (!image_vec_6_2824) {
-            image_vec_6_2824 = assets_image(279);  /* vec_6_2824 */
+            image_vec_6_2824 = assets_image(284);  /* vec_6_2824 */
         }
         /* image_vec_6_2825 */
         if (!image_vec_6_2825) {
-            image_vec_6_2825 = assets_image(280);  /* vec_6_2825 */
+            image_vec_6_2825 = assets_image(285);  /* vec_6_2825 */
         }
         /* image_vec_6_2826 */
         if (!image_vec_6_2826) {
-            image_vec_6_2826 = assets_image(281);  /* vec_6_2826 */
+            image_vec_6_2826 = assets_image(286);  /* vec_6_2826 */
         }
         /* image_vec_6_2827 */
         if (!image_vec_6_2827) {
-            image_vec_6_2827 = assets_image(282);  /* vec_6_2827 */
+            image_vec_6_2827 = assets_image(287);  /* vec_6_2827 */
         }
         /* image_vec_6_2828 */
         if (!image_vec_6_2828) {
-            image_vec_6_2828 = assets_image(283);  /* vec_6_2828 */
+            image_vec_6_2828 = assets_image(288);  /* vec_6_2828 */
         }
         /* image_vec_6_2829 */
         if (!image_vec_6_2829) {
-            image_vec_6_2829 = assets_image(284);  /* vec_6_2829 */
+            image_vec_6_2829 = assets_image(289);  /* vec_6_2829 */
         }
         /* image_vec_6_2830 */
         if (!image_vec_6_2830) {
-            image_vec_6_2830 = assets_image(285);  /* vec_6_2830 */
+            image_vec_6_2830 = assets_image(290);  /* vec_6_2830 */
         }
         /* image_vec_6_2831 */
         if (!image_vec_6_2831) {
-            image_vec_6_2831 = assets_image(286);  /* vec_6_2831 */
+            image_vec_6_2831 = assets_image(291);  /* vec_6_2831 */
         }
         /* image_vec_6_2832 */
         if (!image_vec_6_2832) {
-            image_vec_6_2832 = assets_image(287);  /* vec_6_2832 */
+            image_vec_6_2832 = assets_image(292);  /* vec_6_2832 */
         }
         /* image_vec_6_2833 */
         if (!image_vec_6_2833) {
-            image_vec_6_2833 = assets_image(288);  /* vec_6_2833 */
+            image_vec_6_2833 = assets_image(293);  /* vec_6_2833 */
         }
         /* image_vec_6_2834 */
         if (!image_vec_6_2834) {
-            image_vec_6_2834 = assets_image(289);  /* vec_6_2834 */
+            image_vec_6_2834 = assets_image(294);  /* vec_6_2834 */
         }
         /* image_vec_6_2835 */
         if (!image_vec_6_2835) {
-            image_vec_6_2835 = assets_image(290);  /* vec_6_2835 */
+            image_vec_6_2835 = assets_image(295);  /* vec_6_2835 */
         }
         /* image_vec_6_2836 */
         if (!image_vec_6_2836) {
-            image_vec_6_2836 = assets_image(291);  /* vec_6_2836 */
+            image_vec_6_2836 = assets_image(296);  /* vec_6_2836 */
         }
         /* image_vec_6_2837 */
         if (!image_vec_6_2837) {
-            image_vec_6_2837 = assets_image(292);  /* vec_6_2837 */
+            image_vec_6_2837 = assets_image(297);  /* vec_6_2837 */
         }
         /* image_vec_6_2838 */
         if (!image_vec_6_2838) {
-            image_vec_6_2838 = assets_image(293);  /* vec_6_2838 */
+            image_vec_6_2838 = assets_image(298);  /* vec_6_2838 */
         }
         /* image_vec_6_2839 */
         if (!image_vec_6_2839) {
-            image_vec_6_2839 = assets_image(294);  /* vec_6_2839 */
+            image_vec_6_2839 = assets_image(299);  /* vec_6_2839 */
         }
         /* image_vec_6_2840 */
         if (!image_vec_6_2840) {
-            image_vec_6_2840 = assets_image(295);  /* vec_6_2840 */
+            image_vec_6_2840 = assets_image(300);  /* vec_6_2840 */
         }
         /* image_vec_6_2841 */
         if (!image_vec_6_2841) {
-            image_vec_6_2841 = assets_image(296);  /* vec_6_2841 */
+            image_vec_6_2841 = assets_image(301);  /* vec_6_2841 */
         }
         /* image_vec_6_2842 */
         if (!image_vec_6_2842) {
-            image_vec_6_2842 = assets_image(297);  /* vec_6_2842 */
+            image_vec_6_2842 = assets_image(302);  /* vec_6_2842 */
         }
         /* image_vec_6_2843 */
         if (!image_vec_6_2843) {
-            image_vec_6_2843 = assets_image(298);  /* vec_6_2843 */
+            image_vec_6_2843 = assets_image(303);  /* vec_6_2843 */
         }
         /* image_vec_6_2844 */
         if (!image_vec_6_2844) {
-            image_vec_6_2844 = assets_image(299);  /* vec_6_2844 */
+            image_vec_6_2844 = assets_image(304);  /* vec_6_2844 */
         }
         /* image_vec_6_2845 */
         if (!image_vec_6_2845) {
-            image_vec_6_2845 = assets_image(300);  /* vec_6_2845 */
+            image_vec_6_2845 = assets_image(305);  /* vec_6_2845 */
         }
         /* image_vec_6_2846 */
         if (!image_vec_6_2846) {
-            image_vec_6_2846 = assets_image(301);  /* vec_6_2846 */
+            image_vec_6_2846 = assets_image(306);  /* vec_6_2846 */
         }
         /* image_vec_6_2847 */
         if (!image_vec_6_2847) {
-            image_vec_6_2847 = assets_image(302);  /* vec_6_2847 */
+            image_vec_6_2847 = assets_image(307);  /* vec_6_2847 */
         }
         /* image_vec_6_2848 */
         if (!image_vec_6_2848) {
-            image_vec_6_2848 = assets_image(303);  /* vec_6_2848 */
+            image_vec_6_2848 = assets_image(308);  /* vec_6_2848 */
         }
         /* image_vec_6_2849 */
         if (!image_vec_6_2849) {
-            image_vec_6_2849 = assets_image(304);  /* vec_6_2849 */
+            image_vec_6_2849 = assets_image(309);  /* vec_6_2849 */
         }
         /* image_vec_6_2850 */
         if (!image_vec_6_2850) {
-            image_vec_6_2850 = assets_image(305);  /* vec_6_2850 */
+            image_vec_6_2850 = assets_image(310);  /* vec_6_2850 */
         }
         /* image_vec_6_2851 */
         if (!image_vec_6_2851) {
-            image_vec_6_2851 = assets_image(306);  /* vec_6_2851 */
+            image_vec_6_2851 = assets_image(311);  /* vec_6_2851 */
         }
         /* image_vec_6_2852 */
         if (!image_vec_6_2852) {
-            image_vec_6_2852 = assets_image(307);  /* vec_6_2852 */
+            image_vec_6_2852 = assets_image(312);  /* vec_6_2852 */
         }
         /* image_vec_6_2853 */
         if (!image_vec_6_2853) {
-            image_vec_6_2853 = assets_image(308);  /* vec_6_2853 */
+            image_vec_6_2853 = assets_image(313);  /* vec_6_2853 */
         }
         /* image_vec_6_2854 */
         if (!image_vec_6_2854) {
-            image_vec_6_2854 = assets_image(309);  /* vec_6_2854 */
+            image_vec_6_2854 = assets_image(314);  /* vec_6_2854 */
         }
         /* image_vec_6_2855 */
         if (!image_vec_6_2855) {
-            image_vec_6_2855 = assets_image(310);  /* vec_6_2855 */
+            image_vec_6_2855 = assets_image(315);  /* vec_6_2855 */
         }
         /* image_vec_6_2856 */
         if (!image_vec_6_2856) {
-            image_vec_6_2856 = assets_image(311);  /* vec_6_2856 */
+            image_vec_6_2856 = assets_image(316);  /* vec_6_2856 */
         }
         /* image_vec_6_2857 */
         if (!image_vec_6_2857) {
-            image_vec_6_2857 = assets_image(312);  /* vec_6_2857 */
+            image_vec_6_2857 = assets_image(317);  /* vec_6_2857 */
         }
         /* image_vec_6_2858 */
         if (!image_vec_6_2858) {
-            image_vec_6_2858 = assets_image(313);  /* vec_6_2858 */
+            image_vec_6_2858 = assets_image(318);  /* vec_6_2858 */
         }
         /* image_vec_6_2859 */
         if (!image_vec_6_2859) {
-            image_vec_6_2859 = assets_image(314);  /* vec_6_2859 */
+            image_vec_6_2859 = assets_image(319);  /* vec_6_2859 */
         }
         /* image_vec_6_2860 */
         if (!image_vec_6_2860) {
-            image_vec_6_2860 = assets_image(315);  /* vec_6_2860 */
+            image_vec_6_2860 = assets_image(320);  /* vec_6_2860 */
         }
         /* image_vec_6_2861 */
         if (!image_vec_6_2861) {
-            image_vec_6_2861 = assets_image(316);  /* vec_6_2861 */
+            image_vec_6_2861 = assets_image(321);  /* vec_6_2861 */
         }
         /* image_vec_6_2862 */
         if (!image_vec_6_2862) {
-            image_vec_6_2862 = assets_image(317);  /* vec_6_2862 */
+            image_vec_6_2862 = assets_image(322);  /* vec_6_2862 */
         }
         /* image_vec_6_2863 */
         if (!image_vec_6_2863) {
-            image_vec_6_2863 = assets_image(318);  /* vec_6_2863 */
+            image_vec_6_2863 = assets_image(323);  /* vec_6_2863 */
         }
         /* image_vec_6_2864 */
         if (!image_vec_6_2864) {
-            image_vec_6_2864 = assets_image(319);  /* vec_6_2864 */
+            image_vec_6_2864 = assets_image(324);  /* vec_6_2864 */
         }
         /* image_vec_6_2865 */
         if (!image_vec_6_2865) {
-            image_vec_6_2865 = assets_image(320);  /* vec_6_2865 */
+            image_vec_6_2865 = assets_image(325);  /* vec_6_2865 */
         }
         /* image_vec_6_2866 */
         if (!image_vec_6_2866) {
-            image_vec_6_2866 = assets_image(321);  /* vec_6_2866 */
+            image_vec_6_2866 = assets_image(326);  /* vec_6_2866 */
         }
         /* image_vec_6_2867 */
         if (!image_vec_6_2867) {
-            image_vec_6_2867 = assets_image(322);  /* vec_6_2867 */
+            image_vec_6_2867 = assets_image(327);  /* vec_6_2867 */
         }
         /* image_vec_6_2868 */
         if (!image_vec_6_2868) {
-            image_vec_6_2868 = assets_image(323);  /* vec_6_2868 */
+            image_vec_6_2868 = assets_image(328);  /* vec_6_2868 */
         }
         /* image_vec_6_2869 */
         if (!image_vec_6_2869) {
-            image_vec_6_2869 = assets_image(324);  /* vec_6_2869 */
+            image_vec_6_2869 = assets_image(329);  /* vec_6_2869 */
         }
         /* image_vec_6_2870 */
         if (!image_vec_6_2870) {
-            image_vec_6_2870 = assets_image(325);  /* vec_6_2870 */
+            image_vec_6_2870 = assets_image(330);  /* vec_6_2870 */
         }
         /* image_vec_6_2871 */
         if (!image_vec_6_2871) {
-            image_vec_6_2871 = assets_image(326);  /* vec_6_2871 */
+            image_vec_6_2871 = assets_image(331);  /* vec_6_2871 */
         }
         /* image_vec_6_2872 */
         if (!image_vec_6_2872) {
-            image_vec_6_2872 = assets_image(327);  /* vec_6_2872 */
+            image_vec_6_2872 = assets_image(332);  /* vec_6_2872 */
         }
         /* image_vec_6_2873 */
         if (!image_vec_6_2873) {
-            image_vec_6_2873 = assets_image(328);  /* vec_6_2873 */
+            image_vec_6_2873 = assets_image(333);  /* vec_6_2873 */
         }
         /* image_vec_6_2874 */
         if (!image_vec_6_2874) {
-            image_vec_6_2874 = assets_image(329);  /* vec_6_2874 */
+            image_vec_6_2874 = assets_image(334);  /* vec_6_2874 */
         }
         /* image_vec_6_2875 */
         if (!image_vec_6_2875) {
-            image_vec_6_2875 = assets_image(330);  /* vec_6_2875 */
+            image_vec_6_2875 = assets_image(335);  /* vec_6_2875 */
         }
         /* image_vec_6_2876 */
         if (!image_vec_6_2876) {
-            image_vec_6_2876 = assets_image(331);  /* vec_6_2876 */
+            image_vec_6_2876 = assets_image(336);  /* vec_6_2876 */
         }
         /* image_vec_6_2877 */
         if (!image_vec_6_2877) {
-            image_vec_6_2877 = assets_image(332);  /* vec_6_2877 */
+            image_vec_6_2877 = assets_image(337);  /* vec_6_2877 */
         }
         /* image_vec_6_2878 */
         if (!image_vec_6_2878) {
-            image_vec_6_2878 = assets_image(333);  /* vec_6_2878 */
+            image_vec_6_2878 = assets_image(338);  /* vec_6_2878 */
         }
         /* image_vec_6_2879 */
         if (!image_vec_6_2879) {
-            image_vec_6_2879 = assets_image(334);  /* vec_6_2879 */
+            image_vec_6_2879 = assets_image(339);  /* vec_6_2879 */
         }
         /* image_vec_6_2880 */
         if (!image_vec_6_2880) {
-            image_vec_6_2880 = assets_image(335);  /* vec_6_2880 */
+            image_vec_6_2880 = assets_image(340);  /* vec_6_2880 */
         }
         /* image_vec_6_2881 */
         if (!image_vec_6_2881) {
-            image_vec_6_2881 = assets_image(336);  /* vec_6_2881 */
+            image_vec_6_2881 = assets_image(341);  /* vec_6_2881 */
         }
         /* image_vec_6_2882 */
         if (!image_vec_6_2882) {
-            image_vec_6_2882 = assets_image(337);  /* vec_6_2882 */
+            image_vec_6_2882 = assets_image(342);  /* vec_6_2882 */
         }
         /* image_vec_6_2883 */
         if (!image_vec_6_2883) {
-            image_vec_6_2883 = assets_image(338);  /* vec_6_2883 */
+            image_vec_6_2883 = assets_image(343);  /* vec_6_2883 */
         }
         /* image_vec_6_2884 */
         if (!image_vec_6_2884) {
-            image_vec_6_2884 = assets_image(339);  /* vec_6_2884 */
+            image_vec_6_2884 = assets_image(344);  /* vec_6_2884 */
         }
         /* image_vec_6_2885 */
         if (!image_vec_6_2885) {
-            image_vec_6_2885 = assets_image(340);  /* vec_6_2885 */
+            image_vec_6_2885 = assets_image(345);  /* vec_6_2885 */
         }
         /* image_vec_6_2886 */
         if (!image_vec_6_2886) {
-            image_vec_6_2886 = assets_image(341);  /* vec_6_2886 */
+            image_vec_6_2886 = assets_image(346);  /* vec_6_2886 */
         }
         /* image_vec_6_2887 */
         if (!image_vec_6_2887) {
-            image_vec_6_2887 = assets_image(342);  /* vec_6_2887 */
+            image_vec_6_2887 = assets_image(347);  /* vec_6_2887 */
         }
         /* image_vec_6_2888 */
         if (!image_vec_6_2888) {
-            image_vec_6_2888 = assets_image(343);  /* vec_6_2888 */
+            image_vec_6_2888 = assets_image(348);  /* vec_6_2888 */
         }
         /* image_vec_6_2889 */
         if (!image_vec_6_2889) {
-            image_vec_6_2889 = assets_image(344);  /* vec_6_2889 */
+            image_vec_6_2889 = assets_image(349);  /* vec_6_2889 */
         }
         /* image_vec_6_2890 */
         if (!image_vec_6_2890) {
-            image_vec_6_2890 = assets_image(345);  /* vec_6_2890 */
+            image_vec_6_2890 = assets_image(350);  /* vec_6_2890 */
         }
         /* image_vec_6_2891 */
         if (!image_vec_6_2891) {
-            image_vec_6_2891 = assets_image(346);  /* vec_6_2891 */
+            image_vec_6_2891 = assets_image(351);  /* vec_6_2891 */
         }
         /* image_vec_6_2892 */
         if (!image_vec_6_2892) {
-            image_vec_6_2892 = assets_image(347);  /* vec_6_2892 */
+            image_vec_6_2892 = assets_image(352);  /* vec_6_2892 */
         }
         /* image_vec_6_2893 */
         if (!image_vec_6_2893) {
-            image_vec_6_2893 = assets_image(348);  /* vec_6_2893 */
+            image_vec_6_2893 = assets_image(353);  /* vec_6_2893 */
         }
         /* image_vec_6_2894 */
         if (!image_vec_6_2894) {
-            image_vec_6_2894 = assets_image(349);  /* vec_6_2894 */
+            image_vec_6_2894 = assets_image(354);  /* vec_6_2894 */
         }
         /* image_vec_6_2895 */
         if (!image_vec_6_2895) {
-            image_vec_6_2895 = assets_image(350);  /* vec_6_2895 */
+            image_vec_6_2895 = assets_image(355);  /* vec_6_2895 */
         }
         /* image_vec_6_2896 */
         if (!image_vec_6_2896) {
-            image_vec_6_2896 = assets_image(351);  /* vec_6_2896 */
+            image_vec_6_2896 = assets_image(356);  /* vec_6_2896 */
         }
         /* image_vec_6_2897 */
         if (!image_vec_6_2897) {
-            image_vec_6_2897 = assets_image(352);  /* vec_6_2897 */
+            image_vec_6_2897 = assets_image(357);  /* vec_6_2897 */
         }
         /* image_vec_6_2898 */
         if (!image_vec_6_2898) {
-            image_vec_6_2898 = assets_image(353);  /* vec_6_2898 */
+            image_vec_6_2898 = assets_image(358);  /* vec_6_2898 */
         }
         /* image_vec_6_2899 */
         if (!image_vec_6_2899) {
-            image_vec_6_2899 = assets_image(354);  /* vec_6_2899 */
+            image_vec_6_2899 = assets_image(359);  /* vec_6_2899 */
         }
         /* image_vec_6_2900 */
         if (!image_vec_6_2900) {
-            image_vec_6_2900 = assets_image(355);  /* vec_6_2900 */
+            image_vec_6_2900 = assets_image(360);  /* vec_6_2900 */
         }
         /* image_vec_6_2901 */
         if (!image_vec_6_2901) {
-            image_vec_6_2901 = assets_image(356);  /* vec_6_2901 */
+            image_vec_6_2901 = assets_image(361);  /* vec_6_2901 */
         }
         /* image_vec_6_2902 */
         if (!image_vec_6_2902) {
-            image_vec_6_2902 = assets_image(357);  /* vec_6_2902 */
+            image_vec_6_2902 = assets_image(362);  /* vec_6_2902 */
         }
         /* image_vec_6_2903 */
         if (!image_vec_6_2903) {
-            image_vec_6_2903 = assets_image(358);  /* vec_6_2903 */
+            image_vec_6_2903 = assets_image(363);  /* vec_6_2903 */
         }
         /* image_vec_6_2904 */
         if (!image_vec_6_2904) {
-            image_vec_6_2904 = assets_image(359);  /* vec_6_2904 */
+            image_vec_6_2904 = assets_image(364);  /* vec_6_2904 */
         }
         /* image_vec_6_2905 */
         if (!image_vec_6_2905) {
-            image_vec_6_2905 = assets_image(360);  /* vec_6_2905 */
+            image_vec_6_2905 = assets_image(365);  /* vec_6_2905 */
         }
         /* image_vec_6_2906 */
         if (!image_vec_6_2906) {
-            image_vec_6_2906 = assets_image(361);  /* vec_6_2906 */
+            image_vec_6_2906 = assets_image(366);  /* vec_6_2906 */
         }
         /* image_vec_6_2907 */
         if (!image_vec_6_2907) {
-            image_vec_6_2907 = assets_image(362);  /* vec_6_2907 */
+            image_vec_6_2907 = assets_image(367);  /* vec_6_2907 */
         }
         /* image_vec_6_2908 */
         if (!image_vec_6_2908) {
-            image_vec_6_2908 = assets_image(363);  /* vec_6_2908 */
+            image_vec_6_2908 = assets_image(368);  /* vec_6_2908 */
         }
         /* image_vec_6_2909 */
         if (!image_vec_6_2909) {
-            image_vec_6_2909 = assets_image(364);  /* vec_6_2909 */
+            image_vec_6_2909 = assets_image(369);  /* vec_6_2909 */
         }
         /* image_vec_6_2910 */
         if (!image_vec_6_2910) {
-            image_vec_6_2910 = assets_image(365);  /* vec_6_2910 */
+            image_vec_6_2910 = assets_image(370);  /* vec_6_2910 */
         }
         /* image_vec_6_2911 */
         if (!image_vec_6_2911) {
-            image_vec_6_2911 = assets_image(366);  /* vec_6_2911 */
+            image_vec_6_2911 = assets_image(371);  /* vec_6_2911 */
         }
         /* image_vec_6_2912 */
         if (!image_vec_6_2912) {
-            image_vec_6_2912 = assets_image(367);  /* vec_6_2912 */
+            image_vec_6_2912 = assets_image(372);  /* vec_6_2912 */
         }
         /* image_vec_6_2913 */
         if (!image_vec_6_2913) {
-            image_vec_6_2913 = assets_image(368);  /* vec_6_2913 */
+            image_vec_6_2913 = assets_image(373);  /* vec_6_2913 */
         }
         /* image_vec_6_2914 */
         if (!image_vec_6_2914) {
-            image_vec_6_2914 = assets_image(369);  /* vec_6_2914 */
+            image_vec_6_2914 = assets_image(374);  /* vec_6_2914 */
         }
         /* image_vec_6_2915 */
         if (!image_vec_6_2915) {
-            image_vec_6_2915 = assets_image(370);  /* vec_6_2915 */
+            image_vec_6_2915 = assets_image(375);  /* vec_6_2915 */
         }
         /* image_vec_6_2916 */
         if (!image_vec_6_2916) {
-            image_vec_6_2916 = assets_image(371);  /* vec_6_2916 */
+            image_vec_6_2916 = assets_image(376);  /* vec_6_2916 */
         }
         /* image_vec_6_2917 */
         if (!image_vec_6_2917) {
-            image_vec_6_2917 = assets_image(372);  /* vec_6_2917 */
+            image_vec_6_2917 = assets_image(377);  /* vec_6_2917 */
         }
         /* image_vec_6_2918 */
         if (!image_vec_6_2918) {
-            image_vec_6_2918 = assets_image(373);  /* vec_6_2918 */
+            image_vec_6_2918 = assets_image(378);  /* vec_6_2918 */
         }
         /* image_vec_6_2919 */
         if (!image_vec_6_2919) {
-            image_vec_6_2919 = assets_image(374);  /* vec_6_2919 */
+            image_vec_6_2919 = assets_image(379);  /* vec_6_2919 */
         }
         /* image_vec_6_2920 */
         if (!image_vec_6_2920) {
-            image_vec_6_2920 = assets_image(375);  /* vec_6_2920 */
+            image_vec_6_2920 = assets_image(380);  /* vec_6_2920 */
         }
         /* image_vec_6_2921 */
         if (!image_vec_6_2921) {
-            image_vec_6_2921 = assets_image(376);  /* vec_6_2921 */
+            image_vec_6_2921 = assets_image(381);  /* vec_6_2921 */
         }
         /* image_vec_6_2922 */
         if (!image_vec_6_2922) {
-            image_vec_6_2922 = assets_image(377);  /* vec_6_2922 */
+            image_vec_6_2922 = assets_image(382);  /* vec_6_2922 */
         }
         /* image_vec_6_2923 */
         if (!image_vec_6_2923) {
-            image_vec_6_2923 = assets_image(378);  /* vec_6_2923 */
+            image_vec_6_2923 = assets_image(383);  /* vec_6_2923 */
         }
         /* image_vec_6_2924 */
         if (!image_vec_6_2924) {
-            image_vec_6_2924 = assets_image(379);  /* vec_6_2924 */
+            image_vec_6_2924 = assets_image(384);  /* vec_6_2924 */
         }
         /* image_vec_6_2925 */
         if (!image_vec_6_2925) {
-            image_vec_6_2925 = assets_image(380);  /* vec_6_2925 */
+            image_vec_6_2925 = assets_image(385);  /* vec_6_2925 */
         }
         /* image_vec_6_2926 */
         if (!image_vec_6_2926) {
-            image_vec_6_2926 = assets_image(381);  /* vec_6_2926 */
+            image_vec_6_2926 = assets_image(386);  /* vec_6_2926 */
         }
         /* image_vec_6_2927 */
         if (!image_vec_6_2927) {
-            image_vec_6_2927 = assets_image(382);  /* vec_6_2927 */
+            image_vec_6_2927 = assets_image(387);  /* vec_6_2927 */
         }
         /* image_vec_6_2928 */
         if (!image_vec_6_2928) {
-            image_vec_6_2928 = assets_image(383);  /* vec_6_2928 */
+            image_vec_6_2928 = assets_image(388);  /* vec_6_2928 */
         }
         /* image_vec_6_2929 */
         if (!image_vec_6_2929) {
-            image_vec_6_2929 = assets_image(384);  /* vec_6_2929 */
+            image_vec_6_2929 = assets_image(389);  /* vec_6_2929 */
         }
         /* image_vec_6_2930 */
         if (!image_vec_6_2930) {
-            image_vec_6_2930 = assets_image(385);  /* vec_6_2930 */
+            image_vec_6_2930 = assets_image(390);  /* vec_6_2930 */
         }
         /* image_vec_6_2931 */
         if (!image_vec_6_2931) {
-            image_vec_6_2931 = assets_image(386);  /* vec_6_2931 */
+            image_vec_6_2931 = assets_image(391);  /* vec_6_2931 */
         }
         /* image_vec_6_2932 */
         if (!image_vec_6_2932) {
-            image_vec_6_2932 = assets_image(387);  /* vec_6_2932 */
+            image_vec_6_2932 = assets_image(392);  /* vec_6_2932 */
         }
         /* image_vec_6_2933 */
         if (!image_vec_6_2933) {
-            image_vec_6_2933 = assets_image(388);  /* vec_6_2933 */
+            image_vec_6_2933 = assets_image(393);  /* vec_6_2933 */
         }
         /* image_vec_6_2934 */
         if (!image_vec_6_2934) {
-            image_vec_6_2934 = assets_image(389);  /* vec_6_2934 */
+            image_vec_6_2934 = assets_image(394);  /* vec_6_2934 */
         }
         /* image_vec_6_2935 */
         if (!image_vec_6_2935) {
-            image_vec_6_2935 = assets_image(390);  /* vec_6_2935 */
+            image_vec_6_2935 = assets_image(395);  /* vec_6_2935 */
         }
         /* image_vec_6_2936 */
         if (!image_vec_6_2936) {
-            image_vec_6_2936 = assets_image(391);  /* vec_6_2936 */
+            image_vec_6_2936 = assets_image(396);  /* vec_6_2936 */
         }
         /* image_vec_6_2937 */
         if (!image_vec_6_2937) {
-            image_vec_6_2937 = assets_image(392);  /* vec_6_2937 */
+            image_vec_6_2937 = assets_image(397);  /* vec_6_2937 */
         }
         /* image_vec_6_2938 */
         if (!image_vec_6_2938) {
-            image_vec_6_2938 = assets_image(393);  /* vec_6_2938 */
+            image_vec_6_2938 = assets_image(398);  /* vec_6_2938 */
         }
         /* image_vec_6_2939 */
         if (!image_vec_6_2939) {
-            image_vec_6_2939 = assets_image(394);  /* vec_6_2939 */
+            image_vec_6_2939 = assets_image(399);  /* vec_6_2939 */
         }
         /* image_vec_6_2940 */
         if (!image_vec_6_2940) {
-            image_vec_6_2940 = assets_image(395);  /* vec_6_2940 */
+            image_vec_6_2940 = assets_image(400);  /* vec_6_2940 */
         }
         /* image_vec_6_2943 */
         if (!image_vec_6_2943) {
-            image_vec_6_2943 = assets_image(396);  /* vec_6_2943 */
+            image_vec_6_2943 = assets_image(401);  /* vec_6_2943 */
         }
         /* image_vec_6_2944 */
         if (!image_vec_6_2944) {
-            image_vec_6_2944 = assets_image(397);  /* vec_6_2944 */
+            image_vec_6_2944 = assets_image(402);  /* vec_6_2944 */
         }
         /* image_vec_6_2947 */
         if (!image_vec_6_2947) {
-            image_vec_6_2947 = assets_image(398);  /* vec_6_2947 */
+            image_vec_6_2947 = assets_image(403);  /* vec_6_2947 */
         }
         /* image_vec_6_2948 */
         if (!image_vec_6_2948) {
-            image_vec_6_2948 = assets_image(399);  /* vec_6_2948 */
+            image_vec_6_2948 = assets_image(404);  /* vec_6_2948 */
         }
         /* image_vec_6_2951 */
         if (!image_vec_6_2951) {
-            image_vec_6_2951 = assets_image(400);  /* vec_6_2951 */
+            image_vec_6_2951 = assets_image(405);  /* vec_6_2951 */
         }
         /* image_vec_6_2952 */
         if (!image_vec_6_2952) {
-            image_vec_6_2952 = assets_image(401);  /* vec_6_2952 */
+            image_vec_6_2952 = assets_image(406);  /* vec_6_2952 */
         }
         /* image_vec_6_2955 */
         if (!image_vec_6_2955) {
-            image_vec_6_2955 = assets_image(402);  /* vec_6_2955 */
+            image_vec_6_2955 = assets_image(407);  /* vec_6_2955 */
         }
         /* image_vec_6_2956 */
         if (!image_vec_6_2956) {
-            image_vec_6_2956 = assets_image(403);  /* vec_6_2956 */
+            image_vec_6_2956 = assets_image(408);  /* vec_6_2956 */
         }
         /* image_vec_6_2959 */
         if (!image_vec_6_2959) {
-            image_vec_6_2959 = assets_image(404);  /* vec_6_2959 */
+            image_vec_6_2959 = assets_image(409);  /* vec_6_2959 */
         }
         /* image_vec_6_2960 */
         if (!image_vec_6_2960) {
-            image_vec_6_2960 = assets_image(405);  /* vec_6_2960 */
+            image_vec_6_2960 = assets_image(410);  /* vec_6_2960 */
         }
         /* image_vec_6_2963 */
         if (!image_vec_6_2963) {
-            image_vec_6_2963 = assets_image(406);  /* vec_6_2963 */
+            image_vec_6_2963 = assets_image(411);  /* vec_6_2963 */
         }
         /* image_vec_6_2964 */
         if (!image_vec_6_2964) {
-            image_vec_6_2964 = assets_image(407);  /* vec_6_2964 */
+            image_vec_6_2964 = assets_image(412);  /* vec_6_2964 */
         }
         /* image_vec_25_1105 */
         if (!image_vec_25_1105) {
@@ -2508,7 +2518,7 @@ void plurality_pin_init_gen(const char * asset_path)
         }
         /* image_vec_7_1412 */
         if (!image_vec_7_1412) {
-            image_vec_7_1412 = assets_image(408);  /* vec_7_1412 */
+            image_vec_7_1412 = assets_image(413);  /* vec_7_1412 */
         }
         /* image_vec_1_241 */
         if (!image_vec_1_241) {
@@ -2516,11 +2526,11 @@ void plurality_pin_init_gen(const char * asset_path)
         }
         /* image_vec_7_1491 */
         if (!image_vec_7_1491) {
-            image_vec_7_1491 = assets_image(410);  /* vec_7_1491 */
+            image_vec_7_1491 = assets_image(415);  /* vec_7_1491 */
         }
         /* image_vec_7_1493 */
         if (!image_vec_7_1493) {
-            image_vec_7_1493 = assets_image(411);  /* vec_7_1493 */
+            image_vec_7_1493 = assets_image(416);  /* vec_7_1493 */
         }
         /* image_vec_1_790 */
         if (!image_vec_1_790) {
@@ -2536,7 +2546,7 @@ void plurality_pin_init_gen(const char * asset_path)
         }
         /* image_vec_7_1415 */
         if (!image_vec_7_1415) {
-            image_vec_7_1415 = assets_image(409);  /* vec_7_1415 */
+            image_vec_7_1415 = assets_image(414);  /* vec_7_1415 */
         }
         /* image_vec_23_214 */
         if (!image_vec_23_214) {
@@ -2576,7 +2586,7 @@ void plurality_pin_init_gen(const char * asset_path)
         }
         /* image_vec_7_1590 */
         if (!image_vec_7_1590) {
-            image_vec_7_1590 = assets_image(412);  /* vec_7_1590 */
+            image_vec_7_1590 = assets_image(417);  /* vec_7_1590 */
         }
         /* image_vec_46_963 */
         if (!image_vec_46_963) {
@@ -2721,6 +2731,26 @@ void plurality_pin_init_gen(const char * asset_path)
         /* image_vec_46_998 */
         if (!image_vec_46_998) {
             image_vec_46_998 = assets_image(60);  /* vec_46_998 */
+        }
+        /* image_vec_49_900 */
+        if (!image_vec_49_900) {
+            image_vec_49_900 = assets_image(61);  /* vec_49_900 */
+        }
+        /* image_vec_49_901 */
+        if (!image_vec_49_901) {
+            image_vec_49_901 = assets_image(62);  /* vec_49_901 */
+        }
+        /* image_vec_49_913 */
+        if (!image_vec_49_913) {
+            image_vec_49_913 = assets_image(64);  /* vec_49_913 */
+        }
+        /* image_vec_49_914 */
+        if (!image_vec_49_914) {
+            image_vec_49_914 = assets_image(65);  /* vec_49_914 */
+        }
+        /* image_vec_49_912 */
+        if (!image_vec_49_912) {
+            image_vec_49_912 = assets_image(63);  /* vec_49_912 */
         }
     }
     #endif
@@ -3321,6 +3351,11 @@ void plurality_pin_init_gen(const char * asset_path)
     lv_xml_register_image(NULL, "image_vec_46_996", image_vec_46_996);
     lv_xml_register_image(NULL, "image_vec_46_997", image_vec_46_997);
     lv_xml_register_image(NULL, "image_vec_46_998", image_vec_46_998);
+    lv_xml_register_image(NULL, "image_vec_49_900", image_vec_49_900);
+    lv_xml_register_image(NULL, "image_vec_49_901", image_vec_49_901);
+    lv_xml_register_image(NULL, "image_vec_49_913", image_vec_49_913);
+    lv_xml_register_image(NULL, "image_vec_49_914", image_vec_49_914);
+    lv_xml_register_image(NULL, "image_vec_49_912", image_vec_49_912);
 #endif
 
 #if !defined(LV_USE_XML) || LV_USE_XML == 0

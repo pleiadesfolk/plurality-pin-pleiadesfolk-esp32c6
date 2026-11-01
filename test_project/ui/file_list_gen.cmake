@@ -473,11 +473,17 @@ list(
   ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_996_data.c
   ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_997_data.c
   ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_46_998_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_49_900_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_49_901_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_49_912_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_49_913_data.c
+  ${CMAKE_CURRENT_LIST_DIR}/images/image_vec_49_914_data.c
   ${CMAKE_CURRENT_LIST_DIR}/plurality_pin_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/plurality_pin.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/boot_screen_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/connect_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/connect_wi_fi_gen.c
+  ${CMAKE_CURRENT_LIST_DIR}/screens/crash_screen_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/image_mode_full_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/image_mode_with_text_gen.c
   ${CMAKE_CURRENT_LIST_DIR}/screens/namecard_mode_gen.c

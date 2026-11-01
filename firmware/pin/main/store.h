@@ -45,6 +45,14 @@ bool store_send_state(store_emit_t emit, void *ctx, const char *extra);
  *  = in a fast flash slot, small = on the SD card). free() it. */
 char *store_photos_json(void);
 
+/**
+ * Make the current front `list` (PluralKit's, switched in at `time`): switches
+ * newer than that are dropped (they never reached PluralKit), and the switch
+ * is added unless the pin's newest one already is it (same members, within a
+ * minute). `dropped` / `added` say what was done.
+ */
+esp_err_t store_match_front(uint32_t time, const uint16_t *list, int count, int *dropped, bool *added);
+
 /* Front history upload: begin, write raw store_switch_t records (any chunking), end. */
 esp_err_t store_switches_begin(void);
 esp_err_t store_switches_write(const void *data, size_t len);
@@ -54,6 +62,15 @@ esp_err_t store_switches_end(bool ok);
 esp_err_t store_add_switch(const uint16_t *members, int count);
 /** Record a switch that happened at `time` (unix seconds), e.g. one made in PluralKit. */
 esp_err_t store_add_switch_at(uint32_t time, const uint16_t *members, int count);
+/**
+ * Show a switch without saving it yet (the side button and swipes): the
+ * screen and store_front_* see it, the file doesn't. store_save_preview()
+ * saves it; any other switch, or a new front history, drops it.
+ */
+esp_err_t store_preview_switch(const uint16_t *members, int count);
+/** Save the switch from store_preview_switch(), unless it's back to who was
+ *  fronting before. True if a switch was saved. */
+bool store_save_preview(void);
 /** When the current front started (unix seconds); 0 if there's no history. */
 uint32_t store_front_time(void);
 /** True if exactly these members (in any order) are fronting now. */

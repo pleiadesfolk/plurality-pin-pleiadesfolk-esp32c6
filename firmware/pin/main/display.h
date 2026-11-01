@@ -43,3 +43,6 @@ void display_bus_give(void);
 
 /** Panel brightness, 0-100 %. */
 void display_set_brightness(uint8_t percent);
+
+/** Turn the panel off and put it to sleep (before the pin sleeps). */
+void display_sleep(void);

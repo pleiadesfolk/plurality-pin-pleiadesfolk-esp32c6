@@ -3625,5 +3625,50 @@
     "width": 11,
     "height": 12,
     "pngPath": "images/vec_46_998.png"
+  },
+  {
+    "nodeId": "49:900",
+    "nodeName": "Vector",
+    "name": "image_vec_49_900",
+    "svgPath": "vectors/49_900.svg",
+    "width": 43,
+    "height": 43,
+    "pngPath": "images/vec_49_900.png"
+  },
+  {
+    "nodeId": "49:901",
+    "nodeName": "Vector",
+    "name": "image_vec_49_901",
+    "svgPath": "vectors/49_901.svg",
+    "width": 43,
+    "height": 43,
+    "pngPath": "images/vec_49_901.png"
+  },
+  {
+    "nodeId": "49:913",
+    "nodeName": "Vector",
+    "name": "image_vec_49_913",
+    "svgPath": "vectors/49_913.svg",
+    "width": 130,
+    "height": 92,
+    "pngPath": "images/vec_49_913.png"
+  },
+  {
+    "nodeId": "49:914",
+    "nodeName": "Vector",
+    "name": "image_vec_49_914",
+    "svgPath": "vectors/49_914.svg",
+    "width": 10,
+    "height": 48,
+    "pngPath": "images/vec_49_914.png"
+  },
+  {
+    "nodeId": "49:912",
+    "nodeName": "Vector",
+    "name": "image_vec_49_912",
+    "svgPath": "vectors/49_912.svg",
+    "width": 36,
+    "height": 58,
+    "pngPath": "images/vec_49_912.png"
   }
 ]

@@ -14,6 +14,24 @@
 /** Start the sync task. Needs NVS; call after wifi_start(). */
 void pksync_start(void);
 
+typedef enum {
+    PKSYNC_REFRESH_CHANGED,             /* the pin now shows PluralKit's fronter */
+    PKSYNC_REFRESH_SAME,                /* it already did */
+    PKSYNC_REFRESH_UNKNOWN,             /* PluralKit's fronters aren't on the pin */
+    PKSYNC_REFRESH_NO_RELAY,            /* no relay set up */
+    PKSYNC_REFRESH_BUSY,                /* already asking */
+    PKSYNC_REFRESH_FAILED,              /* the relay or PluralKit couldn't be reached */
+} pksync_refresh_t;
+
+/**
+ * Ask the relay to check PluralKit now (POST /refresh) and make the pin's
+ * current fronter PluralKit's: switches on the pin newer than PluralKit's
+ * current one are dropped, nothing new is logged (store_match_front). Runs in
+ * its own task; `done` is called in the LVGL task (or straight away for
+ * NO_RELAY / BUSY).
+ */
+void pksync_refresh_now(void (*done)(pksync_refresh_t result));
+
 /**
  * Change settings, saved in flash; NULL leaves one as it is, "" clears it.
  *   ref    for asking PluralKit directly: a system ID (5-6 letters; the

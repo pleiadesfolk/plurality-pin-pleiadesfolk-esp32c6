@@ -250,6 +250,13 @@ void display_set_brightness(uint8_t percent)
     esp_lcd_panel_io_tx_param(panel_io, (0x02 << 24) | (0x51 << 8), &level, 1);
 }
 
+void display_sleep(void)
+{
+    display_set_brightness(0);
+    esp_lcd_panel_io_tx_param(panel_io, (0x02 << 24) | (0x28 << 8), NULL, 0);  /* display off */
+    esp_lcd_panel_io_tx_param(panel_io, (0x02 << 24) | (0x10 << 8), NULL, 0);  /* sleep in */
+}
+
 lv_display_t *display_init(void)
 {
     bus_free = xSemaphoreCreateBinary();

@@ -887,6 +887,16 @@ const void * image_vec_46_997 = NULL;
 extern const void * image_vec_46_997_data;
 const void * image_vec_46_998 = NULL;
 extern const void * image_vec_46_998_data;
+const void * image_vec_49_900 = NULL;
+extern const void * image_vec_49_900_data;
+const void * image_vec_49_901 = NULL;
+extern const void * image_vec_49_901_data;
+const void * image_vec_49_913 = NULL;
+extern const void * image_vec_49_913_data;
+const void * image_vec_49_914 = NULL;
+extern const void * image_vec_49_914_data;
+const void * image_vec_49_912 = NULL;
+extern const void * image_vec_49_912_data;
 
 /*----------------
  * Global styles
@@ -2716,6 +2726,26 @@ void plurality_pin_init_gen(const char * asset_path)
         if (!image_vec_46_998) {
             image_vec_46_998 = &image_vec_46_998_data;
         }
+        /* image_vec_49_900 */
+        if (!image_vec_49_900) {
+            image_vec_49_900 = &image_vec_49_900_data;
+        }
+        /* image_vec_49_901 */
+        if (!image_vec_49_901) {
+            image_vec_49_901 = &image_vec_49_901_data;
+        }
+        /* image_vec_49_913 */
+        if (!image_vec_49_913) {
+            image_vec_49_913 = &image_vec_49_913_data;
+        }
+        /* image_vec_49_914 */
+        if (!image_vec_49_914) {
+            image_vec_49_914 = &image_vec_49_914_data;
+        }
+        /* image_vec_49_912 */
+        if (!image_vec_49_912) {
+            image_vec_49_912 = &image_vec_49_912_data;
+        }
     }
     #endif
 
@@ -3315,6 +3345,11 @@ void plurality_pin_init_gen(const char * asset_path)
     lv_xml_register_image(NULL, "image_vec_46_996", image_vec_46_996);
     lv_xml_register_image(NULL, "image_vec_46_997", image_vec_46_997);
     lv_xml_register_image(NULL, "image_vec_46_998", image_vec_46_998);
+    lv_xml_register_image(NULL, "image_vec_49_900", image_vec_49_900);
+    lv_xml_register_image(NULL, "image_vec_49_901", image_vec_49_901);
+    lv_xml_register_image(NULL, "image_vec_49_913", image_vec_49_913);
+    lv_xml_register_image(NULL, "image_vec_49_914", image_vec_49_914);
+    lv_xml_register_image(NULL, "image_vec_49_912", image_vec_49_912);
 #endif
 
 #if !defined(LV_USE_XML) || LV_USE_XML == 0

@@ -16,6 +16,9 @@ this small server, running on an always-on computer, sits in between:
 3. The pin keeps asking GET /front?since=<seq>: the answer comes straight away
    if the front changed since `seq`, otherwise after up to WAIT_S seconds.
    Answer: {"seq": n, "time": unix seconds, "members": ["abcde", ...]}.
+4. POST /refresh (from the pin, when it's double-tapped): ask PluralKit now,
+   and answer like GET /front plus "changed" (true/false). The pin then makes
+   its own current fronter match PluralKit's.
 
 Settings (environment variables, e.g. from /etc/pk-relay.env):
   PK_TOKEN    your PluralKit token (pk;token)
@@ -85,7 +88,8 @@ def parse_time(text):
 
 
 def refresh(reason):
-    """Ask PluralKit who's fronting; wake the pins if it changed"""
+    """Ask PluralKit who's fronting; wake the pins if it changed.
+    True if it changed, False if not, None if PluralKit couldn't be asked."""
     with refresh_lock:
         request = urllib.request.Request(f"{PK_API}/systems/@me/fronters",
                                          headers={"Authorization": PK_TOKEN, "User-Agent": USER_AGENT})
@@ -94,10 +98,10 @@ def refresh(reason):
                 body = res.read() if res.status == 200 else b""
         except urllib.error.HTTPError as e:
             log(f"PluralKit answered {e.code} ({reason})" + (" - check PK_TOKEN" if e.code == 401 else ""))
-            return
+            return None
         except (urllib.error.URLError, OSError) as e:
             log(f"couldn't reach PluralKit ({reason}): {e}")
-            return
+            return None
         if body:
             data = json.loads(body)
             when = parse_time(data["timestamp"])
@@ -106,10 +110,11 @@ def refresh(reason):
             when, members = 0, []           # 204: no switches at all
         with changed:
             if when == front["time"] and members == front["members"]:
-                return
+                return False
             front.update(seq=front["seq"] + 1, time=when, members=members)
             changed.notify_all()
         log(f"front is now {members or 'nobody'} since {when} ({reason})")
+        return True
 
 
 def refresher():
@@ -136,8 +141,23 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         pass                                # quiet: the pin polls constantly
 
+    def pin_allowed(self):
+        given = self.headers.get("Authorization", "").removeprefix("Bearer ").strip()
+        return hmac.compare_digest(given, PIN_SECRET)
+
     def do_POST(self):
-        if urlparse(self.path).path != "/pk":
+        path = urlparse(self.path).path
+        if path == "/refresh":              # the pin asks: check PluralKit now (double tap)
+            self.rfile.read(int(self.headers.get("Content-Length") or 0))
+            if not self.pin_allowed():
+                return self.reply(401, "wrong pin secret")
+            result = refresh("the pin asked")
+            if result is None:
+                return self.reply(502, "couldn't ask PluralKit")
+            with changed:
+                answer = dict(front, changed=result)
+            return self.reply(200, answer)
+        if path != "/pk":
             return self.reply(404, "not found")
         length = int(self.headers.get("Content-Length") or 0)
         if length > 65536:
@@ -170,8 +190,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(200, "ok")
         if url.path != "/front":
             return self.reply(404, "not found")
-        given = self.headers.get("Authorization", "").removeprefix("Bearer ").strip()
-        if not hmac.compare_digest(given, PIN_SECRET):
+        if not self.pin_allowed():
             return self.reply(401, "wrong pin secret")
         try:
             since = int(parse_qs(url.query).get("since", ["-1"])[0])

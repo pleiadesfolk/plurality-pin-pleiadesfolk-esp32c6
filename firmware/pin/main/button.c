@@ -8,6 +8,8 @@
  *   or hold      - Clock screen, or back to the fronter from it
  *   Presses count as one go when each comes within TAP_GAP_MS of the last;
  *   the action happens once no more come.
+ *   A switch shows straight away but is only saved after SAVE_AFTER_MS with
+ *   no more presses or swipes, so stepping past members doesn't log them.
  *   hold RESET_MS - also removes the dashboard password (for when it's
  *                  forgotten; someone holding the pin could take it apart anyway)
  *
@@ -33,6 +35,28 @@ static const char *TAG = "button";
 #define LONG_MS         600             /* held this long: a hold, not a press */
 #define WARN_MS         4000            /* holding: say what's about to happen */
 #define RESET_MS        10000           /* holding: remove the dashboard password */
+#define SAVE_AFTER_MS   5000            /* a switch is saved once it's been left this long */
+
+static lv_timer_t *save_timer;
+
+static void save_switch(lv_timer_t *timer)
+{
+    save_timer = NULL;
+    if (store_save_preview()) {
+        ESP_LOGI(TAG, "switch saved");
+    }
+}
+
+/* (Re)start the wait before the switch is saved */
+static void save_later(void)
+{
+    if (save_timer) {
+        lv_timer_reset(save_timer);
+        return;
+    }
+    save_timer = lv_timer_create(save_switch, SAVE_AFTER_MS, NULL);
+    lv_timer_set_repeat_count(save_timer, 1);
+}
 
 void button_switch(int direction)
 {
@@ -43,11 +67,12 @@ void button_switch(int direction)
         return;
     }
     uint16_t member = (uint16_t)next;
-    if (store_add_switch(&member, 1) != ESP_OK) {
+    if (store_preview_switch(&member, 1) != ESP_OK) {
         nav_toast("Couldn't switch");
         return;
     }
-    ESP_LOGI(TAG, "switched to %s", name);
+    save_later();
+    ESP_LOGI(TAG, "switching to %s", name);
     nav_show_fronter();
     snprintf(msg, sizeof(msg), "Switched to %s", name);
     nav_toast(msg);
@@ -55,11 +80,14 @@ void button_switch(int direction)
 
 static void switch_to_nobody(void)
 {
-    if (!store_front_is(NULL, 0) && store_add_switch(NULL, 0) != ESP_OK) {
-        nav_toast("Couldn't switch");
-        return;
+    if (!store_front_is(NULL, 0)) {
+        if (store_preview_switch(NULL, 0) != ESP_OK) {
+            nav_toast("Couldn't switch");
+            return;
+        }
+        save_later();
     }
-    ESP_LOGI(TAG, "switched to nobody fronting");
+    ESP_LOGI(TAG, "switching to nobody fronting");
     nav_show_fronter();
     nav_toast("Nobody fronting");
 }

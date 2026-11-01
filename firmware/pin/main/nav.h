@@ -10,6 +10,7 @@ typedef void (*nav_screen_cb_t)(const char *name, lv_obj_t *screen);
  *   press and hold - switch mode: page dots appear, then swipe left/right
  *                    slides between fronter and Clock; tap (or
  *                    wait 3 s) to finish
+ *   double tap     - on the fronter screen: ask PluralKit (through the relay) now
  *   left / right   - on the fronter screen: next / previous fronter (like the
  *                    side button); on the other main screens: next / previous screen
  *   down           - pull-down menu (from the fronter screen only)
@@ -27,6 +28,12 @@ void nav_show_fronter(void);
 
 /** Go to the Clock screen, or back to the fronter if it's showing (side button). */
 void nav_toggle_clock(void);
+
+/** Show the battery screen (crash_screen) and ignore swipes and the other
+ *  nav_* calls until nav_power_end() (power.c). Returns the screen. */
+lv_obj_t *nav_show_power(void);
+/** Leave the battery screen for the fronter. */
+void nav_power_end(void);
 
 /** Show a short message at the bottom of the screen for a moment. */
 void nav_toast(const char *text);

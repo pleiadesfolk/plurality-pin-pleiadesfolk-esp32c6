@@ -525,6 +525,11 @@ extern const void * image_vec_46_995;
 extern const void * image_vec_46_996;
 extern const void * image_vec_46_997;
 extern const void * image_vec_46_998;
+extern const void * image_vec_49_900;
+extern const void * image_vec_49_901;
+extern const void * image_vec_49_913;
+extern const void * image_vec_49_914;
+extern const void * image_vec_49_912;
 
 /*----------------
  * Subjects
@@ -640,6 +645,7 @@ void plurality_pin_init_gen(const char * asset_path);
 #include "screens/boot_screen_gen.h"
 #include "screens/connect_gen.h"
 #include "screens/connect_wi_fi_gen.h"
+#include "screens/crash_screen_gen.h"
 #include "screens/image_mode_full_gen.h"
 #include "screens/image_mode_with_text_gen.h"
 #include "screens/namecard_mode_gen.h"

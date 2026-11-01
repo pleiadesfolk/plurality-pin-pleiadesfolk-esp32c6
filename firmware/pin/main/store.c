@@ -76,6 +76,10 @@ static int member_count;
  * (id STORE_NOBODY_ID); id "" = not set up, show the system name */
 static member_t nobody;
 static store_switch_t front;            /* last switch; time 0 = none yet */
+/* A button switch waiting to be saved (store_preview_switch): `front` shows
+ * it, `saved_front` is the last switch in the file */
+static bool previewing;
+static store_switch_t saved_front;
 static uint32_t switch_count;
 static bool front_changed = true;       /* tell the UI on first poll */
 
@@ -242,6 +246,7 @@ static void load_front(void)
 {
     memset(&front, 0, sizeof(front));
     switch_count = 0;
+    previewing = false;
     struct stat st;
     if (stat(STORE_SWITCHES_FILE, &st) != 0 || st.st_size < sizeof(store_switch_t)) {
         return;
@@ -491,31 +496,182 @@ int store_member_index(const char *id)
     return index;
 }
 
+/* Check the members and make a switch record (caller holds the lock) */
+static esp_err_t make_switch(uint32_t time, const uint16_t *list, int count, store_switch_t *sw)
+{
+    sw->time = time;
+    for (int i = 0; i < STORE_FRONT_MAX; i++) {
+        if (i < count && list[i] >= member_count) {
+            return ESP_ERR_INVALID_ARG;
+        }
+        sw->members[i] = i < count ? list[i] : STORE_NO_MEMBER;
+    }
+    return ESP_OK;
+}
+
+/* Add a record to the file and make it the front (caller holds the lock) */
+static esp_err_t append_switch(const store_switch_t *sw)
+{
+    FILE *f = fopen(STORE_SWITCHES_FILE, "ab");
+    esp_err_t err = f && fwrite(sw, sizeof(*sw), 1, f) == 1 ? ESP_OK : ESP_FAIL;
+    if (f) {
+        fclose(f);
+    }
+    if (err == ESP_OK) {
+        front = *sw;
+        switch_count++;
+        front_changed = true;
+        previewing = false;
+    }
+    return err;
+}
+
 esp_err_t store_add_switch_at(uint32_t time, const uint16_t *list, int count)
 {
-    store_switch_t sw = { .time = time };
-    for (int i = 0; i < STORE_FRONT_MAX; i++) {
-        sw.members[i] = i < count ? list[i] : STORE_NO_MEMBER;
-    }
-
+    store_switch_t sw;
     xSemaphoreTake(lock, portMAX_DELAY);
-    for (int i = 0; i < count && i < STORE_FRONT_MAX; i++) {
+    esp_err_t err = make_switch(time, list, count, &sw);
+    if (err == ESP_OK) {
+        err = append_switch(&sw);
+    }
+    xSemaphoreGive(lock);
+    return err;
+}
+
+esp_err_t store_preview_switch(const uint16_t *list, int count)
+{
+    store_switch_t sw;
+    xSemaphoreTake(lock, portMAX_DELAY);
+    esp_err_t err = make_switch((uint32_t)time(NULL), list, count, &sw);
+    if (err == ESP_OK) {
+        if (!previewing) {
+            saved_front = front;
+            previewing = true;
+        }
+        front = sw;
+        front_changed = true;
+    }
+    xSemaphoreGive(lock);
+    return err;
+}
+
+static bool same_members(const store_switch_t *sw, const uint16_t *list, int count);
+
+bool store_save_preview(void)
+{
+    bool saved = false;
+    xSemaphoreTake(lock, portMAX_DELAY);
+    if (previewing) {
+        uint16_t list[STORE_FRONT_MAX];
+        int n = 0;
+        for (int i = 0; i < STORE_FRONT_MAX; i++) {
+            if (front.members[i] != STORE_NO_MEMBER) {
+                list[n++] = front.members[i];
+            }
+        }
+        if (saved_front.time && same_members(&saved_front, list, n)) {
+            front = saved_front;        /* stepped back round to who was fronting */
+            previewing = false;
+            front_changed = true;
+        } else {
+            store_switch_t sw = front;
+            saved = append_switch(&sw) == ESP_OK;
+            if (!saved) {
+                front = saved_front;
+                previewing = false;
+                front_changed = true;
+            }
+        }
+    }
+    xSemaphoreGive(lock);
+    return saved;
+}
+
+/* Same members, in any order (empty places ignored) */
+static bool same_members(const store_switch_t *sw, const uint16_t *list, int count)
+{
+    int n = 0;
+    for (int i = 0; i < STORE_FRONT_MAX; i++) {
+        if (sw->members[i] == STORE_NO_MEMBER) {
+            continue;
+        }
+        n++;
+        bool found = false;
+        for (int k = 0; k < count && !found; k++) {
+            found = list[k] == sw->members[i];
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return n == count;
+}
+
+#define SAME_SWITCH_S   60              /* the same switch, if this close in time */
+
+esp_err_t store_match_front(uint32_t time, const uint16_t *list, int count, int *dropped, bool *added)
+{
+    *dropped = 0;
+    *added = false;
+    xSemaphoreTake(lock, portMAX_DELAY);
+    for (int i = 0; i < count; i++) {
         if (list[i] >= member_count) {
             xSemaphoreGive(lock);
             return ESP_ERR_INVALID_ARG;
         }
     }
-    FILE *f = fopen(STORE_SWITCHES_FILE, "ab");
-    esp_err_t err = f && fwrite(&sw, sizeof(sw), 1, f) == 1 ? ESP_OK : ESP_FAIL;
+    esp_err_t err = ESP_OK;
+    FILE *f = fopen(STORE_SWITCHES_FILE, "r+b");
+    long n = 0;
+    store_switch_t last;
+    bool have_last = false;
+    if (f) {
+        fseek(f, 0, SEEK_END);
+        n = ftell(f) / sizeof(store_switch_t);
+        /* Newest first: drop what came after PluralKit's switch */
+        while (n > 0) {
+            fseek(f, (n - 1) * sizeof(store_switch_t), SEEK_SET);
+            if (fread(&last, sizeof(last), 1, f) != 1) {
+                err = ESP_FAIL;
+                break;
+            }
+            bool same = (last.time > time ? last.time - time : time - last.time) <= SAME_SWITCH_S
+                        && same_members(&last, list, count);
+            if (last.time <= time || same) {
+                have_last = same;
+                break;
+            }
+            n--;
+            (*dropped)++;
+        }
+        if (err == ESP_OK && *dropped) {
+            fflush(f);
+            err = ftruncate(fileno(f), n * sizeof(store_switch_t)) == 0 ? ESP_OK : ESP_FAIL;
+        }
+    }
+    if (err == ESP_OK && !have_last) {
+        store_switch_t sw = { .time = time };
+        for (int i = 0; i < STORE_FRONT_MAX; i++) {
+            sw.members[i] = i < count ? list[i] : STORE_NO_MEMBER;
+        }
+        if (!f) {
+            f = fopen(STORE_SWITCHES_FILE, "ab");
+        }
+        if (f) {
+            fseek(f, n * sizeof(store_switch_t), SEEK_SET);
+        }
+        err = f && fwrite(&sw, sizeof(sw), 1, f) == 1 ? ESP_OK : ESP_FAIL;
+        *added = err == ESP_OK;
+    }
     if (f) {
         fclose(f);
     }
-    if (err == ESP_OK) {
-        front = sw;
-        switch_count++;
-        front_changed = true;
-    }
+    load_front();
+    front_changed = true;
     xSemaphoreGive(lock);
+    if (*dropped || *added) {
+        ESP_LOGI(TAG, "matched PluralKit's front: %d newer switch(es) dropped%s", *dropped, *added ? ", its switch added" : "");
+    }
     return err;
 }
 

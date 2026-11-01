@@ -27,6 +27,7 @@
 #include "esp_heap_caps.h"
 #include "button.h"
 #include "display.h"
+#include "pksync.h"
 #include "store.h"
 #include "ui/plurality_pin.h"
 
@@ -46,6 +47,7 @@ static const screen_t status_screen         = { "status",                 "Statu
 static const screen_t connect_screen        = { "connect",                "Open the dashboard", connect_create };
 static const screen_t menu_screen           = { "pull_down_menu_initial", "Menu",               pull_down_menu_initial_create };
 static const screen_t settings_screen       = { "settings",               "Settings",           settings_create };
+static const screen_t battery_screen        = { "crash_screen",           NULL,                 crash_screen_create };
 
 /* Switch mode (and left/right away from the fronter screen) moves through these.
  * &namecard_screen stands for "the fronter screen", whatever its mode. */
@@ -55,7 +57,7 @@ static const screen_t *const main_screens[] = {
 };
 #define MAIN_COUNT (sizeof(main_screens) / sizeof(main_screens[0]))
 
-typedef enum { AT_MAIN, AT_MENU, AT_PAGE } place_t;
+typedef enum { AT_MAIN, AT_MENU, AT_PAGE, AT_POWER } place_t;   /* AT_POWER: battery screen (power.c) */
 
 static nav_screen_cb_t screen_cb;
 static place_t place;
@@ -140,6 +142,7 @@ static void wire_menu(lv_obj_t *scr)
 
 #define SLIDE_MS            250         /* screen slide in switch mode */
 #define SWITCH_TIMEOUT_MS   3000        /* switch mode ends after this long without a swipe */
+#define DOUBLE_TAP_MS       400         /* a second tap this soon after the first */
 
 /* Show `screen`; `anim` slides it in (LV_SCREEN_LOAD_ANIM_NONE: instant).
  * The old screen is deleted once the new one is in. */
@@ -172,7 +175,9 @@ static void show_anim(const screen_t *screen, lv_screen_load_anim_t anim)
     if (screen_cb) {
         screen_cb(screen->name, scr);
     }
-    nav_toast(screen->title);
+    if (screen->title) {
+        nav_toast(screen->title);
+    }
     ESP_LOGI(TAG, "%s (created in %u ms), free heap %u bytes", screen->name,
              (unsigned)lv_tick_elaps(t0), (unsigned)heap_caps_get_free_size(MALLOC_CAP_DEFAULT));
 }
@@ -262,11 +267,32 @@ static void on_hold(void)
     }
 }
 
+static void refreshed(pksync_refresh_t result)
+{
+    nav_toast(result == PKSYNC_REFRESH_CHANGED ? "Now showing PluralKit's fronter"
+              : result == PKSYNC_REFRESH_SAME ? "Up to date"
+              : result == PKSYNC_REFRESH_UNKNOWN ? "PluralKit's fronter isn't on the pin"
+              : result == PKSYNC_REFRESH_NO_RELAY ? "No relay set up"
+              : result == PKSYNC_REFRESH_BUSY ? "Still checking..."
+              : "Couldn't reach the relay");
+}
+
+/* Double tap on the fronter: ask PluralKit (through the relay) right now */
 static void on_tap(void)
 {
+    static uint32_t last_tap;
     if (switching) {
         switch_end();
+        return;
     }
+    if (place == AT_MAIN && main_screens[main_index] == &namecard_screen
+        && last_tap && lv_tick_elaps(last_tap) < DOUBLE_TAP_MS) {
+        last_tap = 0;
+        nav_toast("Checking PluralKit...");
+        pksync_refresh_now(refreshed);
+        return;
+    }
+    last_tap = lv_tick_get();
 }
 
 static void on_swipe(lv_dir_t dir)
@@ -300,6 +326,8 @@ static void on_swipe(lv_dir_t dir)
             show(main_screens[main_index]);
         }
         break;
+    case AT_POWER:
+        break;                          /* the battery screen stays until power.c ends it */
     case AT_PAGE:
         if (dir == LV_DIR_RIGHT) {
             place = AT_MENU;
@@ -313,6 +341,9 @@ static void on_swipe(lv_dir_t dir)
 
 void nav_show_fronter(void)
 {
+    if (place == AT_POWER) {
+        return;
+    }
     if (place == AT_MAIN && main_screens[main_index] == &namecard_screen && shown == fronter_screen()) {
         return;                         /* already there; the screen updates itself */
     }
@@ -327,6 +358,9 @@ void nav_show_fronter(void)
 
 void nav_toggle_clock(void)
 {
+    if (place == AT_POWER) {
+        return;
+    }
     if (place == AT_MAIN && shown == &watch_screen) {
         nav_show_fronter();
         return;
@@ -341,6 +375,23 @@ void nav_toggle_clock(void)
     }
     place = AT_MAIN;
     show(&watch_screen);
+}
+
+lv_obj_t *nav_show_power(void)
+{
+    if (switching) {
+        switch_end();
+    }
+    place = AT_POWER;
+    show(&battery_screen);
+    return lv_screen_active();
+}
+
+void nav_power_end(void)
+{
+    place = AT_MAIN;
+    shown = NULL;
+    nav_show_fronter();
 }
 
 void nav_benchmark(void)
