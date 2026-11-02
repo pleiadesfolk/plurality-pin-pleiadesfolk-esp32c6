@@ -9,10 +9,14 @@
  *   PUT  /api/switches     replace front history (raw store_switch_t records)
  *   GET  /api/switches     front history, same format
  *   POST /api/front        record a switch now: {"members": [index, ...]}
+ *   POST /api/switch       add one switch to the history: {"time": unix, "members": [index, ...]}
+ *   DELETE /api/switch?time=T  remove the switch at unix time T
+ *                          (these two: one at a time while syncing, so little RAM is needed)
  *   PUT  /api/card?id=ID&kind=K  picture for member ID; K = card (default),
  *                          label, full or side (see store_picture_t)
  *   GET  /api/card?id=ID&kind=K  the same picture back (for the dashboard's previews)
  *   GET  /api/photos       which members have photos, free fast slots (store_photos_json)
+ *   PATCH /api/member      change one member: {"id", "name"?, "card"?, "pk_color"?}
  *   DELETE /api/member?index=N  delete member N (also from front history)
  *   GET  /api/wifi         saved Wi-Fi networks (no passwords) and the pin's address
  *   PUT  /api/wifi         replace the saved networks (see wifi_set_networks_json)
@@ -20,6 +24,8 @@
  *   GET/PUT /api/pk        PluralKit sync status / settings (see pksync.h)
  *   GET  /api/pk/switches?before=T&limit=N  PluralKit's switches before unix time T
  *                          (newest first, as PluralKit sends them), asked with the pin's token
+ *   GET  /api/pk/members   PluralKit's members, asked with the pin's system ID or token
+ *                          (for "Update members from PluralKit")
  *   POST /api/pk/switches  {"timestamp": unix, "members": [PluralKit ids]}: log a
  *                          switch in PluralKit (needs the token; for "Sync with PluralKit")
  *   DELETE /api/pk/switches?id=ID  delete switch ID in PluralKit (needs the token)
@@ -27,6 +33,9 @@
  *   PUT  /api/timezone     {"zone": IANA name, "" = follow PluralKit}
  *   GET  /api/battery      battery log (raw status_log_entry_t records, oldest first)
  *   DELETE /api/battery    clear the battery log
+ *
+ * 503 from any route: the pin is short of memory for the moment; the dashboard
+ * waits and sends the request again.
  *
  * Login (auth.h): once a dashboard password is set, every /api/ route except
  * these needs the session cookie ("pin_session", SameSite=Strict, so other
@@ -214,6 +223,7 @@ static esp_err_t get_state(httpd_req_t *req)
 
 static esp_err_t put_members(httpd_req_t *req)
 {
+    pksync_pk_release();                /* a PluralKit connection left open by a check just before */
     char *body = read_body(req);
     if (!body) {
         return send_error(req, "400 Bad Request", "body missing or too big");
@@ -222,6 +232,9 @@ static esp_err_t put_members(httpd_req_t *req)
     free(body);
     if (err == ESP_ERR_INVALID_ARG) {
         return send_error(req, "400 Bad Request", "invalid member list");
+    }
+    if (err == ESP_ERR_NO_MEM) {
+        return send_error(req, "503 Service Unavailable", "the pin is short of memory - try again in a moment");
     }
     return err == ESP_OK ? send_ok(req) : send_error(req, "500 Internal Server Error", "couldn't save the members - nothing was changed");
 }
@@ -382,6 +395,64 @@ static esp_err_t get_photos(httpd_req_t *req)
     return err;
 }
 
+static esp_err_t post_switch(httpd_req_t *req)
+{
+    char *body = read_body(req);
+    cJSON *root = body ? cJSON_Parse(body) : NULL;
+    free(body);
+    const cJSON *time = cJSON_GetObjectItem(root, "time");
+    const cJSON *list = cJSON_GetObjectItem(root, "members");
+    if (!root) {
+        return send_error(req, "503 Service Unavailable", "the pin is short of memory - try again in a moment");
+    }
+    if (!cJSON_IsNumber(time) || time->valuedouble <= 0 || !cJSON_IsArray(list)) {
+        cJSON_Delete(root);
+        return send_error(req, "400 Bad Request", "expected {\"time\": unix time, \"members\": [index, ...]}");
+    }
+    uint16_t members[STORE_FRONT_MAX];
+    int count = 0;
+    const cJSON *item;
+    cJSON_ArrayForEach(item, list) {
+        if (count < STORE_FRONT_MAX && cJSON_IsNumber(item)) {
+            members[count++] = (uint16_t)item->valueint;
+        }
+    }
+    bool added;
+    esp_err_t err = store_insert_switch((uint32_t)time->valuedouble, members, count, &added);
+    cJSON_Delete(root);
+    return err == ESP_OK ? send_ok(req)
+           : err == ESP_ERR_INVALID_ARG ? send_error(req, "400 Bad Request", "unknown member")
+           : send_error(req, "500 Internal Server Error", "couldn't save the switch");
+}
+
+static esp_err_t delete_switch(httpd_req_t *req)
+{
+    char query[32], value[16];
+    if (httpd_req_get_url_query_str(req, query, sizeof(query)) != ESP_OK
+            || httpd_query_key_value(query, "time", value, sizeof(value)) != ESP_OK || atoll(value) <= 0) {
+        return send_error(req, "400 Bad Request", "expected ?time=<unix time>");
+    }
+    esp_err_t err = store_remove_switch((uint32_t)atoll(value));
+    return err == ESP_OK ? send_ok(req)
+           : err == ESP_ERR_NOT_FOUND ? send_error(req, "404 Not Found", "no switch at that time")
+           : send_error(req, "500 Internal Server Error", "couldn't save the history");
+}
+
+static esp_err_t patch_member(httpd_req_t *req)
+{
+    char *body = read_body(req);
+    if (!body) {
+        return send_error(req, "400 Bad Request", "body missing or too big");
+    }
+    esp_err_t err = store_update_member_json(body);
+    free(body);
+    return err == ESP_OK ? send_ok(req)
+           : err == ESP_ERR_NOT_FOUND ? send_error(req, "404 Not Found", "no member with that id")
+           : err == ESP_ERR_INVALID_ARG ? send_error(req, "400 Bad Request", "expected {\"id\", \"name\", \"card\", \"pk_color\"}, short enough for the pin")
+           : err == ESP_ERR_NO_MEM ? send_error(req, "503 Service Unavailable", "the pin is short of memory - try again in a moment")
+           : send_error(req, "500 Internal Server Error", "couldn't save the member");
+}
+
 static esp_err_t delete_member(httpd_req_t *req)
 {
     char query[32], value[8];
@@ -493,6 +564,9 @@ static esp_err_t pk_data(const char *data, int len, void *req)
 
 static esp_err_t pk_failed(httpd_req_t *req, esp_err_t err)
 {
+    if (err == ESP_ERR_NO_MEM) {
+        return send_error(req, "503 Service Unavailable", "the pin is short of memory - try again in a moment");
+    }
     return send_error(req, err == ESP_ERR_INVALID_STATE ? "409 Conflict" : err == ESP_ERR_NOT_SUPPORTED ? "403 Forbidden"
                       : "502 Bad Gateway",
                       err == ESP_ERR_INVALID_STATE ? "save your PluralKit token on the Import tab first"
@@ -520,6 +594,13 @@ static esp_err_t get_pk_switches(httpd_req_t *req)
     snprintf(path, sizeof(path), "/switches?limit=%d%s%s", limit, when[0] ? "&before=" : "", when);
     pk_answered = false;
     esp_err_t err = pksync_pk_request("GET", path, NULL, pk_status, pk_data, req);
+    return pk_answered ? httpd_resp_send_chunk(req, NULL, 0) : pk_failed(req, err);
+}
+
+static esp_err_t get_pk_members(httpd_req_t *req)
+{
+    pk_answered = false;
+    esp_err_t err = pksync_pk_request("GET", "/members", NULL, pk_status, pk_data, req);
     return pk_answered ? httpd_resp_send_chunk(req, NULL, 0) : pk_failed(req, err);
 }
 
@@ -685,7 +766,7 @@ void web_start(void)
 {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.stack_size = 8192;           /* JSON handling needs more than the default */
-    config.max_uri_handlers = 30;
+    config.max_uri_handlers = 36;
     config.lru_purge_enable = true;     /* phones keep connections open; recycle them */
     config.uri_match_fn = httpd_uri_match_wildcard;   /* for the fonts route */
     config.recv_wait_timeout = 10;
@@ -707,12 +788,16 @@ void web_start(void)
         { .uri = "/api/card",      .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_card },
         { .uri = "/api/card",      .method = HTTP_GET,  .handler = guarded, .user_ctx = get_card },
         { .uri = "/api/photos",    .method = HTTP_GET,  .handler = guarded, .user_ctx = get_photos },
+        { .uri = "/api/switch",    .method = HTTP_POST, .handler = guarded, .user_ctx = post_switch },
+        { .uri = "/api/switch",    .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_switch },
+        { .uri = "/api/member",    .method = HTTP_PATCH, .handler = guarded, .user_ctx = patch_member },
         { .uri = "/api/member",    .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_member },
         { .uri = "/api/wifi",      .method = HTTP_GET,  .handler = guarded, .user_ctx = get_wifi },
         { .uri = "/api/wifi",      .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_wifi },
         { .uri = "/api/wifi/scan", .method = HTTP_GET,  .handler = guarded, .user_ctx = get_wifi_scan },
         { .uri = "/api/pk",        .method = HTTP_GET,  .handler = guarded, .user_ctx = get_pk },
         { .uri = "/api/pk",        .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_pk },
+        { .uri = "/api/pk/members", .method = HTTP_GET, .handler = guarded, .user_ctx = get_pk_members },
         { .uri = "/api/pk/switches", .method = HTTP_GET, .handler = guarded, .user_ctx = get_pk_switches },
         { .uri = "/api/pk/switches", .method = HTTP_POST, .handler = guarded, .user_ctx = post_pk_switch },
         { .uri = "/api/pk/switches", .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_pk_switch },

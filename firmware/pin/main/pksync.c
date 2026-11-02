@@ -37,6 +37,7 @@
 #include "esp_crt_bundle.h"
 #include "esp_event.h"
 #include "esp_timer.h"
+#include "esp_heap_caps.h"
 #include "esp_netif.h"
 #include "nvs.h"
 #include "cJSON.h"
@@ -57,6 +58,7 @@ static const char *TAG = "pksync";
 #define HOME_PROBE_MS   3000            /* is the home address reachable from here? */
 #define RESPONSE_MAX    (32 * 1024)     /* fronters come with their full member details (~1-2 KB each) */
 #define TZ_CHECK_MS     (6 * 3600 * 1000)  /* PluralKit time zone: checked this often */
+#define TLS_FREE_NEEDED (48 * 1024)     /* free RAM needed to open a TLS connection (~40 KB) */
 #define USER_AGENT      "plurality-pin (ESP32 front display)"
 
 typedef enum { ROUTE_HOME, ROUTE_NET, ROUTE_COUNT } route_t;
@@ -377,6 +379,17 @@ static void pk_close(void *arg)
     }
 }
 
+void pksync_pk_release(void)
+{
+    xSemaphoreTake(pk_lock, portMAX_DELAY);
+    esp_timer_stop(pk_idle);
+    if (pk_client) {
+        esp_http_client_cleanup(pk_client);
+        pk_client = NULL;
+    }
+    xSemaphoreGive(pk_lock);
+}
+
 static void pk_send_status(pk_request_t *r, esp_http_client_handle_t client)
 {
     if (!r->status_sent) {
@@ -422,6 +435,10 @@ esp_err_t pksync_pk_request(const char *method, const char *path, const char *bo
     esp_err_t err = ESP_FAIL;
     for (int attempt = 0; attempt < 2 && err != ESP_OK && !r.status_sent; attempt++) {
         bool fresh = !pk_client;
+        if (fresh && heap_caps_get_free_size(MALLOC_CAP_DEFAULT) < TLS_FREE_NEEDED) {
+            err = ESP_ERR_NO_MEM;       /* would fail half-way: say so, so it can be tried again */
+            break;
+        }
         if (fresh) {
             esp_http_client_config_t config = {
                 .url = url,

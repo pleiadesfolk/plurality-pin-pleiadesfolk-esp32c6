@@ -61,10 +61,15 @@ char *pksync_status_json(void);
  * "/switches?limit=100". The connection stays open for a few seconds after,
  * so a series of requests (a sync) doesn't set up TLS each time.
  * on_status gets PluralKit's HTTP status, then on_data the answer in pieces;
- * either returning an error stops it. ESP_ERR_INVALID_STATE: no system ID or
+ * either returning an error stops it. ESP_ERR_NO_MEM: not enough free RAM for
+ * a connection right now (try again shortly). ESP_ERR_INVALID_STATE: no system ID or
  * token saved; ESP_ERR_NOT_SUPPORTED: POST/DELETE with only a system ID.
  */
 typedef esp_err_t (*pksync_status_cb_t)(int status, void *ctx);
 typedef esp_err_t (*pksync_data_cb_t)(const char *data, int len, void *ctx);
 esp_err_t pksync_pk_request(const char *method, const char *path, const char *body,
                             pksync_status_cb_t on_status, pksync_data_cb_t on_data, void *ctx);
+
+/** Close the connection pksync_pk_request() keeps open (~40 KB of RAM), e.g.
+ *  before something that needs a lot of memory. */
+void pksync_pk_release(void);

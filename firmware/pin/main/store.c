@@ -43,6 +43,7 @@ static const char *TAG = "store";
 #define MEMBERS_FILE        "/data/members.json"
 #define MEMBERS_TMP_FILE    "/data/members.tmp"
 #define SWITCHES_TMP_FILE   "/data/switches.tmp"
+#define SWITCHES_EDIT_FILE  "/data/switches.new"   /* store_insert_switch / store_remove_switch */
 #define MAX_MEMBERS         128
 #define MAX_SWITCH_BYTES    (2 * 1024 * 1024)
 #define CARDS_DIR           "/data/cards"
@@ -125,13 +126,15 @@ static void member_from_json(const cJSON *item, member_t *m)
 }
 
 /* Parse the dashboard's members JSON into a new array (*out, free() it); returns
- * count or -1. *has_nobody: whether it had a "nobody" card (then in *nobody_out). */
+ * count, -1 if it isn't a member list, or -2 if it couldn't be read (out of
+ * memory: the parsed list takes ~1 KB per member; the dashboard's JSON is
+ * always well-formed, so a parse failure is taken as that too). *has_nobody: whether it had a "nobody" card (then in *nobody_out). */
 static int members_from_json(const char *json, char *system, size_t system_size, member_t **out,
                              member_t *nobody_out, bool *has_nobody)
 {
     cJSON *root = cJSON_Parse(json);
     if (!root) {
-        return -1;
+        return -2;
     }
     const cJSON *list = cJSON_GetObjectItem(root, "members");
     if (!cJSON_IsArray(list) || cJSON_GetArraySize(list) > MAX_MEMBERS) {
@@ -151,7 +154,7 @@ static int members_from_json(const char *json, char *system, size_t system_size,
     *out = calloc(cJSON_GetArraySize(list) + 1, sizeof(member_t));
     if (!*out) {
         cJSON_Delete(root);
-        return -1;
+        return -2;
     }
     int n = 0;
     const cJSON *item;
@@ -326,7 +329,7 @@ esp_err_t store_set_members_json(const char *json)
     if (n < 0) {
         free(new_nobody);
         free(old_nobody);
-        return ESP_ERR_INVALID_ARG;
+        return n == -1 ? ESP_ERR_INVALID_ARG : ESP_ERR_NO_MEM;
     }
 
     xSemaphoreTake(lock, portMAX_DELAY);
@@ -585,6 +588,121 @@ bool store_save_preview(void)
     }
     xSemaphoreGive(lock);
     return saved;
+}
+
+/* Add or remove one switch: copy the history to a new file a record at a
+ * time (little RAM, whatever its length) with `add` put in time order and/or
+ * the first record at `remove_time` left out, then swap it in. *changed:
+ * false if `add` was already there or nothing was at `remove_time`. */
+static esp_err_t edit_switches(const store_switch_t *add, bool remove, uint32_t remove_time, bool *changed)
+{
+    *changed = false;
+    xSemaphoreTake(lock, portMAX_DELAY);
+    FILE *in = fopen(STORE_SWITCHES_FILE, "rb");
+    FILE *out = fopen(SWITCHES_EDIT_FILE, "wb");
+    esp_err_t err = out ? ESP_OK : ESP_FAIL;
+    bool added = !add, removed = !remove;
+    store_switch_t sw;
+    while (err == ESP_OK && in && fread(&sw, sizeof(sw), 1, in) == 1) {
+        if (!removed && sw.time == remove_time) {
+            removed = true;
+            *changed = true;
+            continue;
+        }
+        if (!added && sw.time == add->time && memcmp(sw.members, add->members, sizeof(sw.members)) == 0) {
+            added = true;               /* already there */
+        }
+        if (!added && sw.time > add->time) {
+            err = fwrite(add, sizeof(*add), 1, out) == 1 ? ESP_OK : ESP_FAIL;
+            added = true;
+            *changed = true;
+        }
+        if (err == ESP_OK && fwrite(&sw, sizeof(sw), 1, out) != 1) {
+            err = ESP_FAIL;
+        }
+    }
+    if (err == ESP_OK && !added) {
+        err = fwrite(add, sizeof(*add), 1, out) == 1 ? ESP_OK : ESP_FAIL;
+        *changed = true;
+    }
+    if (in) {
+        fclose(in);
+    }
+    if (out && fclose(out) != 0) {
+        err = ESP_FAIL;
+    }
+    if (err == ESP_OK && *changed) {
+        unlink(STORE_SWITCHES_FILE);    /* FAT can't rename over an existing file */
+        err = rename(SWITCHES_EDIT_FILE, STORE_SWITCHES_FILE) == 0 ? ESP_OK : ESP_FAIL;
+        load_front();
+        front_changed = true;
+    } else {
+        unlink(SWITCHES_EDIT_FILE);
+    }
+    xSemaphoreGive(lock);
+    return err;
+}
+
+esp_err_t store_insert_switch(uint32_t time, const uint16_t *list, int count, bool *added)
+{
+    store_switch_t sw;
+    xSemaphoreTake(lock, portMAX_DELAY);
+    esp_err_t err = make_switch(time, list, count, &sw);
+    xSemaphoreGive(lock);
+    return err == ESP_OK ? edit_switches(&sw, false, 0, added) : err;
+}
+
+esp_err_t store_remove_switch(uint32_t time)
+{
+    bool removed;
+    esp_err_t err = edit_switches(NULL, true, time, &removed);
+    return err == ESP_OK && !removed ? ESP_ERR_NOT_FOUND : err;
+}
+
+esp_err_t store_update_member_json(const char *json)
+{
+    cJSON *root = cJSON_Parse(json);
+    const char *id = cJSON_GetStringValue(cJSON_GetObjectItem(root, "id"));
+    const char *name = cJSON_GetStringValue(cJSON_GetObjectItem(root, "name"));
+    const char *card = cJSON_GetStringValue(cJSON_GetObjectItem(root, "card"));
+    const char *pk_color = cJSON_GetStringValue(cJSON_GetObjectItem(root, "pk_color"));
+    esp_err_t err = !root ? ESP_ERR_NO_MEM : !id ? ESP_ERR_INVALID_ARG : ESP_OK;
+    if (err == ESP_OK && ((name && (!name[0] || strlen(name) >= sizeof(members[0].name)))
+                          || (card && strlen(card) >= sizeof(members[0].card))
+                          || (pk_color && pk_color[0] && strspn(pk_color, "0123456789abcdefABCDEF") != 6))) {
+        err = ESP_ERR_INVALID_ARG;
+    }
+    if (err == ESP_OK) {
+        xSemaphoreTake(lock, portMAX_DELAY);
+        member_t *m = NULL;
+        for (int i = 0; i < member_count && !m; i++) {
+            if (strcmp(members[i].id, id) == 0) {
+                m = &members[i];
+            }
+        }
+        if (!m) {
+            err = ESP_ERR_NOT_FOUND;
+        } else {
+            member_t before = *m;
+            if (name) {
+                strlcpy(m->name, name, sizeof(m->name));
+            }
+            if (card) {
+                strlcpy(m->card, card, sizeof(m->card));
+            }
+            if (pk_color) {
+                m->pk_color = pk_color[0] ? (int32_t)strtoul(pk_color, NULL, 16) : -1;
+            }
+            err = save_members_file();
+            if (err != ESP_OK) {
+                *m = before;            /* keep what's saved */
+            }
+            front_changed = true;
+        }
+        xSemaphoreGive(lock);
+    }
+    cJSON_Delete(root);
+    return err;
 }
 
 /* Same members, in any order (empty places ignored) */

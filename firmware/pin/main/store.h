@@ -35,6 +35,13 @@ void store_init(void);
  *  member (optional: without it, the one already saved is kept)
  */
 esp_err_t store_set_members_json(const char *json);
+
+/**
+ * Change one member: {"id", and any of "name", "card", "pk_color" ("RRGGBB",
+ * "" = none)}. ESP_ERR_NOT_FOUND: no member with that id; ESP_ERR_INVALID_ARG:
+ * too long or malformed; ESP_ERR_NO_MEM: couldn't read it.
+ */
+esp_err_t store_update_member_json(const char *json);
 /** Receives JSON text in pieces; returns false to stop. */
 typedef bool (*store_emit_t)(const char *text, size_t len, void *ctx);
 /** Send {"system","members":[...],"front":[i..],"front_since":t,"switches":n,"now":t<extra>}
@@ -57,6 +64,14 @@ esp_err_t store_match_front(uint32_t time, const uint16_t *list, int count, int 
 esp_err_t store_switches_begin(void);
 esp_err_t store_switches_write(const void *data, size_t len);
 esp_err_t store_switches_end(bool ok);
+
+/**
+ * One switch at a time, for syncing (little RAM however long the history is):
+ * add a switch in time order (*added false if it was already there), or
+ * remove the one at `time` (ESP_ERR_NOT_FOUND if there's none).
+ */
+esp_err_t store_insert_switch(uint32_t time, const uint16_t *members, int count, bool *added);
+esp_err_t store_remove_switch(uint32_t time);
 
 /** Record a new switch now. `members` may be empty (nobody fronting). */
 esp_err_t store_add_switch(const uint16_t *members, int count);
@@ -90,7 +105,8 @@ int store_step_button_member(int direction, char *name, size_t name_size);
 /**
  * Delete member `index`, take them out of the front history (later members'
  * indexes move down by one) and delete their card picture.
- * Adding and editing members goes through store_set_members_json().
+ * Adding and editing members goes through store_set_members_json(), or
+ * store_update_member_json() for one member.
  */
 esp_err_t store_delete_member(int index);
 

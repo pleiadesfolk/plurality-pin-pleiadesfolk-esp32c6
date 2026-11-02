@@ -262,6 +262,15 @@
       <p class="dim" id="relay-status"></p>
     </div>
     <div class="box">
+      <h2 style="margin-top:0">Update members from PluralKit</h2>
+      <p style="margin-top:0">Copies what changed in PluralKit to the members already on the pin. PluralKit itself isn't changed. Uses your system ID or token above.</p>
+      <label class="check"><input type="checkbox" id="msync-name" checked> Name</label>
+      <label class="check"><input type="checkbox" id="msync-display" checked> Display name (the namecard text)</label>
+      <label class="check"><input type="checkbox" id="msync-color" checked> Colour (the PluralKit colour shown on this dashboard; namecards keep their own)</label>
+      <button class="primary" id="msync-check" style="margin-top:12px">Check PluralKit</button>
+      <div id="msync-result"></div>
+    </div>
+    <div class="box">
       <p style="margin-top:0">In Discord, send <b>pk;export</b> to PluralKit, save the file it sends you, then pick it here.</p>
       <input type="file" id="import-file" accept=".json,application/json">
     </div>
@@ -380,6 +389,9 @@ const $ = id => document.getElementById(id);
 let state = { system: "", members: [], nobody: null, front: [], front_since: 0, switches: 0, now: 0 };
 let clockOffset = 0;                    // pin time - phone time, seconds
 
+// 503: the pin is short of memory for a moment (e.g. a PluralKit connection
+// still open). The request waits its turn and goes again, for up to 2 minutes.
+const BUSY_WAITS = [2, 3, 5, 5, 10, 10, 15, 15, 15, 20, 20];   // seconds, ~2 minutes in all
 async function api(method, path, body) {
   const options = { method };
   if (body instanceof ArrayBuffer || body instanceof Uint8Array) {
@@ -389,10 +401,17 @@ async function api(method, path, body) {
     options.body = JSON.stringify(body);
     options.headers = { "Content-Type": "application/json" };
   }
-  const res = await fetch(path, options);
-  if (res.status === 401 && path !== "/api/login") showLogin();
-  if (!res.ok) throw new Error(`${method} ${path}: ${res.status} ${await res.text()}`);
-  return res;
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(path, options);
+    if (res.status === 401 && path !== "/api/login") showLogin();
+    if (res.status === 503 && attempt < BUSY_WAITS.length) {
+      if (attempt === 0) toast("The pin is busy - waiting to try again…");
+      await sleep(BUSY_WAITS[attempt] * 1000);
+      continue;
+    }
+    if (!res.ok) throw new Error(`${method} ${path}: ${res.status} ${await res.text()}`);
+    return res;
+  }
 }
 
 /* ---------- login (dashboard password) ---------- */
@@ -1591,16 +1610,35 @@ async function applySync() {
       catch (err) { failed.push(`${showTime(del[i].time)}: ${reason(err)}`); }
     }
     const deleted = del.length - failed.length;
+    const failedBeforeSend = failed.length;
     for (let i = 0; i < send.length; i++) {
       progress.innerHTML = `<p class="dim">Adding to PluralKit… ${i + 1} / ${send.length}</p>`;
       try { await pkWrite("POST", "/api/pk/switches", { timestamp: send[i].time, members: send[i].ids }); }
       catch (err) { failed.push(`${showTime(send[i].time)}: ${reason(err)}`); }
     }
-    const sent = send.length - (failed.length - (del.length - deleted));
+    const sent = send.length - (failed.length - failedBeforeSend);
+    // The pin's side, one switch per request (so the pin never holds the whole history)
+    let added = 0, removed = 0;
+    if (add.length || remove.length) {
+      progress.innerHTML = `<p class="dim">Saving the pin's history for Undo…</p>`;
+      backup = await (await api("GET", "/api/switches")).arrayBuffer();
+    }
+    for (let i = 0; i < remove.length; i++) {
+      progress.innerHTML = `<p class="dim">Removing from the pin… ${i + 1} / ${remove.length}</p>`;
+      try { await api("DELETE", `/api/switch?time=${remove[i].time}`); removed++; }
+      catch (err) { failed.push(`${showTime(remove[i].time)} (pin): ${reason(err)}`); }
+    }
+    for (let i = 0; i < add.length; i++) {
+      progress.innerHTML = `<p class="dim">Adding to the pin… ${i + 1} / ${add.length}</p>`;
+      const idx = add[i].ids.map(id => state.members.findIndex(m => m.id === id));
+      if (idx.includes(-1)) { failed.push(`${showTime(add[i].time)} (pin): a member there isn't on the pin`); continue; }
+      try { await api("POST", "/api/switch", { time: add[i].time, members: idx.slice(0, 4) }); added++; }
+      catch (err) { failed.push(`${showTime(add[i].time)} (pin): ${reason(err)}`); }
+    }
     const done = [deleted && `${deleted} deleted from PluralKit`, sent && `${sent} added to PluralKit`,
-      add.length && `${add.length} added to the pin`, remove.length && `${remove.length} removed from the pin`].filter(Boolean);
+      added && `${added} added to the pin`, removed && `${removed} removed from the pin`].filter(Boolean);
     out.innerHTML = `<p>${esc(done.join(", ") || "Nothing changed")}.</p>` +
-      (failed.length ? `<p class="error">PluralKit refused ${failed.length}:</p>${failed.map(f => `<p class="dim">${esc(f)}</p>`).join("")}` : "") +
+      (failed.length ? `<p class="error">${failed.length} didn't go through:</p>${failed.map(f => `<p class="dim">${esc(f)}</p>`).join("")}` : "") +
       (backup ? `<button id="sync-undo">Undo the pin's changes</button>` : "");
     if (backup) $("sync-undo").addEventListener("click", async () => {
       if (!confirm("Put the pin's history back as it was before this sync? (PluralKit's changes stay.)")) return;
@@ -1982,6 +2020,118 @@ $("wifi-save").addEventListener("click", async () => {
 function watchSetup(tries = 0) {
   if (tries >= 30 || wifi.networks.some(n => n.current)) return;
   setTimeout(() => loadWifi().then(() => watchSetup(tries + 1), () => watchSetup(tries + 1)), 2000);
+}
+
+/* ---------- update members from PluralKit ---------- */
+
+const MSYNC_FIELDS = ["name", "display", "color"];
+try {
+  const saved = JSON.parse(localStorage.getItem("msync-fields") || "null");
+  if (saved) MSYNC_FIELDS.forEach(f => $("msync-" + f).checked = saved.includes(f));
+} catch (e) {}
+MSYNC_FIELDS.forEach(f => $("msync-" + f).addEventListener("change", () => {
+  try { localStorage.setItem("msync-fields", JSON.stringify(MSYNC_FIELDS.filter(g => $("msync-" + g).checked))); } catch (e) {}
+}));
+
+let msyncPlan = [];
+const utf8Bytes = s => new TextEncoder().encode(s).length;
+
+// What would change on the pin, member by member: [{index, changes: [{field, from, to}]}]
+function memberChanges(pkMembers, fields) {
+  const byId = new Map(pkMembers.map(m => [m.id, m]));
+  const plan = [], tooLong = [];
+  state.members.forEach((m, index) => {
+    const pk = byId.get(m.id);
+    if (!pk) return;
+    const changes = [];
+    const want = {
+      name: pk.name || pk.id,
+      display: pk.display_name || pk.name || pk.id,
+      color: (pk.color || "").toUpperCase(),
+    };
+    const have = { name: m.name, display: m.card, color: (m.pk_color || "").toUpperCase() };
+    const limit = { name: 47, display: 127, color: 6 };
+    for (const field of fields) {
+      if (want[field] === have[field]) continue;
+      if (utf8Bytes(want[field]) > limit[field]) { tooLong.push(`${m.name} (${field === "display" ? "display name" : field})`); continue; }
+      changes.push({ field, from: have[field], to: want[field] });
+    }
+    if (changes.length) plan.push({ index, changes });
+  });
+  const missing = pkMembers.filter(pk => !state.members.some(m => m.id === pk.id)).length;
+  return { plan, tooLong, missing };
+}
+
+function showMemberChanges({ plan, tooLong, missing }) {
+  const label = { name: "Name", display: "Display name", color: "Colour" };
+  const show = (field, v) => field === "color"
+    ? (v ? `<span class="dot" style="background:#${esc(v)}"></span>#${esc(v)}` : "none")
+    : esc(v);
+  msyncPlan = plan;
+  $("msync-result").innerHTML = (plan.length
+    ? `<p>${plan.length} member${plan.length === 1 ? "" : "s"} changed in PluralKit:</p>
+      <div class="list">${plan.map((p, i) => `
+        <label class="item check" style="margin-top:0"><input type="checkbox" data-msync="${i}" checked>
+          <div class="grow"><div>${esc(state.members[p.index].name)}</div>
+            ${p.changes.map(c => `<div class="dim">${label[c.field]}: ${show(c.field, c.from)} → ${show(c.field, c.to)}</div>`).join("")}
+          </div></label>`).join("")}
+      </div>
+      <button class="primary" id="msync-apply" style="margin-top:12px">Update the pin</button>`
+    : `<p>The pin's members match PluralKit.</p>`)
+    + (tooLong.length ? `<p class="warn">Too long for the pin, left as they are: ${tooLong.map(esc).join(", ")}</p>` : "")
+    + (missing ? `<p class="dim">${missing} member${missing === 1 ? " is" : "s are"} in PluralKit but not on the pin; a full import (below) brings them in.</p>` : "")
+    + `<div id="msync-progress"></div>`;
+  if (plan.length) $("msync-apply").addEventListener("click", applyMemberChanges);
+}
+
+$("msync-check").addEventListener("click", async () => {
+  const fields = MSYNC_FIELDS.filter(f => $("msync-" + f).checked);
+  if (!fields.length) { toast("Tick at least one thing to update"); return; }
+  $("msync-check").disabled = true;
+  $("msync-result").innerHTML = `<p class="dim">Asking PluralKit…</p>`;
+  try {
+    await loadState();
+    const pkMembers = await (await api("GET", "/api/pk/members")).json();
+    showMemberChanges(memberChanges(pkMembers, fields));
+  } catch (e) {
+    $("msync-result").innerHTML = `<p class="error">${esc(e.message)}</p>`;
+  }
+  $("msync-check").disabled = false;
+});
+
+async function applyMemberChanges() {
+  const chosen = msyncPlan.filter((p, i) => document.querySelector(`[data-msync="${i}"]`).checked);
+  if (!chosen.length) { toast("Nothing ticked"); return; }
+  const progress = $("msync-progress");
+  const step = (text, value, max) => progress.innerHTML = `<p class="dim">${esc(text)}</p>` + (max ? `<progress value="${value}" max="${max}"></progress>` : "");
+  $("msync-apply").disabled = true;
+  try {
+    // One member per request (so the pin never holds the whole member list)
+    const failed = [];
+    for (let i = 0; i < chosen.length; i++) {
+      const m = { ...state.members[chosen[i].index] };
+      step(`Updating ${m.name}… ${i + 1} / ${chosen.length}`, i, chosen.length);
+      const patch = { id: m.id };
+      for (const c of chosen[i].changes) {
+        if (c.field === "name") patch.name = m.name = c.to;
+        if (c.field === "display") patch.card = m.card = c.to;
+        if (c.field === "color") patch.pk_color = m.pk_color = c.to;
+      }
+      try {
+        await api("PATCH", "/api/member", patch);
+        if (patch.card !== undefined) await uploadPictures(m, null);   // redraw the namecard
+      } catch (e) { failed.push(`${m.name}: ${e.message.replace(/^.*: \d+ /, "")}`); }
+    }
+    const ok = chosen.length - failed.length;
+    progress.innerHTML = `<p>Updated ${ok} member${ok === 1 ? "" : "s"}.</p>`
+      + (failed.length ? `<p class="error">Didn't work for:</p>${failed.map(f => `<p class="dim">${esc(f)}</p>`).join("")}` : "");
+    toast("Members updated from PluralKit");
+    await loadState();
+    $("msync-apply").remove();
+  } catch (e) {
+    progress.innerHTML = `<p class="error">${esc(e.message)}</p>`;
+    $("msync-apply").disabled = false;
+  }
 }
 
 /* ---------- time zone ---------- */
