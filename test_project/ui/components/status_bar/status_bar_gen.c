@@ -39,7 +39,7 @@ lv_obj_t * status_bar_create(lv_obj_t * parent)
 
     #if PLURALITY_PIN_CHECK_COMPILE_TARGET(PLURALITY_PIN_TARGET_ALL)
     if (plurality_pin_check_target(PLURALITY_PIN_TARGET_ALL)) {
-        lv_obj_t * row_0 = row_create(parent, 0, 0, 15, 16, 56, 0, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER);
+        lv_obj_t * row_0 = row_create(parent, 0, 0, 15, 16, 16, 0, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER);
         lv_obj_set_name_static(row_0, "status_bar_#");
         lv_obj_set_width(row_0, lv_pct(100));
         lv_obj_set_height(row_0, 31);
@@ -66,7 +66,7 @@ lv_obj_t * status_bar_create(lv_obj_t * parent)
         lv_image_set_src(image_1, image_vec_42_2418);
 
         lv_obj_t * row_2 = row_create(row_0, 0, 0, 0, 0, 14, 0, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_CENTER);
-        lv_obj_set_width(row_2, 231);
+        lv_obj_set_width(row_2, LV_SIZE_CONTENT);
         lv_obj_set_height(row_2, 28);
         lv_obj_t * row_3 = row_create(row_2, 0, 0, 0, 0, 3, 0, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER);
         lv_obj_set_width(row_3, LV_SIZE_CONTENT);
