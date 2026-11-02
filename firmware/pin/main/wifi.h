@@ -7,7 +7,8 @@
 #define WIFI_MAX_NETWORKS 6
 
 typedef enum {
-    WIFI_OFF,                           /* no network saved */
+    WIFI_OFF,                           /* no network saved (and no setup network) */
+    WIFI_SETUP,                         /* no network saved: the setup network is up */
     WIFI_DISABLED,                      /* turned off on the Settings screen */
     WIFI_CONNECTING,
     WIFI_CONNECTED,
@@ -17,6 +18,7 @@ typedef enum {
 /**
  * Join the first saved network that's in range and keep reconnecting if the
  * connection drops. Once connected, the clock is set from the internet (NTP).
+ * With no saved network, starts the setup network instead (wifi_setup_network).
  * Needs NVS to be initialised first.
  */
 void wifi_start(void);
@@ -42,10 +44,23 @@ const char *wifi_get_ssid(void);
 /** The pin's address while connected, e.g. "192.168.50.99"; false if not connected. */
 bool wifi_get_ip(char *buf, size_t size);
 
+/** The dashboard's address on the setup network */
+#define WIFI_SETUP_URL "http://192.168.4.1/"
+
+/**
+ * While no network is saved, the pin runs its own Wi-Fi ("setup network") so
+ * a phone can join it and add one on the dashboard. True while it's up, with
+ * its name and password written to `ssid` and `password`.
+ */
+bool wifi_setup_network(char *ssid, size_t ssid_size, char *password, size_t password_size);
+/** Phones joined to the setup network right now (0 when it's off). */
+int wifi_setup_phones(void);
+
 /** True once the clock has been set from the internet (NTP) since starting. */
 bool wifi_clock_set(void);
 
-/** Saved networks for the dashboard: {"networks":[{"ssid","skip","current"}],"ip"}
+/** Saved networks for the dashboard: {"networks":[{"ssid","skip","current"}],"ip","setup"}
+ *  ("setup": the setup network is up)
  *  - passwords are never included. free() the result. */
 char *wifi_networks_json(void);
 /** Scan for networks in range (takes a few seconds; the connection stays up):

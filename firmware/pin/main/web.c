@@ -23,6 +23,8 @@
  *   POST /api/pk/switches  {"timestamp": unix, "members": [PluralKit ids]}: log a
  *                          switch in PluralKit (needs the token; for "Sync with PluralKit")
  *   DELETE /api/pk/switches?id=ID  delete switch ID in PluralKit (needs the token)
+ *   GET  /api/timezone     {"picked", "pluralkit", "zone", "posix"} (zone.h)
+ *   PUT  /api/timezone     {"zone": IANA name, "" = follow PluralKit}
  *   GET  /api/battery      battery log (raw status_log_entry_t records, oldest first)
  *   DELETE /api/battery    clear the battery log
  *
@@ -47,6 +49,7 @@
 #include "photos.h"
 #include "store.h"
 #include "wifi.h"
+#include "zone.h"
 #include "pksync.h"
 #include "auth.h"
 #include "web.h"
@@ -428,6 +431,31 @@ static esp_err_t get_pk(httpd_req_t *req)
     return err;
 }
 
+static esp_err_t get_timezone(httpd_req_t *req)
+{
+    char *json = zone_json();
+    if (!json) {
+        return send_error(req, "500 Internal Server Error", "out of memory");
+    }
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_set_hdr(req, "Cache-Control", "no-store");
+    esp_err_t err = httpd_resp_sendstr(req, json);
+    free(json);
+    return err;
+}
+
+static esp_err_t put_timezone(httpd_req_t *req)
+{
+    char *body = read_body(req);
+    cJSON *root = body ? cJSON_Parse(body) : NULL;
+    free(body);
+    const char *zone = cJSON_GetStringValue(cJSON_GetObjectItem(root, "zone"));
+    esp_err_t err = zone ? zone_set(zone) : ESP_ERR_INVALID_ARG;
+    cJSON_Delete(root);
+    return err == ESP_OK ? send_ok(req)
+           : send_error(req, "400 Bad Request", "expected {\"zone\": a time zone name like Asia/Hong_Kong, or \"\"}");
+}
+
 /* {"ref", "home", "net", "secret"}: any of them; missing = keep, "" = clear (see pksync_set) */
 static esp_err_t put_pk(httpd_req_t *req)
 {
@@ -688,6 +716,8 @@ void web_start(void)
         { .uri = "/api/pk/switches", .method = HTTP_GET, .handler = guarded, .user_ctx = get_pk_switches },
         { .uri = "/api/pk/switches", .method = HTTP_POST, .handler = guarded, .user_ctx = post_pk_switch },
         { .uri = "/api/pk/switches", .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_pk_switch },
+        { .uri = "/api/timezone",  .method = HTTP_GET,  .handler = guarded, .user_ctx = get_timezone },
+        { .uri = "/api/timezone",  .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_timezone },
         { .uri = "/api/battery",   .method = HTTP_GET,  .handler = guarded, .user_ctx = get_battery },
         { .uri = "/api/battery",   .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_battery },
         { .uri = "/api/auth",      .method = HTTP_GET,  .handler = get_auth },

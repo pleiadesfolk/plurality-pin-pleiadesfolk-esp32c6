@@ -40,7 +40,8 @@ static int progress(void)
         steps++;
     }
     wifi_state_t wifi = wifi_get_state();
-    if (wifi == WIFI_CONNECTED || wifi == WIFI_OFF || wifi == WIFI_DISABLED) {
+    if (wifi == WIFI_CONNECTED || wifi == WIFI_OFF || wifi == WIFI_DISABLED
+        || wifi == WIFI_SETUP) {
         steps++;
     }
     return steps * 255 / 3;

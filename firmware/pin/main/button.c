@@ -68,7 +68,7 @@ void button_switch(int direction)
     }
     uint16_t member = (uint16_t)next;
     if (store_preview_switch(&member, 1) != ESP_OK) {
-        nav_toast("Couldn't switch");
+        nav_toast("Couldn’t switch");
         return;
     }
     save_later();
@@ -82,7 +82,7 @@ static void switch_to_nobody(void)
 {
     if (!store_front_is(NULL, 0)) {
         if (store_preview_switch(NULL, 0) != ESP_OK) {
-            nav_toast("Couldn't switch");
+            nav_toast("Couldn’t switch");
             return;
         }
         save_later();

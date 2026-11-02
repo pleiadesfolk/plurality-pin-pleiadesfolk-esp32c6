@@ -83,7 +83,7 @@ void nav_toast(const char *text)
         lv_obj_set_style_bg_color(toast, lv_color_black(), 0);
         lv_obj_set_style_bg_opa(toast, LV_OPA_70, 0);
         lv_obj_set_style_text_color(toast, lv_color_white(), 0);
-        lv_obj_set_style_text_font(toast, &lv_font_montserrat_14, 0);
+        lv_obj_set_style_text_font(toast, font_inter_semi_bold_14, 0);   /* has ’ and …, unlike Montserrat */
         lv_obj_set_style_pad_hor(toast, 10, 0);
         lv_obj_set_style_pad_ver(toast, 4, 0);
         lv_obj_set_style_radius(toast, 10, 0);
@@ -270,12 +270,12 @@ static void on_hold(void)
 
 static void refreshed(pksync_refresh_t result)
 {
-    nav_toast(result == PKSYNC_REFRESH_CHANGED ? "Now showing PluralKit's fronter"
+    nav_toast(result == PKSYNC_REFRESH_CHANGED ? "Now showing PluralKit’s fronter"
               : result == PKSYNC_REFRESH_SAME ? "Up to date"
-              : result == PKSYNC_REFRESH_UNKNOWN ? "PluralKit's fronter isn't on the pin"
+              : result == PKSYNC_REFRESH_UNKNOWN ? "PluralKit’s fronter isn’t on the pin"
               : result == PKSYNC_REFRESH_NO_RELAY ? "No relay set up"
-              : result == PKSYNC_REFRESH_BUSY ? "Still checking..."
-              : "Couldn't reach the relay");
+              : result == PKSYNC_REFRESH_BUSY ? "Still checking…"
+              : "Couldn’t reach the relay");
 }
 
 /* Double tap on the fronter: ask PluralKit (through the relay) right now */
@@ -289,7 +289,7 @@ static void on_tap(void)
     if (place == AT_MAIN && main_screens[main_index] == &namecard_screen
         && last_tap && lv_tick_elaps(last_tap) < DOUBLE_TAP_MS) {
         last_tap = 0;
-        nav_toast("Checking PluralKit...");
+        nav_toast("Checking PluralKit…");
         pksync_refresh_now(refreshed);
         return;
     }

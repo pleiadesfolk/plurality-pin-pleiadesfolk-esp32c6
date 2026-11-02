@@ -19,7 +19,7 @@ static void wifi_tapped(lv_event_t *e)
 
 static void bluetooth_tapped(lv_event_t *e)
 {
-    nav_toast("Bluetooth isn't available yet");
+    nav_toast("Bluetooth isn’t available yet");
 }
 
 static void make_unclickable(lv_obj_t *obj)

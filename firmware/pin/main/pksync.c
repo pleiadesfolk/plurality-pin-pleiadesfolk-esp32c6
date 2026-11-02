@@ -14,6 +14,11 @@
  * (204: no switches). <ref> is the system ID, or "@me" with the token in the
  * Authorization header. Used when there's no relay, or it can't be reached.
  *
+ * Time zone: with the token, the pin also reads the system's time zone from
+ * PluralKit (GET /systems/@me/settings, "timezone": "Asia/Hong_Kong") at
+ * start and every few hours, turns it into a POSIX TZ string (timezones.c)
+ * and hands it to zone.c (used unless one is picked on the dashboard).
+ *
  * A TLS session holds ~40 KB of RAM while open. The token and the relay
  * secret are kept in NVS ("pin"/"pk_ref", "pk_secret") and never logged or
  * sent anywhere but PluralKit / the relay.
@@ -38,6 +43,7 @@
 #include "lvgl.h"
 #include "pksync.h"
 #include "store.h"
+#include "zone.h"
 #include "wifi.h"
 
 static const char *TAG = "pksync";
@@ -50,6 +56,7 @@ static const char *TAG = "pksync";
 #define RELAY_WAIT_MS   65000           /* the relay answers within ~50 s */
 #define HOME_PROBE_MS   3000            /* is the home address reachable from here? */
 #define RESPONSE_MAX    (32 * 1024)     /* fronters come with their full member details (~1-2 KB each) */
+#define TZ_CHECK_MS     (6 * 3600 * 1000)  /* PluralKit time zone: checked this often */
 #define USER_AGENT      "plurality-pin (ESP32 front display)"
 
 typedef enum { ROUTE_HOME, ROUTE_NET, ROUTE_COUNT } route_t;
@@ -583,14 +590,70 @@ static bool relay_wait(void)
     return true;
 }
 
+/* ---------- time zone ---------- */
+
+typedef struct {
+    int status;
+    int len;
+    char body[1024];                    /* system settings are ~300 bytes */
+} small_response_t;
+
+static esp_err_t small_status(int status, void *ctx)
+{
+    ((small_response_t *)ctx)->status = status;
+    return ESP_OK;
+}
+
+static esp_err_t small_data(const char *data, int len, void *ctx)
+{
+    small_response_t *r = ctx;
+    if (r->len + len >= sizeof(r->body)) {
+        return ESP_ERR_NO_MEM;
+    }
+    memcpy(r->body + r->len, data, len);
+    r->len += len;
+    r->body[r->len] = 0;
+    return ESP_OK;
+}
+
+/* Read the system's time zone from PluralKit; true if it was answered */
+static bool check_timezone(void)
+{
+    xSemaphoreTake(lock, portMAX_DELAY);
+    bool token = ref[0] && !is_system_id(ref);
+    xSemaphoreGive(lock);
+    if (!token) {
+        return true;                    /* the settings are private: needs the token */
+    }
+    small_response_t *r = calloc(1, sizeof(*r));
+    if (!r) {
+        return false;
+    }
+    esp_err_t err = pksync_pk_request("GET", "/settings", NULL, small_status, small_data, r);
+    if (err != ESP_OK || r->status != 200) {
+        ESP_LOGW(TAG, "time zone: PluralKit answered %d (%s)", r->status, esp_err_to_name(err));
+        free(r);
+        return false;
+    }
+    cJSON *root = cJSON_Parse(r->body);
+    free(r);
+    const cJSON *zone = cJSON_GetObjectItem(root, "timezone");
+    if (cJSON_IsString(zone)) {
+        zone_from_pluralkit(zone->valuestring);
+    }
+    cJSON_Delete(root);
+    return true;
+}
+
 /* ---------- task ---------- */
 
 static void sync_task(void *arg)
 {
-    uint32_t last_direct = 0;
+    uint32_t last_direct = 0, last_timezone = 0;
     while (1) {
         if (settings_changed) {
             settings_changed = false;
+            last_timezone = 0;          /* the token may have changed */
             relay_close(ROUTE_HOME);
             relay_close(ROUTE_NET);
             relay_seq = -1;
@@ -615,6 +678,10 @@ static void sync_task(void *arg)
             relay_close(ROUTE_NET);
             ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(5000));
             continue;
+        }
+        uint32_t ms = xTaskGetTickCount() * portTICK_PERIOD_MS;
+        if ((!last_timezone || ms - last_timezone >= TZ_CHECK_MS) && check_timezone()) {
+            last_timezone = ms ? ms : 1;
         }
         if (relay && relay_wait()) {
             continue;                   /* straight back to waiting */

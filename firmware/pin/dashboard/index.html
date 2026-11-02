@@ -186,7 +186,7 @@
     </div>
   </section>
 
-  <!-- Wi-Fi networks the pin joins -->
+  <!-- Settings: Wi-Fi networks the pin joins, dashboard password, time zone -->
   <section id="tab-wifi">
     <div class="box">
       <p style="margin-top:0" id="wifi-now">…</p>
@@ -221,6 +221,17 @@
         <button id="pw-logout">Log out</button>
       </div>
       <p class="dim">Forgot it? Hold the pin's side button for 10 seconds (it opens the clock first) - that removes the password.</p>
+    </div>
+    <div class="box">
+      <h2 style="margin-top:0">Time zone</h2>
+      <p style="margin-top:0" id="tz-now">…</p>
+      <label class="field" for="tz-pick">The pin's clock uses</label>
+      <select id="tz-pick"></select>
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="tz-save">Save</button>
+        <button id="tz-phone"></button>
+      </div>
+      <p class="dim">Following PluralKit, the pin uses your system's time zone there (set it with <b>pk;config timezone</b>, e.g. <b>pk;config timezone Asia/Hong_Kong</b>) and picks up changes within a few hours. This needs your token on the Import tab.</p>
     </div>
   </section>
 
@@ -269,7 +280,7 @@
   <button data-tab="front" class="active">Front</button>
   <button data-tab="members">Members</button>
   <button data-tab="history">History</button>
-  <button data-tab="wifi">Wi-Fi</button>
+  <button data-tab="wifi">Settings</button>
   <button data-tab="import">Import</button>
 </nav>
 
@@ -920,7 +931,7 @@ function renderFront() {
     .filter(({ m }) => !query || (m.name + " " + m.card).toLowerCase().includes(query))
     .map(({ m, i }) => `
       <button class="member ${state.front.includes(i) ? "current" : ""}" data-index="${i}">
-        <span class="dot" style="background:${hex(m.color)}"></span>
+        <span class="dot" style="background:${pkHex(m)}"></span>
         <span class="name">${esc(m.name)}</span>
       </button>`).join("");
 }
@@ -1873,7 +1884,11 @@ async function loadWifi() {
 
 function renderWifi() {
   const now = wifi.networks.find(n => n.current);
-  $("wifi-now").textContent = now ? `The pin is on ${now.ssid}, at ${wifi.ip}.` : "The pin isn't connected right now.";
+  $("wifi-now").textContent = now ? `The pin is on ${now.ssid}, at ${wifi.ip}.`
+    + (wifi.setup ? ` It turns off its setup Wi-Fi in a few seconds and your phone goes back to its usual Wi-Fi: then open http://${wifi.ip}/ (or scan the code on the pin's Connect screen again).` : "")
+    : wifi.setup && wifi.networks.length ? "You're on the pin's setup Wi-Fi. The pin is trying to join your network… (if it doesn't, check the name and password)"
+    : wifi.setup ? "You're on the pin's setup Wi-Fi: it isn't on a network yet. Add your Wi-Fi (or your phone's hotspot) below, then tap Save to the pin."
+    : "The pin isn't connected right now.";
   $("wifi-list").innerHTML = wifi.networks.map((n, i) => `
     <div class="item">
       <div class="grow">
@@ -1958,8 +1973,45 @@ $("wifi-save").addEventListener("click", async () => {
     await api("PUT", "/api/wifi", { networks });
     toast("Saved");
     await loadWifi();
+    if (wifi.setup) watchSetup();
   } catch (e) { toast("Couldn't save: " + e.message); }
 });
+
+// On the setup Wi-Fi: show when the pin has joined the saved network (and its
+// new address) - shortly after that the setup Wi-Fi goes and this page with it
+function watchSetup(tries = 0) {
+  if (tries >= 30 || wifi.networks.some(n => n.current)) return;
+  setTimeout(() => loadWifi().then(() => watchSetup(tries + 1), () => watchSetup(tries + 1)), 2000);
+}
+
+/* ---------- time zone ---------- */
+
+const phoneZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+async function loadTimezone() {
+  const tz = await (await api("GET", "/api/timezone")).json();
+  const zones = Intl.supportedValuesOf ? Intl.supportedValuesOf("timeZone") : [];
+  for (const z of ["UTC", tz.picked, phoneZone]) if (z && !zones.includes(z)) zones.push(z);
+  zones.sort();
+  $("tz-pick").innerHTML = `<option value="">Follow PluralKit${tz.pluralkit ? ` (${esc(tz.pluralkit)})` : ""}</option>`
+    + zones.map(z => `<option value="${esc(z)}">${esc(z.replaceAll("_", " "))}</option>`).join("");
+  $("tz-pick").value = tz.picked;
+  const local = new Date().toLocaleTimeString([], { timeZone: tz.zone, hour: "numeric", minute: "2-digit" });
+  $("tz-now").textContent = `Now: ${tz.zone.replaceAll("_", " ")}, ${local} on the pin`
+    + (tz.picked ? " (picked here)." : tz.pluralkit ? " (from PluralKit)." : " (PluralKit's isn't known yet).");
+  $("tz-phone").textContent = `Use this phone's (${phoneZone.replaceAll("_", " ")})`;
+  $("tz-phone").hidden = tz.picked === phoneZone;
+}
+
+async function saveTimezone(zone) {
+  try {
+    await api("PUT", "/api/timezone", { zone });
+    toast(zone ? "Time zone saved" : "Following PluralKit's time zone");
+    await loadTimezone();
+  } catch (e) { toast(e.message); }
+}
+$("tz-save").addEventListener("click", () => saveTimezone($("tz-pick").value));
+$("tz-phone").addEventListener("click", () => saveTimezone(phoneZone));
 
 /* ---------- tabs ---------- */
 
@@ -1972,7 +2024,10 @@ document.querySelector("nav").addEventListener("click", e => {
     renderHistory().catch(err => toast(err.message));
     renderBattery().catch(err => toast(err.message));
   }
-  if (b.dataset.tab === "wifi") loadWifi().catch(err => toast(err.message));
+  if (b.dataset.tab === "wifi") {
+    loadWifi().catch(err => toast(err.message));
+    loadTimezone().catch(err => toast(err.message));
+  }
   if (b.dataset.tab === "import") loadPkSync().catch(err => toast(err.message));
 });
 
@@ -1981,6 +2036,9 @@ async function start() {
   showPassword();
   if (auth.password && !auth.logged_in) return showLogin();
   await loadState();
+  // A new pin, opened on its setup Wi-Fi: straight to the Settings tab
+  const w = await (await api("GET", "/api/wifi")).json();
+  if (w.setup && !w.networks.length) document.querySelector('nav [data-tab="wifi"]').click();
 }
 start().catch(e => { $("subtitle").textContent = "Can't reach the pin: " + e.message; });
 setInterval(() => { if (!$("login").open) loadState().catch(() => {}); }, 30000);

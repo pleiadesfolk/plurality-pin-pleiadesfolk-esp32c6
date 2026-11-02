@@ -199,6 +199,11 @@ static void wifi_update(void)
         set_string(&wifi_status, "Off");
         set_string(&wifi_name, "Not set up");
         return;
+    case WIFI_SETUP:
+        set_int(&wifi_state, 0);
+        set_string(&wifi_status, "Setup");
+        set_string(&wifi_name, "Not set up");
+        return;
     case WIFI_DISABLED:
         set_int(&wifi_state, 0);
         set_string(&wifi_status, "Off");
@@ -334,6 +339,10 @@ void status_battery_icon(lv_obj_t *icon, bool solid)
 static void wifi_card_tapped(lv_event_t *e)
 {
     char ssid[33], text[64];
+    if (wifi_get_state() == WIFI_SETUP) {
+        nav_toast("Not set up yet - see the Connect screen");
+        return;
+    }
     switch (wifi_switch_next(ssid, sizeof(ssid))) {
     case ESP_OK:
         snprintf(text, sizeof(text), "Switching to %s", ssid);

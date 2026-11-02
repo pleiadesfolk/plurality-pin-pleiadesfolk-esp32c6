@@ -43,11 +43,13 @@
 #include "store.h"
 #include "web.h"
 #include "wifi.h"
+#include "zone.h"
 #include "ui/plurality_pin.h"
 
 static const char *TAG = "pin";
 
-/* Local time zone, POSIX format: Hong Kong, UTC+8, no daylight saving */
+/* Time zone for the build time (it's local time on the computer that built
+ * it). The real one comes from zone.c once NVS is up. */
 #define TIME_ZONE "HKT-8"
 
 /* 1: time every screen at startup and log the results (see nav_benchmark) */
@@ -215,6 +217,7 @@ void app_main(void)
     tzset();
     set_time_from_build();              /* the build time is local time */
     nvs_init();
+    zone_init();                        /* PluralKit's or the dashboard's time zone, from NVS */
     assets_init();
     photos_init();
     store_init();
