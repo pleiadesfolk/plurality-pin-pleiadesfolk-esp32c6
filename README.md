@@ -4,9 +4,9 @@ This is the codebase for a wearable display pin for plural systems. It shows who
 
 The pin is configurable from a web dashboard, available on a phone over Wi-Fi. 
 
-New to the pin? Start with the **[User guide](docs/USER_GUIDE.md)**.
+This project was largely coded with the help of Claude Opus 5.5. The UI was designed by Lyra Ellis in Figma and LVGL.
 
-This project was largely coded with the help of Claude Opus 5.5. The UI was designed by Lyra Ellis in Figma and LVGL. 
+New to the pin? Start with the **[User guide](docs/USER_GUIDE.md)**.
 
 ## Introduction and design philosophy
 
@@ -16,13 +16,13 @@ It uses a [Waveshare ESP32-C6-Touch-AMOLED-1.64](https://docs.waveshare.com/ESP3
 
 The initial design philosophy was for a pin that also doubled as a grounding tool and switch tracker, but we realised that reconciling the switch history between PK and the pin can get iffy. 
 
-As it is currently designed, the pin uses PluralKit as its primary source of truth on who's fronting in a system. 
+As it is currently designed, the pin uses PluralKit as its primary source of truth on who's fronting in a system and relevant system data (names, display names, colours, etc.)
 
-A lot of systems use `pk;ap latch`, as opposed to `pk;cfg proxy switch new` and `pk;ap front`, which is how the Pleiadesfolk register switches. We don't foresee this to be a problem, however; the pin is designed to read who your fronter is, and that's it. 
+The pin is designed to read who your fronter is from PK. You can change that via `pk;switch`. 
 
-It's possible too that you can simply just not connect this to PK. 
+We recommend adopting `pk;cfg proxy switch new` and `pk;ap front` as your autoproxy and proxy switch settings, in order to make the most out of this code base. `pk;ap latch` does not register switches.
 
-This project won't be actively maintained; the code and the UI will only be tuned to the device that we are designing this for
+This project won't be actively maintained; the code and the UI will only be tuned to the device that we are designing this for. 
 
 Feel free to fork this project and write your own code! 
 
@@ -218,7 +218,7 @@ The screens are designed in Figma, exported with LVGL Figma Flow into
 
 Live values (time, battery, Wi-Fi and so on) are LVGL *subjects* declared at the
 end of `test_project/ui/globals.xml` and set by the firmware. All XML files
-are marked `OWNED_BY=USER`, so a new Figma export doesn't overwrite hand edits.
+are marked `OWNED_BY=USER`, so a new Figma export doesn't overwrite hand edits. 
 
 ## The PluralKit relay
 
