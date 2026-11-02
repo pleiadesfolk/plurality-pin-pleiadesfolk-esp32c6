@@ -53,4 +53,6 @@ void settings_attach(lv_obj_t *scr)
     make_button(lv_obj_get_child(cards, 1), bluetooth_tapped);
     /* battery card > [card > icon, column] */
     status_battery_icon(lv_obj_get_child(lv_obj_get_child(lv_obj_get_child(cards, 2), 0), 0), false);
+    /* battery card > [card > icon, column > ["Battery", row > percent]] */
+    status_charging_label(lv_obj_get_child(lv_obj_get_child(lv_obj_get_child(cards, 2), 1), 0));
 }

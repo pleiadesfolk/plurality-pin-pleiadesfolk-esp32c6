@@ -39,6 +39,10 @@ void status_wifi_icon(lv_obj_t *icon, bool tinted);
 /**
  * Make a battery icon show battery_percent as four bars (one per quarter; a
  * single red bar when low). `solid`: the status bar's filled battery, which
- * is faded behind the bars; otherwise the cards' battery, drawn upright.
+ * is faded behind the bars; otherwise the cards' battery, drawn upright,
+ * whose bars fill up in green, over and over, while USB is plugged in.
  */
 void status_battery_icon(lv_obj_t *icon, bool solid);
+
+/** Make a label say "Charging" while USB is plugged in, "Battery" otherwise. */
+void status_charging_label(lv_obj_t *label);

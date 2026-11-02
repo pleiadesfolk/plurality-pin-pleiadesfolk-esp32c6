@@ -273,15 +273,34 @@ void status_wifi_icon(lv_obj_t *icon, bool tinted)
 
 #define BATTERY_BARS    4
 #define BATTERY_RED     0xFF453A
+#define BATTERY_GREEN   0x30D158        /* charging */
+#define CHARGE_STEP_MS  500             /* charging: the bars fill one more each step */
+
+static lv_subject_t charge_step;        /* counts up while on USB: the charging animation */
+static lv_timer_t *charge_timer;
+
+static void charge_tick(lv_timer_t *timer)
+{
+    if (lv_subject_get_int(&usb_power)) {
+        lv_subject_set_int(&charge_step, (lv_subject_get_int(&charge_step) + 1) % BATTERY_BARS);
+    }
+}
 
 static void battery_icon_update(lv_observer_t *observer, lv_subject_t *subject)
 {
-    /* One bar per quarter: 76-100 % four, 51-75 % three, 26-50 % two, else one (red when low) */
+    /* One bar per quarter: 76-100 % four, 51-75 % three, 26-50 % two, else one
+     * (red when low). On USB (the cards' icons): green bars filling up, over and over. */
     lv_obj_t *bars = lv_observer_get_target_obj(observer);
-    int percent = lv_subject_get_int(subject);
+    bool solid = lv_obj_get_user_data(bars) != NULL;
+    int percent = lv_subject_get_int(&battery_percent);
     int count = percent > 75 ? 4 : percent > 50 ? 3 : percent > 25 ? 2 : 1;
-    lv_color_t colour = percent <= LOW_BATTERY_PERCENT ? lv_color_hex(BATTERY_RED)
-                                                       : lv_color_hex((uint32_t)(uintptr_t)lv_observer_get_user_data(observer));
+    lv_color_t colour = lv_color_hex(solid ? 0xF2F2F7 : 0xFFFFFF);
+    if (!solid && lv_subject_get_int(&usb_power)) {
+        count = 1 + lv_subject_get_int(&charge_step);
+        colour = lv_color_hex(BATTERY_GREEN);
+    } else if (percent <= LOW_BATTERY_PERCENT) {
+        colour = lv_color_hex(BATTERY_RED);
+    }
     for (int i = 0; i < BATTERY_BARS; i++) {
         lv_obj_t *bar = lv_obj_get_child(bars, i);
         lv_obj_set_flag(bar, LV_OBJ_FLAG_HIDDEN, i >= count);
@@ -306,7 +325,7 @@ void status_battery_icon(lv_obj_t *icon, bool solid)
      * instead of the small 21x13 image: upright, 1.75 times the size, an outline
      * with the tip on top and bars filling from the bottom. */
     int x, y, w, h, dx, dy;
-    uint32_t colour;
+    uint32_t colour;                    /* the outline's (the bars' is set in battery_icon_update) */
     if (solid) {
         x = 4, y = 4, w = 7, h = 15, dx = 9, dy = 0, colour = 0xF2F2F7;
         lv_obj_set_style_image_opa(icon, LV_OPA_40, 0);
@@ -333,7 +352,26 @@ void status_battery_icon(lv_obj_t *icon, bool solid)
         lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
         lv_obj_set_style_radius(bar, solid ? 2 : 1, 0);
     }
-    lv_subject_add_observer_obj(&battery_percent, battery_icon_update, bars, (void *)(uintptr_t)colour);
+    lv_obj_set_user_data(bars, solid ? (void *)1 : NULL);
+    if (!charge_timer) {
+        lv_subject_init_int(&charge_step, 0);
+        charge_timer = lv_timer_create(charge_tick, CHARGE_STEP_MS, NULL);
+    }
+    lv_subject_add_observer_obj(&battery_percent, battery_icon_update, bars, NULL);
+    if (!solid) {
+        lv_subject_add_observer_obj(&usb_power, battery_icon_update, bars, NULL);
+        lv_subject_add_observer_obj(&charge_step, battery_icon_update, bars, NULL);
+    }
+}
+
+static void charging_label_update(lv_observer_t *observer, lv_subject_t *subject)
+{
+    lv_label_set_text(lv_observer_get_target_obj(observer), lv_subject_get_int(subject) ? "Charging" : "Battery");
+}
+
+void status_charging_label(lv_obj_t *label)
+{
+    lv_subject_add_observer_obj(&usb_power, charging_label_update, label, NULL);
 }
 
 static void wifi_card_tapped(lv_event_t *e)
