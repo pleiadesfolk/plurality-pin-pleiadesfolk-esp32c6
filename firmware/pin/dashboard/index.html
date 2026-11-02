@@ -96,6 +96,8 @@
   .member.current { outline: 2px solid var(--accent); }
   .list .item { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
   .list .item:last-child { border-bottom: 0; }
+  details.box summary { cursor: pointer; font-weight: 600; }
+  details.box[open] summary { margin-bottom: 4px; }
   .icon-delete { background: none; padding: 8px; color: var(--dim); display: flex; }
   .icon-delete:hover { color: var(--bad); }
   .icon-delete svg { width: 20px; height: 20px; }
@@ -148,6 +150,11 @@
       <input type="search" id="member-search" placeholder="Search members" class="grow">
       <button class="primary" id="member-add">Add member</button>
     </div>
+    <details class="box list" id="fast-box" style="margin-top:12px">
+      <summary>Fast photo <span class="dim" id="fast-summary"></span></summary>
+      <p class="dim" style="margin:8px 0 0">Ticked members keep their photo in the pin's own memory, so it shows straight away. Others load from the SD card in a couple of seconds.</p>
+      <div id="fast-list"></div>
+    </details>
     <div class="box list" id="nobody-row" style="margin-top:12px"></div>
     <div class="box list" id="member-list" style="margin-top:12px"></div>
   </section>
@@ -480,6 +487,7 @@ async function loadState() {
     `${state.members.length} members · ${state.switches} switches`;
   renderFront();
   renderMembers();
+  if ($("fast-box").open) loadFastList();
 }
 
 function membersPayload() {
@@ -579,6 +587,12 @@ function loadFonts() {
   return fontsReady;
 }
 
+// How wide `text` is: its advance, or its ink where script swashes stick out past that
+function textWidth(ctx, text) {
+  const m = ctx.measureText(text);
+  return Math.max(m.width, Math.ceil(m.actualBoundingBoxLeft + m.actualBoundingBoxRight));
+}
+
 // Break text into lines no wider than box.w, after spaces and hyphens. A word wider
 // than the box is split by character; `split` says whether that happened.
 function wrap(ctx, text, box) {
@@ -586,20 +600,26 @@ function wrap(ctx, text, box) {
   const lines = [];
   let line = "", split = false;
   for (const token of tokens) {
-    if (ctx.measureText((line + token).trimEnd()).width <= box.w) { line += token; continue; }
+    if (textWidth(ctx, (line + token).trimEnd()) <= box.w) { line += token; continue; }
     if (line.trim()) { lines.push(line.trimEnd()); line = ""; }
-    if (ctx.measureText(token.trimEnd()).width <= box.w) { line = token; continue; }
+    if (textWidth(ctx, token.trimEnd()) <= box.w) { line = token; continue; }
     // A single word wider than the box: split it by character
     split = true;
     let part = "";
     for (const ch of token) {
-      if (ctx.measureText((part + ch).trimEnd()).width > box.w && part) { lines.push(part); part = ""; }
+      if (textWidth(ctx, (part + ch).trimEnd()) > box.w && part) { lines.push(part); part = ""; }
       part += ch;
     }
     line = part;
   }
   if (line.trim()) lines.push(line.trimEnd());
   return { lines, split };
+}
+
+// Where the first line's baseline goes: the design's 1.05 x size, or lower when
+// letters reach higher (Playwrite's S loop does), so their tops aren't cut off
+function firstBaseline(ctx, lines, size) {
+  return Math.max(size * 1.05, Math.ceil(ctx.measureText(lines[0] || "").actualBoundingBoxAscent) + 1);
 }
 
 // Lay the text out at the biggest size that fits without splitting words
@@ -609,7 +629,9 @@ function layout(ctx, text, box) {
   for (let size = box.max; size >= box.min; size -= 2) {
     ctx.font = FONTS(box, size);
     const { lines, split } = wrap(ctx, text, box);
-    const height = (lines.length - 1) * Math.round(size * box.pitch) + size * 1.3;
+    // Top of the first line to the bottom of the last one's descenders
+    const descent = Math.max(size * 0.25, ctx.measureText(lines.at(-1) || "").actualBoundingBoxDescent);
+    const height = firstBaseline(ctx, lines, size) + (lines.length - 1) * Math.round(size * box.pitch) + descent + 1;
     if (height <= box.h && (!split || size === box.min)) return { size, lines, fits: true };
   }
   ctx.font = FONTS(box, box.min);
@@ -626,9 +648,14 @@ function drawText(text, box) {
   ctx.font = FONTS(box, size);
   ctx.fillStyle = "#fff";
   ctx.textBaseline = "alphabetic";
-  ctx.textAlign = box.align;
-  const x = box.align === "center" ? box.w / 2 : box.align === "right" ? box.w : 0;
-  lines.forEach((line, i) => ctx.fillText(line, x, size * 1.05 + i * pitch));
+  const top = firstBaseline(ctx, lines, size);
+  lines.forEach((line, i) => {
+    // Align by the advance, then nudge in any swash that would go past the edge
+    const m = ctx.measureText(line);
+    const start = box.align === "center" ? (box.w - m.width) / 2 : box.align === "right" ? box.w - m.width : 0;
+    const x = Math.min(Math.max(start, m.actualBoundingBoxLeft), box.w - m.actualBoundingBoxRight);
+    ctx.fillText(line, x, top + i * pitch);
+  });
 
   // Crop to the drawn pixels
   const img = ctx.getImageData(0, 0, box.w, box.h);
@@ -1055,13 +1082,13 @@ function openEditor(index) {
   if (nobody) $("editor-avatar").hidden = true;
   editorPhoto = null;
   editorStored = null;
-  editorPhotos = { free_slots: null, have: "" };
+  editorPhotos = { free_slots: null, have: "", holders: [] };
   $("editor-fast").checked = !!m.fast;
   showFastNote();
   if (index >= 0 || nobody) loadStoredPhotos(m);
   photoInfo().then(info => {
     if (editing !== index) return;      // the editor moved on meanwhile
-    editorPhotos = { free_slots: info.free_slots, have: info.photos[m.id] || "" };
+    editorPhotos = { free_slots: info.free_slots, have: info.photos[m.id] || "", holders: fastHolders(info, m.id) };
     // Photos already in a slot from before "fast" existed count as fast
     if (/[FS]/.test(editorPhotos.have)) $("editor-fast").checked = true;
     showFastNote();
@@ -1071,15 +1098,36 @@ function openEditor(index) {
   if (index === -1) $("editor-name").focus();
 }
 
-// What the pin has for the member being edited (from photoInfo)
-let editorPhotos = { free_slots: null, have: "" };
+// What the pin has for the member being edited (from photoInfo); holders =
+// names of the other members whose photos are in a fast slot
+let editorPhotos = { free_slots: null, have: "", holders: [] };
 const wasFast = () => /[FS]/.test(editorPhotos.have) || !!editingSaved()?.fast;
+
+// Names of the members (other than `exceptId`) whose photos fill the fast slots
+function fastHolders(info, exceptId) {
+  const all = [...state.members, ...(state.nobody ? [state.nobody] : [])];
+  return Object.entries(info.photos)
+    .filter(([id, have]) => id !== exceptId && /[FS]/.test(have))
+    .map(([id]) => all.find(m => m.id === id)?.name)
+    .filter(Boolean);
+}
+
+// "untick Fast photo on A, B or C", for when every fast slot is taken
+function fastFullHint() {
+  const names = editorPhotos.holders;
+  if (!names.length) return "untick Fast photo on another member first";
+  const list = names.length === 1 ? names[0] : names.slice(0, -1).join(", ") + " or " + names.at(-1);
+  return `to make room, untick Fast photo on ${list}`;
+}
 
 function showFastNote() {
   const free = editorPhotos.free_slots;
+  const full = free === 0 && !wasFast() && $("editor-fast").checked;
   $("editor-fast-note").textContent = "Kept in the pin's own memory, so it shows straight away. Other photos load from the SD card in a couple of seconds."
-    + (free === null ? "" : ` ${free} of ${FAST_PLACES} fast places free.`);
+    + (free === null ? "" : ` ${free} of ${FAST_PLACES} fast places free.`)
+    + (full ? ` All in use - ${fastFullHint()}.` : "");
 }
+$("editor-fast").addEventListener("change", showFastNote);
 
 async function loadStoredPhotos(m) {
   const [full, side] = await Promise.all(["full", "side"].map(k => storedPhoto(m.id, k).catch(() => null)));
@@ -1283,7 +1331,84 @@ $("member-list").addEventListener("click", e => {
   if (row) openEditor(+row.dataset.index);
 });
 $("nobody-row").addEventListener("click", () => openEditor(NOBODY));
-$("member-search").addEventListener("input", renderMembers);
+$("member-search").addEventListener("input", () => { renderMembers(); renderFastList(); });
+
+/* ---------- Fast photo list (Members tab) ---------- */
+
+let fastInfo = null;                    // photoInfo() for the list, or null before it loads
+
+async function loadFastList() {
+  try { fastInfo = await photoInfo(); } catch (e) { toast("Couldn't read the photos: " + e.message); }
+  renderFastList();
+}
+
+function renderFastList() {
+  if (!fastInfo) {
+    $("fast-summary").textContent = "";
+    $("fast-list").innerHTML = `<p class="dim">Loading…</p>`;
+    return;
+  }
+  const free = fastInfo.free_slots;
+  $("fast-summary").textContent = `· ${FAST_PLACES - free} of ${FAST_PLACES} places used`;
+  const query = $("member-search").value.trim().toLowerCase();
+  const rows = state.members
+    .map((m, i) => ({ m, i }))
+    .sort((a, b) => a.m.name.localeCompare(b.m.name));
+  if (state.nobody) rows.unshift({ m: state.nobody, i: NOBODY });
+  $("fast-list").innerHTML = rows
+    .filter(({ m }) => !query || m.name.toLowerCase().includes(query))
+    .map(({ m, i }) => {
+      const have = fastInfo.photos[m.id] || "";
+      const inSlot = /[FS]/.test(have);
+      const on = inSlot || !!m.fast;
+      // Ticking someone whose photos are on the SD card needs a free place
+      const blocked = !on && free === 0 && /[fs]/.test(have);
+      const where = inSlot ? "In the pin's memory" : have ? "On the SD card" : "No photo yet";
+      return `
+      <label class="item" style="cursor:${blocked ? "default" : "pointer"}">
+        <input type="checkbox" data-fast="${i}" ${on ? "checked" : ""} ${blocked ? "disabled" : ""} style="width:20px;height:20px;accent-color:var(--accent)">
+        <div class="grow">
+          <div>${esc(m.name)}</div>
+          <div class="dim">${where}${blocked ? " - all places in use, untick someone first" : ""}</div>
+        </div>
+      </label>`;
+    }).join("") || `<p class="dim">No members yet - use Import.</p>`;
+}
+
+// Turn Fast photo on or off for member `index` (or NOBODY) and move their photos
+async function setFast(index, on) {
+  const nobody = index === NOBODY;
+  const members = state.members.map(m => ({ ...m }));
+  const m = nobody ? { ...state.nobody } : members[index];
+  const have = fastInfo.photos[m.id] || "";
+  if (!on && /[FS]/.test(have) && !fastInfo.sd_card) {
+    throw new Error(`the pin has no SD card in, so ${m.name}'s photo has nowhere else to go`);
+  }
+  m.fast = on;
+  await api("PUT", "/api/members", nobody ? { system: state.system, members, nobody: m } : { system: state.system, members });
+  // Photos already in the right place (or none at all) don't need moving
+  if (on ? /[fs]/.test(have) : /[FS]/.test(have)) {
+    toast(on ? `Moving ${m.name}'s photo into the pin's memory…` : `Moving ${m.name}'s photo to the SD card…`);
+    await movePhotos(m, have);
+  }
+}
+
+$("fast-list").addEventListener("change", async e => {
+  const box = e.target.closest("[data-fast]");
+  if (!box) return;
+  const inputs = [...$("fast-list").querySelectorAll("input")];
+  inputs.forEach(x => x.disabled = true);
+  try {
+    await setFast(+box.dataset.fast, box.checked);
+    toast("Saved");
+  } catch (err) { toast("Couldn't change Fast photo: " + err.message); }
+  try { await loadState(); } catch (err) { renderFastList(); }   // loadState reloads the list
+});
+$("fast-box").addEventListener("toggle", () => {
+  try { localStorage.setItem("fast-open", $("fast-box").open ? "1" : ""); } catch (e) {}
+  if ($("fast-box").open && state.now) loadFastList();   // state.now: loadState has run
+});
+try { $("fast-box").open = localStorage.getItem("fast-open") === "1"; } catch (e) {}
 $("member-add").addEventListener("click", () => openEditor(-1));
 $("editor-name").addEventListener("input", () => {
   if (cardFollowsName) $("editor-card").value = defaultCard($("editor-name").value.trim());
@@ -1323,7 +1448,7 @@ $("editor-save").addEventListener("click", async () => {
   m.avatar ??= "";
   const moving = editing !== -1 && m.fast !== wasFast() && !editorPhoto && /[fs]/i.test(editorPhotos.have);
   if (m.fast && !wasFast() && editorPhotos.free_slots === 0 && (editorPhoto || moving)) {
-    toast(`All ${FAST_PLACES} fast photo places are in use - untick Fast photo on another member first`);
+    toast(`All ${FAST_PLACES} fast photo places are in use - ${fastFullHint()}`);
     return;
   }
   if (editing === -1) members.push(m);
