@@ -22,8 +22,7 @@ the pin, and your PluralKit export if you use PluralKit.
 
 2. **Open the dashboard.** On the pin, **swipe down** to open the menu and tap
    **Connect to pin**. Scan the QR code with your phone's camera and open the
-   link. You can also type the address (like `http://192.168.1.42/`) into
-   your phone's browser.
+   link. 
 
 3. **Import your system.** In Discord, DM PluralKit `pk;export` and save the
    file it sends. In the dashboard, open **Import**, pick the file, check the
@@ -170,10 +169,7 @@ while the pin is still on your home Wi-Fi.
 
 ### Sync from PluralKit (one minute)
 
-Import tab → *Sync with PluralKit*. Enter either:
-
-- your **system ID** (5–6 letters) if your front is public, or
-- your **token** (DM PluralKit `pk;token`) to also work with a private front.
+Import tab → *Sync with PluralKit*. Enter your **token** (DM PluralKit `pk;token`) to import all your system's data. 
 
 When you switch in PluralKit (for example `pk;switch Alex`), the pin adds it to
 its history within about a minute. This only reads from PluralKit and never
@@ -240,10 +236,12 @@ With the relay, its address and secret must match the relay's settings.
 Photos on the SD card take a moment to load. Tick **Fast photo** for that
 member (8 slots).
 
-**The wrong person got saved after swiping.**
+**The wrong member got saved after swiping.**
 Switch to the right member. If you swiped past someone, they weren't saved as
 long as you kept going within 5 seconds. To correct the history, use
-History → Sync with PluralKit… → Overwrite the pin.
+History → Sync with PluralKit… → Overwrite the pin. 
+
+It might be better to switch through the phone itself, if you find switching from the pin finicky. 
 
 **Text looks wrong on the namecard.**
 Open the member in the dashboard and save again. The phone redraws the card
