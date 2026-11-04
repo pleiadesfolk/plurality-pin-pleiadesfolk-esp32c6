@@ -46,6 +46,8 @@
   section { display: none; }
   section.active { display: block; }
   h2 { font-size: 17px; margin: 20px 0 8px; }
+  h3 { font-size: 15px; margin: 20px 0 6px; }
+  .box hr { border: 0; border-top: 1px solid var(--line); margin: 20px 0 0; }
   .box { background: var(--card); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
   .dim { color: var(--dim); font-size: 14px; }
   .row { display: flex; gap: 10px; align-items: center; }
@@ -94,6 +96,24 @@
   }
   .member .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .member.current { outline: 2px solid var(--accent); }
+  .fast-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .fast-col { background: var(--bg); border-radius: 12px; padding: 8px; min-width: 0; }
+  .fast-col h3 { margin: 4px 4px 8px; font-size: 14px; }
+  .fast-col h3 .dim { font-weight: 400; font-size: 13px; }
+  /* Each column is as tall as 8 cards (the pin has 8 fast places); the Off column scrolls */
+  .fast-items {
+    --item-h: 52px; --item-gap: 6px;
+    display: flex; flex-direction: column; gap: var(--item-gap);
+    height: calc(8 * var(--item-h) + 7 * var(--item-gap));
+    overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  }
+  .fast-item {
+    display: flex; align-items: center; gap: 6px; width: 100%; text-align: left; flex: none;
+    height: var(--item-h); padding: 0 10px; border-radius: 10px; background: var(--card); min-width: 0;
+  }
+  .fast-item .grow div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fast-item .dim { font-size: 12px; }
+  .fast-item .arrow { color: var(--dim); flex: none; }
   .new-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-top: 12px; }
   .new-card {
     position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px;
@@ -169,14 +189,14 @@
     </div>
     <details class="box list" id="fast-box" style="margin-top:12px">
       <summary>Fast photo <span class="dim" id="fast-summary"></span></summary>
-      <p class="dim" style="margin:8px 0 0">Ticked members keep their photo in the pin's own memory, so it shows straight away. Others load from the SD card in a couple of seconds.</p>
+      <p class="dim" style="margin:8px 0 0">Members with Fast photo on keep their photo in the pin's own memory, so it shows straight away. Others load from the SD card in a couple of seconds. Tap a member to move them to the other side.</p>
       <div id="fast-list"></div>
     </details>
     <div class="box list" id="nobody-row" style="margin-top:12px"></div>
     <div class="box list" id="member-list" style="margin-top:12px"></div>
   </section>
 
-  <!-- History: recent switches, time fronting per member, battery log -->
+  <!-- History: recent switches, time fronting per member -->
   <section id="tab-history">
     <div class="row" style="align-items:center">
       <h2 class="grow" style="margin:0">Recent switches</h2>
@@ -198,8 +218,70 @@
       <button data-days="0">All</button>
     </div>
     <div class="box list" id="history-list" style="margin-top:12px"></div>
-    <h2>Battery</h2>
+  </section>
+
+  <!-- Settings: Wi-Fi, dashboard password, time zone, battery log -->
+  <section id="tab-wifi">
     <div class="box">
+      <h2 style="margin-top:0">Wi-Fi</h2>
+      <h3>Current connection</h3>
+      <p style="margin-top:0" id="wifi-now">…</p>
+      <div class="list" id="wifi-stats"></div>
+      <hr>
+      <h3>Remembered networks</h3>
+      <p class="dim" style="margin-top:0">Order the networks by priority. If the pin ends up on no network at all, turn Wi-Fi off and on again from the pin's Settings screen.</p>
+      <p class="dim">You can use a phone's hotspot — ensure maximum compatibility, and keep the screen open until the pin has joined.</p>
+      <div class="list" id="wifi-list"></div>
+      <button class="primary" id="wifi-save" style="margin-top:12px" disabled>Save to the pin</button>
+      <hr>
+      <h3>Add a network</h3>
+      <p class="dim" style="margin-top:0">The pin looks for 2.4 GHz networks around it. Tap one to add it.</p>
+      <button id="wifi-scan">Find networks nearby</button>
+      <div class="list" id="wifi-found"></div>
+      <div id="wifi-pick" hidden>
+        <label class="field" for="wifi-password" id="wifi-pick-label">Password</label>
+        <input type="text" id="wifi-password" autocapitalize="off" autocorrect="off">
+        <div class="row" style="margin-top:12px">
+          <button class="primary" id="wifi-add">Add</button>
+          <button id="wifi-pick-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2 style="margin-top:0">Security</h2>
+      <h3>Dashboard password</h3>
+      <p class="dim" style="margin-top:0">Set a password for the dashboard, so only you can change the pin from here.</p>
+      <p class="dim" id="pw-now"></p>
+      <label class="field" for="pw-new">New password</label>
+      <input type="password" id="pw-new" autocomplete="new-password">
+      <label class="field" for="pw-again">Type it again</label>
+      <input type="password" id="pw-again" autocomplete="new-password">
+      <div class="row" style="margin-top:12px; flex-wrap:wrap">
+        <button class="primary" id="pw-save">Set password</button>
+        <button id="pw-remove">Remove password</button>
+        <button id="pw-logout">Log out</button>
+      </div>
+      <p class="dim">Forgot it? Hold the pin's side button for 10 seconds (it opens the clock first) - that removes the password.</p>
+    </div>
+
+    <div class="box">
+      <h2 style="margin-top:0">Time zone</h2>
+      <h3>Current time zone</h3>
+      <p style="margin-top:0" id="tz-now">…</p>
+      <hr>
+      <h3>Set time zone</h3>
+      <label class="field" for="tz-pick" style="margin-top:0">The pin's clock uses</label>
+      <select id="tz-pick"></select>
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="tz-save">Save</button>
+        <button id="tz-phone"></button>
+      </div>
+      <p class="dim">Following PluralKit, the pin uses your system's time zone there (set it with <b>pk;config timezone</b>, e.g. <b>pk;config timezone Asia/Hong_Kong</b>) and picks up changes within a few hours. This needs your token on the Import tab.</p>
+    </div>
+
+    <div class="box">
+      <h2 style="margin-top:0">Battery</h2>
       <p class="dim" style="margin-top:0" id="battery-summary"></p>
       <svg id="battery-chart" viewBox="0 0 600 220" style="width:100%; height:auto; display:block"></svg>
       <p class="dim">The pin notes its battery voltage once a minute and keeps the last 4 days, even if the battery runs flat. To measure a full charge: charge it fully, clear the log, then use the pin on battery until it switches off.</p>
@@ -210,60 +292,20 @@
     </div>
   </section>
 
-  <!-- Settings: Wi-Fi networks the pin joins, dashboard password, time zone -->
-  <section id="tab-wifi">
-    <div class="box">
-      <p style="margin-top:0" id="wifi-now">…</p>
-      <p class="dim" style="margin-bottom:0">The pin tries these networks in this order and joins the first one in range
-        (untick "Use this network" to have it ignore one for a while - e.g. home Wi-Fi, to test your hotspot).
-        If the pin ends up on no network at all, turn Wi-Fi off and on again on the pin's Settings screen: that switches every network back on.
-        A phone's hotspot works too: on an iPhone, turn on <b>Settings → Personal Hotspot → Maximize Compatibility</b>
-        (the pin only does 2.4 GHz) and keep that screen open until the pin has joined.</p>
-    </div>
-    <div class="box list" id="wifi-list"></div>
-    <h2>Add a network</h2>
-    <div class="box">
-      <button id="wifi-scan">Find networks nearby</button>
-      <div class="list" id="wifi-found"></div>
-      <label class="field" for="wifi-ssid">Network name (exactly as your phone shows it)</label>
-      <input type="text" id="wifi-ssid" autocapitalize="off" autocorrect="off">
-      <label class="field" for="wifi-password">Password</label>
-      <input type="text" id="wifi-password" autocapitalize="off" autocorrect="off">
-      <button id="wifi-add">Add</button>
-    </div>
-    <button class="primary" id="wifi-save" disabled>Save to the pin</button>
-    <div class="box">
-      <h2 style="margin-top:0">Dashboard password</h2>
-      <p class="dim" style="margin-top:0" id="pw-now"></p>
-      <label class="field" for="pw-new">New password</label>
-      <input type="password" id="pw-new" autocomplete="new-password">
-      <label class="field" for="pw-again">Type it again</label>
-      <input type="password" id="pw-again" autocomplete="new-password">
-      <div class="row" style="margin-top:12px">
-        <button class="primary" id="pw-save">Set password</button>
-        <button id="pw-remove">Remove password</button>
-        <button id="pw-logout">Log out</button>
-      </div>
-      <p class="dim">Forgot it? Hold the pin's side button for 10 seconds (it opens the clock first) - that removes the password.</p>
-    </div>
-    <div class="box">
-      <h2 style="margin-top:0">Time zone</h2>
-      <p style="margin-top:0" id="tz-now">…</p>
-      <label class="field" for="tz-pick">The pin's clock uses</label>
-      <select id="tz-pick"></select>
-      <div class="row" style="margin-top:12px">
-        <button class="primary" id="tz-save">Save</button>
-        <button id="tz-phone"></button>
-      </div>
-      <p class="dim">Following PluralKit, the pin uses your system's time zone there (set it with <b>pk;config timezone</b>, e.g. <b>pk;config timezone Asia/Hong_Kong</b>) and picks up changes within a few hours. This needs your token on the Import tab.</p>
-    </div>
-  </section>
-
   <!-- Import a pk;export file -->
   <section id="tab-import">
     <div class="box">
+      <h2 style="margin-top:0">Import a PluralKit profile</h2>
+      <p style="margin-top:0">Brings in your whole system from PluralKit: members and front history. In Discord, send <b>pk;export</b> to PluralKit, save the file it sends you, then pick it here.</p>
+      <input type="file" id="import-file" accept=".json,application/json">
+    </div>
+    <div id="import-preview"></div>
+
+    <div class="box">
       <h2 style="margin-top:0">Sync with PluralKit</h2>
-      <p style="margin-top:0">When you switch in PluralKit (e.g. <b>pk;switch</b> in Discord), the pin picks it up within a minute and adds it to its front history. The pin only reads from PluralKit, never changes anything there.</p>
+      <p style="margin-top:0">When you switch in PluralKit (e.g. <b>pk;switch</b> in Discord), the pin picks it up and adds it to its front history. The pin only reads from PluralKit, never changes anything there.</p>
+      <h3>Through system ID or token</h3>
+      <p class="dim" style="margin-top:0">The pin checks PluralKit every minute.</p>
       <p class="dim">Enter your system ID if your front is public, or your token (send <b>pk;token</b> to PluralKit in a DM) to also work with a private front. The token stays on the pin and is never shown here again.</p>
       <input type="password" id="pk-ref" placeholder="System ID or token" autocomplete="off" autocapitalize="off" spellcheck="false">
       <div class="row" style="margin-top:12px">
@@ -271,8 +313,9 @@
         <button id="pk-off">Turn off</button>
       </div>
       <p class="dim" id="pk-status"></p>
-      <h2>Instant, through your relay</h2>
-      <p class="dim" style="margin-top:0">With the relay running on an always-on computer (see relay/README.md), PluralKit tells the relay about each switch and the pin gets it straight away. Checking PluralKit directly (above) then only happens if the relay can't be reached.</p>
+      <hr>
+      <h3>Through an always-on server relay</h3>
+      <p class="dim" style="margin-top:0">With the relay running on an always-on computer (see relay/README.md), PluralKit tells the relay about each switch and the pin gets it straight away. Checking with your system ID or token then only happens if the relay can't be reached.</p>
       <label class="field" for="relay-home">Address at home</label>
       <input type="text" id="relay-home" placeholder="http://192.168.50.20:8787" autocapitalize="off" spellcheck="false">
       <label class="field" for="relay-net">Address from anywhere</label>
@@ -285,32 +328,28 @@
       </div>
       <p class="dim" id="relay-status"></p>
     </div>
+
     <div class="box">
-      <h2 style="margin-top:0">Update members from PluralKit</h2>
-      <p style="margin-top:0">Copies what changed in PluralKit to the members already on the pin. PluralKit itself isn't changed. Uses your system ID or token above.</p>
+      <h2 style="margin-top:0">Update from PluralKit</h2>
+      <p style="margin-top:0">Copies things from PluralKit to the pin. PluralKit itself isn't changed. These use your system ID or token from "Sync with PluralKit".</p>
+      <h3>Import photos from PluralKit</h3>
+      <p class="dim" style="margin-top:0">Gives every member their PluralKit avatar as their photo, for the image modes. Photos go on the pin's SD card; members marked "Fast photo" in the member editor keep theirs in the pin's own memory instead, so they show straight away.</p>
+      <label class="check" style="margin-top:0"><input type="checkbox" id="pfp-skip" checked> Skip members who already have a photo</label>
+      <button class="primary" id="pfp-go" style="margin-top:12px">Import photos</button>
+      <div id="pfp-progress" style="margin-top:12px"></div>
+      <hr>
+      <h3>Update members</h3>
+      <p class="dim" style="margin-top:0">Copies what changed in PluralKit to the members already on the pin.</p>
       <label class="check"><input type="checkbox" id="msync-name" checked> Name</label>
       <label class="check"><input type="checkbox" id="msync-display" checked> Display name (the namecard text)</label>
       <label class="check"><input type="checkbox" id="msync-color" checked> Colour (the PluralKit colour shown on this dashboard; namecards keep their own)</label>
       <button class="primary" id="msync-check" style="margin-top:12px">Check PluralKit</button>
       <div id="msync-result"></div>
-    </div>
-    <div class="box">
-      <h2 style="margin-top:0">Add new members</h2>
-      <p style="margin-top:0">Finds members in PluralKit who aren't on the pin yet, so you can pick which ones to add. Everyone already on the pin, and the front history, stay as they are. Uses your system ID or token above (or pick a <b>pk;export</b> file below and choose "Add only new members").</p>
+      <hr>
+      <h3>Add new members</h3>
+      <p class="dim" style="margin-top:0">Finds members in PluralKit who aren't on the pin yet, so you can pick which ones to add. Everyone already on the pin, and the front history, stay as they are. (With a <b>pk;export</b> file picked in "Import a PluralKit profile", you can also choose "Add only new members" there.)</p>
       <button class="primary" id="newm-check">Find new members</button>
       <div id="newm-result"></div>
-    </div>
-    <div class="box">
-      <p style="margin-top:0">In Discord, send <b>pk;export</b> to PluralKit, save the file it sends you, then pick it here.</p>
-      <input type="file" id="import-file" accept=".json,application/json">
-    </div>
-    <div id="import-preview"></div>
-    <div class="box">
-      <h2 style="margin-top:0">Photos from PluralKit</h2>
-      <p style="margin-top:0">Gives every member their PluralKit avatar as their photo, for the image modes. Photos go on the pin's SD card; members marked "Fast photo" in the member editor keep theirs in the pin's own memory instead, so they show straight away.</p>
-      <label class="check" style="margin-top:0"><input type="checkbox" id="pfp-skip" checked> Skip members who already have a photo</label>
-      <button class="primary" id="pfp-go" style="margin-top:12px">Import photos</button>
-      <div id="pfp-progress" style="margin-top:12px"></div>
     </div>
   </section>
 </main>
@@ -1378,24 +1417,36 @@ function renderFastList() {
     .map((m, i) => ({ m, i }))
     .sort((a, b) => a.m.name.localeCompare(b.m.name));
   if (state.nobody) rows.unshift({ m: state.nobody, i: NOBODY });
-  $("fast-list").innerHTML = rows
-    .filter(({ m }) => !query || m.name.toLowerCase().includes(query))
-    .map(({ m, i }) => {
-      const have = fastInfo.photos[m.id] || "";
-      const inSlot = /[FS]/.test(have);
-      const on = inSlot || !!m.fast;
-      // Ticking someone whose photos are on the SD card needs a free place
-      const blocked = !on && free === 0 && /[fs]/.test(have);
-      const where = inSlot ? "In the pin's memory" : have ? "On the SD card" : "No photo yet";
-      return `
-      <label class="item" style="cursor:${blocked ? "default" : "pointer"}">
-        <input type="checkbox" data-fast="${i}" ${on ? "checked" : ""} ${blocked ? "disabled" : ""} style="width:20px;height:20px;accent-color:var(--accent)">
-        <div class="grow">
-          <div>${esc(m.name)}</div>
-          <div class="dim">${where}${blocked ? " - all places in use, untick someone first" : ""}</div>
-        </div>
-      </label>`;
-    }).join("") || `<p class="dim">No members yet - use Import.</p>`;
+  const item = ({ m, i }) => {
+    const have = fastInfo.photos[m.id] || "";
+    const inSlot = /[FS]/.test(have);
+    const on = inSlot || !!m.fast;
+    // Turning on someone whose photos are on the SD card needs a free place
+    const blocked = !on && free === 0 && /[fs]/.test(have);
+    const where = inSlot ? "In the pin's memory" : have ? "On the SD card" : "No photo yet";
+    return { on, html: `
+      <button class="fast-item" data-fast="${i}" data-to="${on ? 0 : 1}" ${blocked ? "disabled" : ""}
+        aria-label="${on ? "Turn Fast photo off for" : "Turn Fast photo on for"} ${esc(m.name)}">
+        ${on ? "" : '<span class="arrow">←</span>'}
+        <span class="grow"><div>${esc(m.name)}</div>
+          <div class="dim">${blocked ? "No free place" : where}</div></span>
+        ${on ? '<span class="arrow">→</span>' : ""}
+      </button>` };
+  };
+  const shown = rows.filter(({ m }) => !query || m.name.toLowerCase().includes(query)).map(item);
+  const onList = shown.filter(x => x.on), offList = shown.filter(x => !x.on);
+  $("fast-list").innerHTML = !rows.length ? `<p class="dim">No members yet - use Import.</p>` : `
+    <div class="fast-cols">
+      <div class="fast-col">
+        <h3>Fast photo on</h3>
+        <div class="fast-items">${onList.map(x => x.html).join("") || `<p class="dim" style="margin:4px">Nobody yet</p>`}</div>
+      </div>
+      <div class="fast-col">
+        <h3>Fast photo off${offList.length > 8 ? ` <span class="dim">· ${offList.length}</span>` : ""}</h3>
+        <div class="fast-items">${offList.map(x => x.html).join("") || `<p class="dim" style="margin:4px">${query ? "No matches" : "Nobody"}</p>`}</div>
+      </div>
+    </div>
+    ${free === 0 ? `<p class="dim">All ${FAST_PLACES} places are in use: move someone off first.</p>` : ""}`;
 }
 
 // Turn Fast photo on or off for member `index` (or NOBODY) and move their photos
@@ -1416,13 +1467,14 @@ async function setFast(index, on) {
   }
 }
 
-$("fast-list").addEventListener("change", async e => {
+$("fast-list").addEventListener("click", async e => {
   const box = e.target.closest("[data-fast]");
-  if (!box) return;
-  const inputs = [...$("fast-list").querySelectorAll("input")];
+  if (!box || box.disabled) return;
+  const inputs = [...$("fast-list").querySelectorAll("button")];
   inputs.forEach(x => x.disabled = true);
+  box.querySelector(".dim").textContent = "Moving…";
   try {
-    await setFast(+box.dataset.fast, box.checked);
+    await setFast(+box.dataset.fast, box.dataset.to === "1");
     toast("Saved");
   } catch (err) { toast("Couldn't change Fast photo: " + err.message); }
   try { await loadState(); } catch (err) { renderFastList(); }   // loadState reloads the list
@@ -1807,7 +1859,7 @@ async function applySync() {
   }
 }
 
-/* ---------- battery log (History tab) ---------- */
+/* ---------- battery log (Settings tab) ---------- */
 
 let batteryLog = [];                    // [{time, volts, usb}], oldest first
 
@@ -1951,7 +2003,7 @@ function previewImport(p) {
   $("import-go").addEventListener("click", runImport);
   if (state.members.length) $("import-new").addEventListener("click", () => {
     showNewMembers(p.raw, "this file");
-    $("newm-result").closest(".box").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("newm-check").scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
@@ -2082,6 +2134,16 @@ function renderWifi() {
     : wifi.setup && wifi.networks.length ? "You're on the pin's setup Wi-Fi. The pin is trying to join your network… (if it doesn't, check the name and password)"
     : wifi.setup ? "You're on the pin's setup Wi-Fi: it isn't on a network yet. Add your Wi-Fi (or your phone's hotspot) below, then tap Save to the pin."
     : "The pin isn't connected right now.";
+  const signal = r => r >= -55 ? "Excellent" : r >= -67 ? "Good" : r >= -78 ? "Fair" : "Weak";
+  const stats = now ? [
+    ["Network", esc(now.ssid)],
+    wifi.rssi !== undefined && ["Signal", `${wifiBars(wifi.rssi)} ${signal(wifi.rssi)} <span class="dim">(${wifi.rssi} dBm)</span>`],
+    wifi.channel && ["Channel", `${wifi.channel} <span class="dim">(2.4 GHz)</span>`],
+    ["Address", `<a href="http://${esc(wifi.ip)}/" style="color:inherit">${esc(wifi.ip)}</a>`],
+  ].filter(Boolean) : [];
+  $("wifi-now").hidden = now && !wifi.setup;   // the table below says it all
+  $("wifi-stats").innerHTML = stats.map(([k, v]) => `
+    <div class="item"><span class="grow dim">${k}</span><span>${v}</span></div>`).join("");
   $("wifi-list").innerHTML = wifi.networks.map((n, i) => `
     <div class="item">
       <div class="grow">
@@ -2120,6 +2182,9 @@ $("wifi-list").addEventListener("change", e => {
   }
 });
 
+const wifiBars = rssi => rssi >= -55 ? "▂▄▆█" : rssi >= -67 ? "▂▄▆" : rssi >= -78 ? "▂▄" : "▂";
+let wifiFound = [], wifiPicked = null;   // networks the pin can see; the one tapped
+
 // Ask the pin which networks it can see (2.4 GHz only - that's all it can join)
 $("wifi-scan").addEventListener("click", async () => {
   const button = $("wifi-scan");
@@ -2127,34 +2192,53 @@ $("wifi-scan").addEventListener("click", async () => {
   button.textContent = "Looking…";
   try {
     const { found } = await (await api("GET", "/api/wifi/scan")).json();
-    const bars = rssi => rssi >= -55 ? "▂▄▆█" : rssi >= -67 ? "▂▄▆" : rssi >= -78 ? "▂▄" : "▂";
-    $("wifi-found").innerHTML = found.map(n => `
-      <div class="item" data-ssid="${esc(n.ssid)}" style="cursor:pointer">
+    wifiFound = found;
+    $("wifi-pick").hidden = true;
+    $("wifi-found").innerHTML = found.map((n, i) => `
+      <div class="item" data-found="${i}" style="cursor:pointer">
         <span class="grow">${esc(n.ssid)}${n.saved ? ' <span class="tag">saved</span>' : ""}</span>
-        <span class="dim">${n.open ? "open" : "🔒"} ${bars(n.rssi)}</span>
+        <span class="dim">${n.open ? "open" : "🔒"} ${wifiBars(n.rssi)}</span>
       </div>`).join("") || `<p class="dim">No networks found. A phone's hotspot only shows up while its settings screen is open.</p>`;
   } catch (e) { toast("Couldn't look for networks: " + e.message); }
   button.disabled = false;
   button.textContent = "Find networks nearby";
 });
-$("wifi-found").addEventListener("click", e => {
-  const row = e.target.closest("[data-ssid]");
-  if (!row) return;
-  $("wifi-ssid").value = row.dataset.ssid;
-  $("wifi-password").focus();
-});
-
-$("wifi-add").addEventListener("click", () => {
-  const ssid = $("wifi-ssid").value.trim(), password = $("wifi-password").value;
-  const bytes = new TextEncoder().encode(ssid).length;
-  if (!ssid || bytes > 32) { toast("Enter the network's name (up to 32 characters)"); return; }
-  if (password && (password.length < 8 || password.length > 63)) { toast("Wi-Fi passwords are 8 to 63 characters"); return; }
-  if (wifi.networks.length >= 6) { toast("The pin keeps up to 6 networks"); return; }
+// Add a network to the list (saved to the pin with "Save to the pin")
+function addWifi(ssid, password) {
   const existing = wifi.networks.find(n => n.ssid === ssid);
+  if (!existing && wifi.networks.length >= 6) { toast("The pin keeps up to 6 networks - remove one first"); return false; }
   if (existing) existing.password = password;
   else wifi.networks.push({ ssid, password });
-  $("wifi-ssid").value = ""; $("wifi-password").value = "";
   wifiChanged();
+  toast(`${ssid} added - tap Save to the pin`);
+  $("wifi-save").scrollIntoView({ behavior: "smooth", block: "center" });
+  return true;
+}
+$("wifi-found").addEventListener("click", e => {
+  const row = e.target.closest("[data-found]");
+  if (!row) return;
+  const n = wifiFound[+row.dataset.found];
+  $("wifi-found").querySelectorAll("[data-found]").forEach(r => r.style.background = r === row ? "var(--line)" : "");
+  if (n.open) { $("wifi-pick").hidden = true; addWifi(n.ssid, ""); return; }
+  wifiPicked = n;
+  $("wifi-pick-label").textContent = `Password for ${n.ssid}` + (n.saved ? " (to change the saved one)" : "");
+  $("wifi-password").value = "";
+  $("wifi-pick").hidden = false;
+  $("wifi-password").focus();
+});
+$("wifi-pick-cancel").addEventListener("click", () => {
+  $("wifi-pick").hidden = true;
+  $("wifi-found").querySelectorAll("[data-found]").forEach(r => r.style.background = "");
+});
+$("wifi-add").addEventListener("click", () => {
+  const password = $("wifi-password").value;
+  if (!wifiPicked) return;
+  if (password.length < 8 || password.length > 63) { toast("Wi-Fi passwords are 8 to 63 characters"); return; }
+  if (addWifi(wifiPicked.ssid, password)) {
+    $("wifi-password").value = "";
+    $("wifi-pick").hidden = true;
+    $("wifi-found").querySelectorAll("[data-found]").forEach(r => r.style.background = "");
+  }
 });
 
 $("wifi-save").addEventListener("click", async () => {
@@ -2349,7 +2433,7 @@ function showNewMembers(pkMembers, source) {
       </label>`;
     }).join("")}
     </div>
-    <p class="dim">They start with a text namecard in their PluralKit colour; change anything later on the Members tab. Their past switches aren't added (the History tab's sync with PluralKit can fill in the last day). For photos, use "Photos from PluralKit" below afterwards.</p>
+    <p class="dim">They start with a text namecard in their PluralKit colour; change anything later on the Members tab. Their past switches aren't added (the History tab's sync with PluralKit can fill in the last day). For photos, use "Import photos from PluralKit" above afterwards.</p>
     <button class="primary" id="newm-add" style="margin-top:4px"></button>
     <div id="newm-progress" style="margin-top:12px"></div>`;
   const boxes = () => [...$("newm-result").querySelectorAll("[data-newm]:not(:disabled)")];
@@ -2445,13 +2529,11 @@ document.querySelector("nav").addEventListener("click", e => {
   if (!b) return;
   document.querySelectorAll("nav button").forEach(x => x.classList.toggle("active", x === b));
   document.querySelectorAll("main section").forEach(s => s.classList.toggle("active", s.id === "tab-" + b.dataset.tab));
-  if (b.dataset.tab === "history") {
-    renderHistory().catch(err => toast(err.message));
-    renderBattery().catch(err => toast(err.message));
-  }
+  if (b.dataset.tab === "history") renderHistory().catch(err => toast(err.message));
   if (b.dataset.tab === "wifi") {
     loadWifi().catch(err => toast(err.message));
     loadTimezone().catch(err => toast(err.message));
+    renderBattery().catch(err => toast(err.message));
   }
   if (b.dataset.tab === "import") loadPkSync().catch(err => toast(err.message));
 });

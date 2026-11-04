@@ -562,6 +562,11 @@ char *wifi_networks_json(void)
     xSemaphoreGive(lock);
     cJSON_AddStringToObject(root, "ip", ip);
     cJSON_AddBoolToObject(root, "setup", setup_on);
+    wifi_ap_record_t ap;                /* signal of the network the pin is on */
+    if (wifi_get_state() == WIFI_CONNECTED && esp_wifi_sta_get_ap_info(&ap) == ESP_OK) {
+        cJSON_AddNumberToObject(root, "rssi", ap.rssi);
+        cJSON_AddNumberToObject(root, "channel", ap.primary);
+    }
     char *json = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);
     return json;
