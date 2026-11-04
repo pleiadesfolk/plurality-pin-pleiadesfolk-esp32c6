@@ -705,6 +705,61 @@ esp_err_t store_update_member_json(const char *json)
     return err;
 }
 
+/* Add one member at the end of the list, so everyone else keeps their index
+ * (the front history refers to members by index) */
+static bool valid_id(const char *id);
+
+esp_err_t store_add_member_json(const char *json)
+{
+    cJSON *root = cJSON_Parse(json);
+    if (!root) {
+        return ESP_ERR_NO_MEM;
+    }
+    member_t *m = calloc(1, sizeof(member_t));
+    if (!m) {
+        cJSON_Delete(root);
+        return ESP_ERR_NO_MEM;
+    }
+    const char *name = cJSON_GetStringValue(cJSON_GetObjectItem(root, "name"));
+    const char *card = cJSON_GetStringValue(cJSON_GetObjectItem(root, "card"));
+    esp_err_t err = cJSON_IsObject(root) && name && name[0] && strlen(name) < sizeof(m->name)
+                    && (!card || strlen(card) < sizeof(m->card)) ? ESP_OK : ESP_ERR_INVALID_ARG;
+    if (err == ESP_OK) {
+        member_from_json(root, m);
+        if (!valid_id(m->id) || strcmp(m->id, STORE_NOBODY_ID) == 0) {
+            err = ESP_ERR_INVALID_ARG;
+        }
+    }
+    cJSON_Delete(root);
+    if (err == ESP_OK) {
+        xSemaphoreTake(lock, portMAX_DELAY);
+        for (int i = 0; i < member_count && err == ESP_OK; i++) {
+            if (strcmp(members[i].id, m->id) == 0) {
+                err = ESP_ERR_INVALID_STATE;
+            }
+        }
+        if (err == ESP_OK && member_count >= MAX_MEMBERS) {
+            err = ESP_ERR_NO_MEM;
+        }
+        member_t *grown = err == ESP_OK ? realloc(members, (member_count + 1) * sizeof(member_t)) : NULL;
+        if (err == ESP_OK && !grown) {
+            err = ESP_ERR_NO_MEM;
+        }
+        if (grown) {
+            members = grown;
+            members[member_count++] = *m;
+            err = save_members_file();
+            if (err != ESP_OK) {
+                member_count--;         /* keep what's saved */
+            }
+            front_changed = true;
+        }
+        xSemaphoreGive(lock);
+    }
+    free(m);
+    return err;
+}
+
 /* Same members, in any order (empty places ignored) */
 static bool same_members(const store_switch_t *sw, const uint16_t *list, int count)
 {

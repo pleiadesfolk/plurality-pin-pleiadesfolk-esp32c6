@@ -42,6 +42,14 @@ esp_err_t store_set_members_json(const char *json);
  * too long or malformed; ESP_ERR_NO_MEM: couldn't read it.
  */
 esp_err_t store_update_member_json(const char *json);
+
+/**
+ * Add one member (same fields as in the members list) at the end, so the
+ * others keep their indexes. ESP_ERR_INVALID_ARG: no name/id or too long;
+ * ESP_ERR_INVALID_STATE: that id is already on the pin; ESP_ERR_NO_MEM: out of
+ * memory or the pin is full.
+ */
+esp_err_t store_add_member_json(const char *json);
 /** Receives JSON text in pieces; returns false to stop. */
 typedef bool (*store_emit_t)(const char *text, size_t len, void *ctx);
 /** Send {"system","members":[...],"front":[i..],"front_since":t,"switches":n,"now":t<extra>}
@@ -106,7 +114,8 @@ int store_step_button_member(int direction, char *name, size_t name_size);
  * Delete member `index`, take them out of the front history (later members'
  * indexes move down by one) and delete their card picture.
  * Adding and editing members goes through store_set_members_json(), or
- * store_update_member_json() for one member.
+ * store_update_member_json() for one member and
+ * store_add_member_json() to add one.
  */
 esp_err_t store_delete_member(int index);
 

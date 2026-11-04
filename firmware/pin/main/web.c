@@ -453,6 +453,21 @@ static esp_err_t patch_member(httpd_req_t *req)
            : send_error(req, "500 Internal Server Error", "couldn't save the member");
 }
 
+static esp_err_t post_member(httpd_req_t *req)
+{
+    char *body = read_body(req);
+    if (!body) {
+        return send_error(req, "400 Bad Request", "body missing or too big");
+    }
+    esp_err_t err = store_add_member_json(body);
+    free(body);
+    return err == ESP_OK ? send_ok(req)
+           : err == ESP_ERR_INVALID_STATE ? send_error(req, "409 Conflict", "that member is already on the pin")
+           : err == ESP_ERR_INVALID_ARG ? send_error(req, "400 Bad Request", "expected a member with an id and a name, short enough for the pin")
+           : err == ESP_ERR_NO_MEM ? send_error(req, "503 Service Unavailable", "the pin is short of memory (or full) - try again in a moment")
+           : send_error(req, "500 Internal Server Error", "couldn't save the member");
+}
+
 static esp_err_t delete_member(httpd_req_t *req)
 {
     char query[32], value[8];
@@ -791,6 +806,7 @@ void web_start(void)
         { .uri = "/api/switch",    .method = HTTP_POST, .handler = guarded, .user_ctx = post_switch },
         { .uri = "/api/switch",    .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_switch },
         { .uri = "/api/member",    .method = HTTP_PATCH, .handler = guarded, .user_ctx = patch_member },
+        { .uri = "/api/member",    .method = HTTP_POST, .handler = guarded, .user_ctx = post_member },
         { .uri = "/api/member",    .method = HTTP_DELETE, .handler = guarded, .user_ctx = delete_member },
         { .uri = "/api/wifi",      .method = HTTP_GET,  .handler = guarded, .user_ctx = get_wifi },
         { .uri = "/api/wifi",      .method = HTTP_PUT,  .handler = guarded, .user_ctx = put_wifi },

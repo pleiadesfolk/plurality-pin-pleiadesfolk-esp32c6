@@ -94,6 +94,23 @@
   }
   .member .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .member.current { outline: 2px solid var(--accent); }
+  .new-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-top: 12px; }
+  .new-card {
+    position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 14px 10px 12px; border-radius: 12px; background: var(--bg); text-align: center;
+    border: 2px solid var(--line); cursor: pointer; min-width: 0;
+  }
+  .new-card:has(input:checked) { border-color: var(--accent); }
+  .new-card.off { opacity: .5; cursor: default; }
+  .new-card input { position: absolute; top: 8px; left: 8px; width: 20px; height: 20px; margin: 0; accent-color: var(--accent); }
+  .new-card .pic {
+    width: 64px; height: 64px; border-radius: 50%; overflow: hidden; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 600; color: #fff; border: 3px solid var(--line);
+  }
+  .new-card .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .new-card .name, .new-card .dim { width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .new-card .name { font-weight: 600; }
   .list .item { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
   .list .item:last-child { border-bottom: 0; }
   details.box summary { cursor: pointer; font-weight: 600; }
@@ -276,6 +293,12 @@
       <label class="check"><input type="checkbox" id="msync-color" checked> Colour (the PluralKit colour shown on this dashboard; namecards keep their own)</label>
       <button class="primary" id="msync-check" style="margin-top:12px">Check PluralKit</button>
       <div id="msync-result"></div>
+    </div>
+    <div class="box">
+      <h2 style="margin-top:0">Add new members</h2>
+      <p style="margin-top:0">Finds members in PluralKit who aren't on the pin yet, so you can pick which ones to add. Everyone already on the pin, and the front history, stay as they are. Uses your system ID or token above (or pick a <b>pk;export</b> file below and choose "Add only new members").</p>
+      <button class="primary" id="newm-check">Find new members</button>
+      <div id="newm-result"></div>
     </div>
     <div class="box">
       <p style="margin-top:0">In Discord, send <b>pk;export</b> to PluralKit, save the file it sends you, then pick it here.</p>
@@ -1900,7 +1923,7 @@ function convertExport(pk) {
   const noColour = pk.members.filter(m => !m.color).length;
   if (noColour) warnings.push(`${plural(noColour, "member has", "members have")} no colour; they get the default blue.`);
 
-  return { system, members, switches, bytes, warnings };
+  return { system, members, switches, bytes, warnings, raw: pk.members };
 }
 
 function previewImport(p) {
@@ -1914,7 +1937,10 @@ function previewImport(p) {
       <p class="dim">Fronting now, per the export: ${current ? esc(current.name) : "nobody"}</p>
       ${p.warnings.map(w => `<p class="warn">${esc(w)}</p>`).join("")}
       <p class="warn">This replaces all members and front history on the pin${state.members.length ? ` (now ${state.members.length} members, ${state.switches} switches)` : ""}.</p>
-      <button class="primary" id="import-go">Send to the pin</button>
+      <div class="row" style="flex-wrap:wrap">
+        <button class="primary" id="import-go">Send to the pin</button>
+        ${state.members.length ? `<button id="import-new">Add only new members</button>` : ""}
+      </div>
       <div id="import-progress" style="margin-top:12px"></div>
     </div>
     <div class="box list">${p.members.map(m => `
@@ -1923,6 +1949,10 @@ function previewImport(p) {
       </div>`).join("")}
     </div>`;
   $("import-go").addEventListener("click", runImport);
+  if (state.members.length) $("import-new").addEventListener("click", () => {
+    showNewMembers(p.raw, "this file");
+    $("newm-result").closest(".box").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 }
 
 async function runImport() {
@@ -2204,7 +2234,7 @@ function showMemberChanges({ plan, tooLong, missing }) {
       <button class="primary" id="msync-apply" style="margin-top:12px">Update the pin</button>`
     : `<p>The pin's members match PluralKit.</p>`)
     + (tooLong.length ? `<p class="warn">Too long for the pin, left as they are: ${tooLong.map(esc).join(", ")}</p>` : "")
-    + (missing ? `<p class="dim">${missing} member${missing === 1 ? " is" : "s are"} in PluralKit but not on the pin; a full import (below) brings them in.</p>` : "")
+    + (missing ? `<p class="dim">${missing} member${missing === 1 ? " is" : "s are"} in PluralKit but not on the pin; "Add new members" (below) brings them in.</p>` : "")
     + `<div id="msync-progress"></div>`;
   if (plan.length) $("msync-apply").addEventListener("click", applyMemberChanges);
 }
@@ -2257,6 +2287,126 @@ async function applyMemberChanges() {
     progress.innerHTML = `<p class="error">${esc(e.message)}</p>`;
     $("msync-apply").disabled = false;
   }
+}
+
+/* ---------- add new members (from PluralKit or an export file) ---------- */
+
+let newmList = [];   // PluralKit member objects not on the pin, in the order shown
+
+// A PluralKit member as the pin stores it (the same as a full import would make)
+function pinMemberFromPk(pk) {
+  const name = pk.name || pk.id;
+  const card = pk.display_name || name;
+  const color = /^[0-9a-f]{6}$/i.test(pk.color || "") ? pk.color.toUpperCase() : "";
+  return {
+    id: pk.id, name, card,
+    color: color || "468DC3",
+    pk_color: color,
+    messages: pk.message_count || 0,
+    button: false, mode: "card", style: "", grad: "", fast: false,
+    label: card,
+    avatar: (pk.avatar_url || "").length < 128 ? pk.avatar_url || "" : "",   // the pin keeps up to 127
+  };
+}
+
+// Why a member can't go on the pin as they are, or ""
+function newMemberProblem(m) {
+  if (!/^[A-Za-z0-9]{1,10}$/.test(m.id)) return "odd PluralKit id";
+  if (utf8Bytes(m.name) > 47) return "name too long for the pin";
+  if (utf8Bytes(m.card) > 127) return "display name too long for the pin";
+  if (utf8Bytes(m.label) > 63) m.label = m.name;   // the text beside a photo has less room
+  return "";
+}
+
+function showNewMembers(pkMembers, source) {
+  const onPin = new Set(state.members.map(m => m.id));
+  newmList = pkMembers
+    .filter(pk => pk && pk.id && !onPin.has(pk.id))
+    .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+  if (!newmList.length) {
+    $("newm-result").innerHTML = `<p>Everyone in ${esc(source)} is already on the pin.</p>`;
+    return;
+  }
+  const initial = s => esc([...(s || "?").trim()][0] || "?");
+  $("newm-result").innerHTML = `
+    <p>${newmList.length} member${newmList.length === 1 ? " isn't" : "s aren't"} on the pin yet (from ${esc(source)}). Tap a card to pick or unpick it.</p>
+    <div class="row">
+      <button id="newm-all">Pick all</button>
+      <button id="newm-none">Pick none</button>
+    </div>
+    <div class="new-cards">${newmList.map((pk, i) => {
+      const m = pinMemberFromPk(pk);
+      const problem = newMemberProblem(m);
+      const colour = "#" + (m.pk_color || "468DC3");
+      return `
+      <label class="new-card${problem ? " off" : ""}">
+        <input type="checkbox" data-newm="${i}" ${problem ? "disabled" : "checked"}>
+        <span class="pic" style="background:${colour};border-color:${colour}">${
+          m.avatar ? `<img src="${esc(m.avatar)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(document.createTextNode(this.dataset.i))" data-i="${initial(m.name)}">` : initial(m.name)}</span>
+        <span class="name">${esc(m.name)}</span>
+        <span class="dim">${m.card !== m.name ? esc(m.card) : "&nbsp;"}</span>
+        ${problem ? `<span class="error" style="font-size:13px">${esc(problem)}</span>` : ""}
+      </label>`;
+    }).join("")}
+    </div>
+    <p class="dim">They start with a text namecard in their PluralKit colour; change anything later on the Members tab. Their past switches aren't added (the History tab's sync with PluralKit can fill in the last day). For photos, use "Photos from PluralKit" below afterwards.</p>
+    <button class="primary" id="newm-add" style="margin-top:4px"></button>
+    <div id="newm-progress" style="margin-top:12px"></div>`;
+  const boxes = () => [...$("newm-result").querySelectorAll("[data-newm]:not(:disabled)")];
+  const count = () => {
+    const n = boxes().filter(b => b.checked).length;
+    $("newm-add").textContent = n ? `Add ${n} member${n === 1 ? "" : "s"} to the pin` : "Pick members to add";
+    $("newm-add").disabled = !n;
+  };
+  $("newm-all").addEventListener("click", () => { boxes().forEach(b => b.checked = true); count(); });
+  $("newm-none").addEventListener("click", () => { boxes().forEach(b => b.checked = false); count(); });
+  $("newm-result").querySelector(".new-cards").addEventListener("change", count);
+  $("newm-add").addEventListener("click", addNewMembers);
+  count();
+}
+
+$("newm-check").addEventListener("click", async () => {
+  $("newm-check").disabled = true;
+  $("newm-result").innerHTML = `<p class="dim">Asking PluralKit…</p>`;
+  try {
+    await loadState();
+    const pkMembers = await (await api("GET", "/api/pk/members")).json();
+    showNewMembers(pkMembers, "PluralKit");
+  } catch (e) {
+    $("newm-result").innerHTML = `<p class="error">${esc(e.message)}</p>`;
+  }
+  $("newm-check").disabled = false;
+});
+
+async function addNewMembers() {
+  const chosen = [...$("newm-result").querySelectorAll("[data-newm]:checked")].map(b => newmList[+b.dataset.newm]);
+  if (!chosen.length) return;
+  const progress = $("newm-progress");
+  const step = (text, value, max) => progress.innerHTML = `<p class="dim">${esc(text)}</p>` + (max ? `<progress value="${value}" max="${max}"></progress>` : "");
+  $("newm-result").querySelectorAll("button, input").forEach(x => x.disabled = true);
+  // One member per request: each goes on the end of the list, so everyone else
+  // keeps their place in the front history
+  const added = [], failed = [], already = [];
+  for (let i = 0; i < chosen.length; i++) {
+    const m = pinMemberFromPk(chosen[i]);
+    newMemberProblem(m);
+    step(`Adding ${m.name}… ${i + 1} / ${chosen.length}`, i, chosen.length);
+    try {
+      await api("POST", "/api/member", m);
+    } catch (e) {
+      if (/: 409 /.test(e.message)) already.push(m.name);
+      else failed.push(`${m.name}: ${e.message.replace(/^.*: \d+ /, "")}`);
+      continue;
+    }
+    added.push(m.name);
+    try { await uploadPictures(m, null); }   // draw the namecard
+    catch (e) { failed.push(`${m.name}: added, but the namecard picture didn't send (save them once on the Members tab)`); }
+  }
+  $("newm-result").innerHTML = `<p>Added ${added.length} member${added.length === 1 ? "" : "s"}${added.length ? ": " + added.map(esc).join(", ") : ""}.</p>`
+    + (already.length ? `<p class="dim">Already on the pin: ${already.map(esc).join(", ")}</p>` : "")
+    + (failed.length ? `<p class="error">Problems:</p>${failed.map(f => `<p class="dim">${esc(f)}</p>`).join("")}` : "");
+  if (added.length) toast(`Added ${added.length} member${added.length === 1 ? "" : "s"}`);
+  try { await loadState(); } catch (e) {}
 }
 
 /* ---------- time zone ---------- */
