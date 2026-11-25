@@ -24,3 +24,6 @@ firmware/pin/main/wifi_credentials.h
 # iPhone widget (Scriptable script and font profile), kept out of the repository
 relay/widget/
 *.lck
+
+# Python cache
+__pycache__/
