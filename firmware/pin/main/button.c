@@ -13,10 +13,18 @@
  *   hold RESET_MS - also removes the dashboard password (for when it's
  *                  forgotten; someone holding the pin could take it apart anyway)
  *
+ * Up and Down buttons (the button daughterboard):
+ *   press        - Up switches to the next member of the Quick Switch list,
+ *                  Down to the previous one, straight away on the press.
+ *                  Saved like a BOOT switch, after SAVE_AFTER_MS.
+ *
  * Schematic: Key2 connects GPIO9 to ground, with a 10k pull-up, so it reads 0
  * while pressed. (The vendor BSP says GPIO0, but GPIO0 is the battery
- * measurement.) It's polled from an LVGL timer, so the switch and the screen
- * change happen in the LVGL task.
+ * measurement.) The daughterboard's buttons connect GPIO6 (Up, the upper one)
+ * and GPIO3 (Down, the lower one) to ground through 1k, with 10k pull-ups, so
+ * they read 0 while pressed too; with the internal pull-ups they read
+ * released when no daughterboard is fitted. All are polled from one LVGL
+ * timer, so the switch and the screen change happen in the LVGL task.
  */
 
 #include "driver/gpio.h"
@@ -28,7 +36,6 @@
 
 static const char *TAG = "button";
 
-#define BUTTON_GPIO     GPIO_NUM_9
 #define POLL_MS         20
 #define STABLE_POLLS    2               /* must read the same twice in a row (debounce) */
 #define TAP_GAP_MS      350             /* a press this soon after the last: part of the same go */
@@ -36,6 +43,21 @@ static const char *TAG = "button";
 #define WARN_MS         4000            /* holding: say what's about to happen */
 #define RESET_MS        10000           /* holding: remove the dashboard password */
 #define SAVE_AFTER_MS   5000            /* a switch is saved once it's been left this long */
+
+typedef struct {
+    gpio_num_t gpio;
+    int direction;                      /* 0: BOOT's presses and holds; +1/-1: step members */
+    int last;                           /* last level read */
+    int count;                          /* polls in a row it has read `last` */
+    int stable;                         /* debounced level: 1 released, 0 pressed */
+} button_t;
+
+static button_t buttons[] = {
+    { .gpio = GPIO_NUM_9, .direction = 0  },    /* BOOT, the side button */
+    { .gpio = GPIO_NUM_6, .direction = +1 },    /* Up: next member */
+    { .gpio = GPIO_NUM_3, .direction = -1 },    /* Down: previous member */
+};
+#define NUM_BUTTONS (sizeof(buttons) / sizeof(buttons[0]))
 
 static lv_timer_t *save_timer;
 
@@ -103,18 +125,27 @@ static void taps_done(int taps)
     }
 }
 
-static void poll(lv_timer_t *timer)
+/* Read a button; true when its debounced level has just changed */
+static bool debounce(button_t *b)
 {
-    static int last = 1, count, stable = 1;
+    int level = gpio_get_level(b->gpio);
+    b->count = level == b->last ? b->count + 1 : 0;
+    b->last = level;
+    if (b->count == STABLE_POLLS && level != b->stable) {
+        b->stable = level;
+        return true;
+    }
+    return false;
+}
+
+/* BOOT: presses are counted on release, holds timed while down */
+static void boot_poll(int stable, bool changed)
+{
     static uint32_t held_ms;
     static int taps;                    /* presses so far in this go */
     static int tap_wait_ms;             /* time left for another press to join them */
-    int level = gpio_get_level(BUTTON_GPIO);
-    count = level == last ? count + 1 : 0;
-    last = level;
-    if (count == STABLE_POLLS && level != stable) {
-        stable = level;
-        if (level == 0) {
+    if (changed) {
+        if (stable == 0) {
             held_ms = 0;
         } else if (held_ms < LONG_MS) { /* released: a press */
             taps++;
@@ -142,12 +173,30 @@ static void poll(lv_timer_t *timer)
     }
 }
 
+static void poll(lv_timer_t *timer)
+{
+    for (size_t i = 0; i < NUM_BUTTONS; i++) {
+        button_t *b = &buttons[i];
+        bool changed = debounce(b);
+        if (b->direction == 0) {
+            boot_poll(b->stable, changed);
+        } else if (changed && b->stable == 0) {
+            button_switch(b->direction);
+        }
+    }
+}
+
 void button_init(void)
 {
+    uint64_t mask = 0;
+    for (size_t i = 0; i < NUM_BUTTONS; i++) {
+        mask |= 1ULL << buttons[i].gpio;
+        buttons[i].last = buttons[i].stable = 1;
+    }
     const gpio_config_t cfg = {
-        .pin_bit_mask = 1ULL << BUTTON_GPIO,
+        .pin_bit_mask = mask,
         .mode = GPIO_MODE_INPUT,
-        .pull_up_en = GPIO_PULLUP_ENABLE,   /* the board has one too; harmless */
+        .pull_up_en = GPIO_PULLUP_ENABLE,   /* the boards have them too; harmless */
     };
     gpio_config(&cfg);
     lv_timer_create(poll, POLL_MS, NULL);
