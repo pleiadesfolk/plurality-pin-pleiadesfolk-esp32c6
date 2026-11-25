@@ -60,8 +60,8 @@ lv_font_t * font_inter_bold_14;
 lv_font_t * font_inter_bold_20;
 lv_font_t * font_inter_bold_23;
 lv_font_t * font_inter_semi_bold_13;
-lv_font_t * font_playwrite_us_trad_regular_40;
-lv_font_t * font_playwrite_us_trad_regular_52;
+lv_font_t * font_playwrite_nz_regular_40;
+lv_font_t * font_playwrite_nz_regular_52;
 lv_font_t * font_inter_semi_bold_8;
 lv_font_t * font_inter_semi_bold_11;
 lv_font_t * font_roboto_medium_14;
@@ -1030,17 +1030,17 @@ void plurality_pin_init_gen(const char * asset_path)
             lv_snprintf(buf, 256, "%s%s", asset_path, "fonts/Inter-SemiBold.ttf");
             font_inter_semi_bold_13 = lv_tiny_ttf_create_file(buf, 13);
         }
-        if (!font_playwrite_us_trad_regular_40) {
-            /* font_playwrite_us_trad_regular_40 */
-            /* create tiny ttf font "font_playwrite_us_trad_regular_40" from file */
-            lv_snprintf(buf, 256, "%s%s", asset_path, "fonts/PlaywriteUSTrad-Regular.ttf");
-            font_playwrite_us_trad_regular_40 = lv_tiny_ttf_create_file(buf, 40);
+        if (!font_playwrite_nz_regular_40) {
+            /* font_playwrite_nz_regular_40 */
+            /* create tiny ttf font "font_playwrite_nz_regular_40" from file */
+            lv_snprintf(buf, 256, "%s%s", asset_path, "fonts/PlaywriteNZ-Regular.ttf");
+            font_playwrite_nz_regular_40 = lv_tiny_ttf_create_file(buf, 40);
         }
-        if (!font_playwrite_us_trad_regular_52) {
-            /* font_playwrite_us_trad_regular_52 */
-            /* create tiny ttf font "font_playwrite_us_trad_regular_52" from file */
-            lv_snprintf(buf, 256, "%s%s", asset_path, "fonts/PlaywriteUSTrad-Regular.ttf");
-            font_playwrite_us_trad_regular_52 = lv_tiny_ttf_create_file(buf, 52);
+        if (!font_playwrite_nz_regular_52) {
+            /* font_playwrite_nz_regular_52 */
+            /* create tiny ttf font "font_playwrite_nz_regular_52" from file */
+            lv_snprintf(buf, 256, "%s%s", asset_path, "fonts/PlaywriteNZ-Regular.ttf");
+            font_playwrite_nz_regular_52 = lv_tiny_ttf_create_file(buf, 52);
         }
         if (!font_inter_semi_bold_8) {
             /* font_inter_semi_bold_8 */
@@ -2877,8 +2877,8 @@ void plurality_pin_init_gen(const char * asset_path)
     check_font(&font_inter_bold_20, "font_inter_bold_20");
     check_font(&font_inter_bold_23, "font_inter_bold_23");
     check_font(&font_inter_semi_bold_13, "font_inter_semi_bold_13");
-    check_font(&font_playwrite_us_trad_regular_40, "font_playwrite_us_trad_regular_40");
-    check_font(&font_playwrite_us_trad_regular_52, "font_playwrite_us_trad_regular_52");
+    check_font(&font_playwrite_nz_regular_40, "font_playwrite_nz_regular_40");
+    check_font(&font_playwrite_nz_regular_52, "font_playwrite_nz_regular_52");
     check_font(&font_inter_semi_bold_8, "font_inter_semi_bold_8");
     check_font(&font_inter_semi_bold_11, "font_inter_semi_bold_11");
     check_font(&font_roboto_medium_14, "font_roboto_medium_14");
@@ -2903,8 +2903,8 @@ void plurality_pin_init_gen(const char * asset_path)
     lv_xml_register_font(NULL, "font_inter_bold_20", font_inter_bold_20);
     lv_xml_register_font(NULL, "font_inter_bold_23", font_inter_bold_23);
     lv_xml_register_font(NULL, "font_inter_semi_bold_13", font_inter_semi_bold_13);
-    lv_xml_register_font(NULL, "font_playwrite_us_trad_regular_40", font_playwrite_us_trad_regular_40);
-    lv_xml_register_font(NULL, "font_playwrite_us_trad_regular_52", font_playwrite_us_trad_regular_52);
+    lv_xml_register_font(NULL, "font_playwrite_nz_regular_40", font_playwrite_nz_regular_40);
+    lv_xml_register_font(NULL, "font_playwrite_nz_regular_52", font_playwrite_nz_regular_52);
     lv_xml_register_font(NULL, "font_inter_semi_bold_8", font_inter_semi_bold_8);
     lv_xml_register_font(NULL, "font_inter_semi_bold_11", font_inter_semi_bold_11);
     lv_xml_register_font(NULL, "font_roboto_medium_14", font_roboto_medium_14);

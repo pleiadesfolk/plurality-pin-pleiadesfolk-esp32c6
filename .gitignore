@@ -20,3 +20,6 @@ ESP32-C6-Touch-AMOLED-1.64-main/
 
 # Wi-Fi password (template: firmware/pin/main/wifi_credentials.example.h)
 firmware/pin/main/wifi_credentials.h
+
+# iPhone widget (Scriptable script and font profile), kept out of the repository
+relay/widget/

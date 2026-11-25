@@ -33,8 +33,8 @@ extern const lv_font_t bitmap_inter_semibold_14;
 extern const lv_font_t bitmap_inter_semibold_16;
 extern const lv_font_t bitmap_inter_semibold_22;
 extern const lv_font_t bitmap_inter_semibold_8;
-extern const lv_font_t bitmap_playwriteustrad_regular_40;
-extern const lv_font_t bitmap_playwriteustrad_regular_52;
+extern const lv_font_t bitmap_playwritenz_regular_40;
+extern const lv_font_t bitmap_playwritenz_regular_52;
 extern const lv_font_t bitmap_roboto_medium_14;
 extern const lv_font_t bitmap_roboto_semibold_22;
 
@@ -90,8 +90,8 @@ lv_font_t * font_inter_bold_14;
 lv_font_t * font_inter_bold_20;
 lv_font_t * font_inter_bold_23;
 lv_font_t * font_inter_semi_bold_13;
-lv_font_t * font_playwrite_us_trad_regular_40;
-lv_font_t * font_playwrite_us_trad_regular_52;
+lv_font_t * font_playwrite_nz_regular_40;
+lv_font_t * font_playwrite_nz_regular_52;
 lv_font_t * font_inter_semi_bold_8;
 lv_font_t * font_inter_semi_bold_11;
 lv_font_t * font_roboto_medium_14;
@@ -1047,15 +1047,15 @@ void plurality_pin_init_gen(const char * asset_path)
             /* create tiny ttf font "font_inter_semi_bold_13" from file */
             font_inter_semi_bold_13 = (lv_font_t *)&bitmap_inter_semibold_13;  /* Inter-SemiBold.ttf at 13 px */
         }
-        if (!font_playwrite_us_trad_regular_40) {
-            /* font_playwrite_us_trad_regular_40 */
-            /* create tiny ttf font "font_playwrite_us_trad_regular_40" from file */
-            font_playwrite_us_trad_regular_40 = (lv_font_t *)&bitmap_playwriteustrad_regular_40;  /* PlaywriteUSTrad-Regular.ttf at 40 px */
+        if (!font_playwrite_nz_regular_40) {
+            /* font_playwrite_nz_regular_40 */
+            /* create tiny ttf font "font_playwrite_nz_regular_40" from file */
+            font_playwrite_nz_regular_40 = (lv_font_t *)&bitmap_playwritenz_regular_40;  /* PlaywriteNZ-Regular.ttf at 40 px */
         }
-        if (!font_playwrite_us_trad_regular_52) {
-            /* font_playwrite_us_trad_regular_52 */
-            /* create tiny ttf font "font_playwrite_us_trad_regular_52" from file */
-            font_playwrite_us_trad_regular_52 = (lv_font_t *)&bitmap_playwriteustrad_regular_52;  /* PlaywriteUSTrad-Regular.ttf at 52 px */
+        if (!font_playwrite_nz_regular_52) {
+            /* font_playwrite_nz_regular_52 */
+            /* create tiny ttf font "font_playwrite_nz_regular_52" from file */
+            font_playwrite_nz_regular_52 = (lv_font_t *)&bitmap_playwritenz_regular_52;  /* PlaywriteNZ-Regular.ttf at 52 px */
         }
         if (!font_inter_semi_bold_8) {
             /* font_inter_semi_bold_8 */
@@ -2883,8 +2883,8 @@ void plurality_pin_init_gen(const char * asset_path)
     check_font(&font_inter_bold_20, "font_inter_bold_20");
     check_font(&font_inter_bold_23, "font_inter_bold_23");
     check_font(&font_inter_semi_bold_13, "font_inter_semi_bold_13");
-    check_font(&font_playwrite_us_trad_regular_40, "font_playwrite_us_trad_regular_40");
-    check_font(&font_playwrite_us_trad_regular_52, "font_playwrite_us_trad_regular_52");
+    check_font(&font_playwrite_nz_regular_40, "font_playwrite_nz_regular_40");
+    check_font(&font_playwrite_nz_regular_52, "font_playwrite_nz_regular_52");
     check_font(&font_inter_semi_bold_8, "font_inter_semi_bold_8");
     check_font(&font_inter_semi_bold_11, "font_inter_semi_bold_11");
     check_font(&font_roboto_medium_14, "font_roboto_medium_14");
@@ -2909,8 +2909,8 @@ void plurality_pin_init_gen(const char * asset_path)
     lv_xml_register_font(NULL, "font_inter_bold_20", font_inter_bold_20);
     lv_xml_register_font(NULL, "font_inter_bold_23", font_inter_bold_23);
     lv_xml_register_font(NULL, "font_inter_semi_bold_13", font_inter_semi_bold_13);
-    lv_xml_register_font(NULL, "font_playwrite_us_trad_regular_40", font_playwrite_us_trad_regular_40);
-    lv_xml_register_font(NULL, "font_playwrite_us_trad_regular_52", font_playwrite_us_trad_regular_52);
+    lv_xml_register_font(NULL, "font_playwrite_nz_regular_40", font_playwrite_nz_regular_40);
+    lv_xml_register_font(NULL, "font_playwrite_nz_regular_52", font_playwrite_nz_regular_52);
     lv_xml_register_font(NULL, "font_inter_semi_bold_8", font_inter_semi_bold_8);
     lv_xml_register_font(NULL, "font_inter_semi_bold_11", font_inter_semi_bold_11);
     lv_xml_register_font(NULL, "font_roboto_medium_14", font_roboto_medium_14);

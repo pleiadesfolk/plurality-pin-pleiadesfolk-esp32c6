@@ -68,8 +68,8 @@ lv_obj_t * image_mode_with_text_create(void)
         lv_obj_set_width(label_0, lv_pct(100));
         lv_obj_set_height(label_0, LV_SIZE_CONTENT);
         lv_label_set_text(label_0, "Meredith\nEllis");
-        lv_obj_set_style_text_font(label_0, font_playwrite_us_trad_regular_40, 0);
-        lv_obj_set_style_text_line_space(label_0, -18, 0);
+        lv_obj_set_style_text_font(label_0, font_playwrite_nz_regular_40, 0);
+        lv_obj_set_style_text_line_space(label_0, -7, 0);
         lv_obj_set_style_text_color(label_0, lv_color_hex(0xFFFFFF), 0);
         lv_obj_set_style_text_align(label_0, LV_TEXT_ALIGN_CENTER, 0);
         lv_label_set_long_mode(label_0, LV_LABEL_LONG_MODE_CLIP);

@@ -9,7 +9,7 @@
   Plain HTML/JS, no build step. Talks to the pin's /api/... endpoints.
 
   Namecard text is drawn here, in the browser, and sent to the pin as a picture
-  (renderCard), so any script and colour emoji work. Fonts: Playwrite (served
+  (renderCard), so any script and colour emoji work. Fonts: Playwrite NZ (served
   by the pin), then Noto Sans HK for CJK (Google Fonts, if reachable), then the
   phone's own fonts and emoji.
 -->
@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400&display=swap">
 <style>
   /* Fonts for drawing text pictures, served by the pin (work without internet) */
-  @font-face { font-family: "PlaywritePin"; font-weight: 400; src: url("/fonts/PlaywriteUSTrad-Regular.ttf"); }
+  @font-face { font-family: "PlaywritePin"; font-weight: 400; src: url("/fonts/PlaywriteNZ-Regular.ttf"); }
   @font-face { font-family: "InterPin"; font-weight: 500; src: url("/fonts/Inter-Medium.ttf"); }
   @font-face { font-family: "InterPin"; font-weight: 600; src: url("/fonts/Inter-SemiBold.ttf"); }
   @font-face { font-family: "InterPin"; font-weight: 700; src: url("/fonts/Inter-Bold.ttf"); }
@@ -194,6 +194,10 @@
     </details>
     <div class="box list" id="nobody-row" style="margin-top:12px"></div>
     <div class="box list" id="member-list" style="margin-top:12px"></div>
+    <div class="box" style="margin-top:12px">
+      <p class="dim" style="margin-top:0">Namecards are drawn when they're saved. After a font update (the handwriting is now Playwrite NZ), redraw them so they all use the new font. Photos aren't touched.</p>
+      <div class="row"><button id="redraw-all">Redraw namecards</button><span class="dim" id="redraw-progress"></span></div>
+    </div>
   </section>
 
   <!-- History: recent switches, time fronting per member -->
@@ -597,7 +601,7 @@ const LABEL_BOX = { x: 18, y: 12, w: 202, h: 256 };
 // Fonts members can use. pitch = line spacing per px of size; Playwrite's are the
 // pin design's (its line box is very tall), separately for the namecard and the label.
 const FONT_FAMILIES = {
-  playwrite: { name: "Playwrite", css: "PlaywritePin", weights: [400], pitch: 70 / 52, labelPitch: 59 / 40 },
+  playwrite: { name: "Playwrite NZ", css: "PlaywritePin", weights: [400], pitch: 70 / 52, labelPitch: 59 / 40 },
   inter: { name: "Inter", css: "InterPin", weights: [500, 600, 700], pitch: 1.22, labelPitch: 1.22 },
   plex: { name: "IBM Plex Mono", css: "PlexPin", weights: [400, 500, 600], pitch: 1.25, labelPitch: 1.25 },
 };
@@ -1022,6 +1026,25 @@ async function uploadPictures(member, photo) {
   if (label.w) await api("PUT", picturePath(member, "label"), encodeCard(label));
   if (photo) await uploadPhotos(member, photo);
 }
+
+// Redraw every namecard in the handwriting font (e.g. after it changed in a firmware update)
+$("redraw-all").addEventListener("click", async () => {
+  const button = $("redraw-all"), progress = $("redraw-progress");
+  const todo = [...state.members, ...(state.nobody ? [state.nobody] : [])]
+    .filter(m => parseStyle(m.style).font === "playwrite");
+  button.disabled = true;
+  try {
+    for (let i = 0; i < todo.length; i++) {
+      progress.textContent = `${i + 1} / ${todo.length}`;
+      await uploadPictures(todo[i], null);
+    }
+    progress.textContent = "";
+    toast(todo.length ? `Redrew ${todo.length} namecard${todo.length === 1 ? "" : "s"}` : "Nothing to redraw");
+  } catch (e) {
+    progress.textContent = e.message;
+  }
+  button.disabled = false;
+});
 
 /* ---------- Front tab ---------- */
 

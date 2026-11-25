@@ -72,7 +72,7 @@ extern const char index_html_start[] asm("_binary_index_html_start");
 extern const char index_html_end[]   asm("_binary_index_html_end");
 #define FONT(sym) extern const uint8_t sym##_start[] asm("_binary_" #sym "_start"); \
                   extern const uint8_t sym##_end[] asm("_binary_" #sym "_end");
-FONT(PlaywriteUSTrad_Regular_ttf)
+FONT(PlaywriteNZ_Regular_ttf)
 FONT(Inter_Medium_ttf)
 FONT(Inter_SemiBold_ttf)
 FONT(Inter_Bold_ttf)
@@ -85,7 +85,7 @@ static const struct {
     const uint8_t *start, *end;
 } fonts[] = {
 #define FONT_FILE(name, sym) { "/fonts/" name, sym##_start, sym##_end }
-    FONT_FILE("PlaywriteUSTrad-Regular.ttf", PlaywriteUSTrad_Regular_ttf),
+    FONT_FILE("PlaywriteNZ-Regular.ttf", PlaywriteNZ_Regular_ttf),
     FONT_FILE("Inter-Medium.ttf", Inter_Medium_ttf),
     FONT_FILE("Inter-SemiBold.ttf", Inter_SemiBold_ttf),
     FONT_FILE("Inter-Bold.ttf", Inter_Bold_ttf),

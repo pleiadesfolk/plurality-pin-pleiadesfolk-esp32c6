@@ -17,8 +17,8 @@
       height="0"
       flex_grow="1"
       text="Meredith&#10;Ellis"
-      style_text_font="font_playwrite_us_trad_regular_40"
-      style_text_line_space="18"
+      style_text_font="font_playwrite_nz_regular_40"
+      style_text_line_space="29"
       style_text_color="0xFFFFFF"
       style_text_align="center"
       long_mode="clip" />

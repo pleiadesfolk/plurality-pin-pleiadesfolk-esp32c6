@@ -481,15 +481,15 @@
       as_file="true"
       src_path="fonts/Inter-SemiBold.ttf" />
     <tiny_ttf
-      name="font_playwrite_us_trad_regular_40"
+      name="font_playwrite_nz_regular_40"
       size="40"
       as_file="true"
-      src_path="fonts/PlaywriteUSTrad-Regular.ttf" />
+      src_path="fonts/PlaywriteNZ-Regular.ttf" />
     <tiny_ttf
-      name="font_playwrite_us_trad_regular_52"
+      name="font_playwrite_nz_regular_52"
       size="52"
       as_file="true"
-      src_path="fonts/PlaywriteUSTrad-Regular.ttf" />
+      src_path="fonts/PlaywriteNZ-Regular.ttf" />
     <tiny_ttf
       name="font_inter_semi_bold_8"
       size="8"

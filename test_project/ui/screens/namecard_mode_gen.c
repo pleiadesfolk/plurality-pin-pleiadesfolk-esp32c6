@@ -67,8 +67,8 @@ lv_obj_t * namecard_mode_create(void)
         lv_obj_set_width(label_0, 416);
         lv_obj_set_height(label_0, LV_SIZE_CONTENT);
         lv_label_set_text(label_0, "Helvetica Ellis of the Pleiadesfolk");
-        lv_obj_set_style_text_font(label_0, font_playwrite_us_trad_regular_52, 0);
-        lv_obj_set_style_text_line_space(label_0, -30, 0);
+        lv_obj_set_style_text_font(label_0, font_playwrite_nz_regular_52, 0);
+        lv_obj_set_style_text_line_space(label_0, -15, 0);
         lv_obj_set_style_text_color(label_0, lv_color_hex(0xFFFFFF), 0);
         lv_obj_set_style_text_align(label_0, LV_TEXT_ALIGN_LEFT, 0);
         lv_label_set_long_mode(label_0, LV_LABEL_LONG_MODE_WRAP);
