@@ -2,62 +2,48 @@
 
 | Folder | What's in it |
 | --- | --- |
-| `electronics/` | The button daughterboard (`badgebuttonboard`): KiCad project, Gerbers, drill files, BOM and placement files for JLCPCB, and a STEP model of the TS24CA switch |
-| `mechanical/` | The desk stand (base, lever, cable holder) as `.3mf`. The case is being redesigned for the larger buttons and isn't here yet |
+| `electronics/` | The button daughterboard (`badgebuttonboard`): KiCad project, Gerbers, drill files, BOM and placement files for JLCPCB |
+| `mechanical/` | The desk stand (base, lever, cable holder) and casing files as `.3mf`.  |
 
-The dev board itself (Waveshare ESP32-C6-Touch-AMOLED-1.64) is described in
-`handover.md`, section 2.
+## Casing
+
+Two versions of the case are available, one with buttons and one without. 
+Recommended layer height is 0.2mm, with PLA supports if printed in PETG.
+If printing with a transparent filament, please follow the settings at 
+https://www.printables.com/model/15310-how-to-print-glass
+One M2x5 and two M2x10 screws are required for assembly if you are using the 
+button daughterboard, else three M2x5 screws are required. When securing the 
+PCB assembly with the button daughterboard into the case, some tweaking of 
+screw tightness may be required to ensure that the top button is able to 
+actuate, and as a result the lower left corner might protrude a bit.
 
 ## Button daughterboard
 
 Two buttons and an RGB LED, connected to the dev board by two connectors.
-The firmware uses the buttons to step through members (`firmware/pin/main/button.c`);
-`firmware/daughterboard_test` checks the board on its own.
-
-### Wiring to the dev board
-
-| Daughterboard | Signal | Dev board | Firmware name |
-| --- | --- | --- | --- |
-| J1 pin 1 | GND | GND | |
-| J1 pin 2 | 3V3 | 3V3 | |
-| J1 pin 3 | B1 (SW1) | GPIO6 or GPIO3, see below | |
-| J1 pin 4 | B2 (SW2) | GPIO6 or GPIO3, see below | |
-| | Up button, the upper one | **GPIO6** | Up: next member |
-| | Down button, the lower one | **GPIO3** | Down: previous member |
-| J2 pin 1 | LED red cathode | **GPIO2** | |
-| J2 pin 2 | LED green cathode | not connected | |
-| J2 pin 3 | LED blue cathode | not connected | |
-
-**Not recorded yet: which of B1/B2 is Up.** To find out, run
-`firmware/daughterboard_test` and press SW1 (the switch on the B1 line): the
-Up card lights if B1 goes to GPIO6, the Down card if it goes to GPIO3. Then
-fill in the two J1 rows above.
-
 Green and blue aren't connected because the dev board has no free GPIOs left.
 GPIO2, 3 and 6 are the only free pins once GPIO9 stays the BOOT button.
-For a full-colour LED, the options are an addressable LED on one pin, the
-UART pins GPIO16/17 on header P2, or an I²C expander on the shared bus.
+
+The button board is designed to be fabricated at JLCPCB with a 0.8mm thick
+PCB, all other settings remaining as default. Select the option for PCB 
+assembly, and use badgebuttonboard.csv and badgebuttonboard-all-pos.csv for 
+BOM and part placement files respectively.
 
 **GPIO23 can't be used**, although it's on header P2: the dev board wires it
 to the display's tearing-effect output (`OLED_TE`, through the 0 Ω link R3),
-which drives the line itself. A button on GPIO23 reads pressed or pulses at
-the display's frame rate.
+which drives the line itself. Solder the board as shown in the image. 
 
-### Circuit
+![PCB assembly](images/20261125_230644063.jpg)
 
-- **Buttons** are active low. Each line has a 10k pull-up to 3V3 (R4, R5) and
-  100n to GND (C1, C2) at the connector, then 1k (R6, R7) to the switch
-  (SW1, SW2, TS24CA), which goes to GND. Pressed reads about 0.3 V, released
-  3.3 V. The firmware also turns on the chip's own pull-ups and debounces over
-  20 ms.
-- **LED** D1 (QLS6B-FKW) is common anode: all three anodes on 3V3, each
-  cathode through 1k (R1–R3) to J2. A pin driven low lights its colour.
-- Schematic quirk: D1 pin 6 is named `KR` in the symbol, the same as pin 4.
-  From the anode/cathode pairing (1–2 blue, 3–4 red, 5–6 green) it's the
-  green cathode. The wiring is right; only the pin name is wrong.
+With reference to the image, the top rightmost pin on the daughterboard should 
+be soldered to GPIO6, with the pin to the left of it soldered to GPIO3. The
+3V3, GND, and GPIO2 pins should be soldered with headers for mechanical support.
 
-### Measured with the board fitted (unpowered)
+## Stand
 
-- B line to GND, button released: about 18 kΩ, which is normal. Most likely
-  the 10k pull-up in series with the dev board's 3V3 rail to GND, not a leak.
-- B line to GND, button pressed: about 1 kΩ, the series resistor.
+All the stand parts are designed to print without support. The stand is designed 
+to use four 8x3mm button magnets, but the cavity is 5mm deep to allow tuning of 
+the magnet depth for magnets of different strength. Use superglue to secure the 
+position of the magnet. The ejection lever is intended to be pinned into the 
+stand with a length of 1.75mm filament, through the channel shown below.
+
+![filament channel](images/filamentchannel.png)
