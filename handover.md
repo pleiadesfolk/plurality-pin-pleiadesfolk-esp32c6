@@ -330,10 +330,9 @@ and `daughterboard_test` shows what the test screen should look like.
 - [x] Refactor `button.c` for multiple buttons; Up/Down = next/previous member
 - [x] Standalone daughterboard test (`firmware/daughterboard_test`), passed on the board
 - [x] Commit the hardware work (case, stand, README, KiCad files) on `hw-test`
-- [ ] Add KiCad's `*-backups/` and `fp-info-cache` to `.gitignore`
-- [ ] Fix `hardware/README.md`: it lists **GPIO0** as free, but GPIO0 is the
+- [x] Fix `hardware/README.md`: it lists **GPIO0** as free, but GPIO0 is the
       battery ADC. The free pins were 2, 3 and 6 (plus 9 without BOOT)
-- [ ] Push `hw-test` and open a pull request into `main` for the owner
+- [x] Push `hw-test` and open a pull request into `main` for the owner
 - [ ] Decide what the LED means in normal use (e.g. flash on a switch, low
       battery, no Wi-Fi), then drive GPIO2 from the main firmware (LEDC PWM,
       active low). Until then the main firmware leaves GPIO2 unconfigured
@@ -345,11 +344,8 @@ and `daughterboard_test` shows what the test screen should look like.
       during the button test
 - [ ] Document Up/Down in the [User guide](docs/USER_GUIDE.md) once the case
       and button layout are final
-- [ ] Print and fit the new case (`casing2 w button` / `no button`); check
+- [x] Print and fit the new case (`casing2 w button` / `no button`); check
       access to USB-C, PWR, microSD and JP8
-- [ ] Optional: rename D1 pin 6 to `KG` in the KiCad symbol
-- [ ] Optional: remove R3 if GPIO23 is ever needed (frees it from the display's TE)
-- [ ] Confirm battery connector polarity and cell size for the case
 - [ ] Possibly use the IMU (driver already present, unused): e.g. wake on lift
       or auto-flip the screen 180° (`FLIP_180` in `display.c`)
 
