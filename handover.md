@@ -54,20 +54,13 @@ button daughterboard work:
 |---|---|
 | `ac0d92c` | `firmware/daughterboard_test`: standalone test app for the daughterboard (section 3) |
 | `8fbeba4` | `button.c`/`button.h`: buttons in a table; Up/Down step members, BOOT unchanged |
-| `f7ff016` | First version of `hardware/README.md` (since rewritten in the working copy, below) |
+| `f7ff016` | First version of `hardware/README.md` |
+| `87fae53` | This handover update; the new case (`casing2 w button.3mf`, `casing2 no button.3mf`) and modified stand base; `hardware/README.md` rewritten with casing, JLCPCB ordering, soldering and stand notes plus photos (`hardware/images/`); the button board's schematic PDF, 3D model and switch footprint library (`button.pretty/`, `fp-lib-table`) |
 
-**Uncommitted on `hw-test`** (hardware work in progress, in the working copy):
-
-| Change | State |
-|---|---|
-| `hardware/README.md` rewritten: casing, JLCPCB ordering, soldering guide with photo, stand | Ready, but fix the GPIO0 line first (section 8) |
-| `hardware/images/` (assembly photo, filament channel) | Ready |
-| `hardware/mechanical/casing2 w button.3mf`, `casing2 no button.3mf` | New case, with and without buttons |
-| `hardware/mechanical/stand - base.3mf` | Modified |
-| `hardware/electronics/badgebuttonboard.kicad_pro`, `.pdf`, `.step`, `button.pretty/`, `fp-lib-table` | KiCad project changes, schematic PDF, 3D model, footprint library |
-
-KiCad also writes `*-backups/` and `fp-info-cache` next to the project;
-those belong in `.gitignore`, not in a commit.
+Nothing is uncommitted. `hardware/README.md` still lists GPIO0 as a free
+pin, which is wrong (section 8). KiCad also writes `*-backups/` and
+`fp-info-cache` next to the project; those belong in `.gitignore`, not in a
+commit.
 
 ---
 
@@ -336,8 +329,8 @@ and `daughterboard_test` shows what the test screen should look like.
 - [x] Decide button count and GPIOs: Up GPIO6, Down GPIO3, red LED GPIO2
 - [x] Refactor `button.c` for multiple buttons; Up/Down = next/previous member
 - [x] Standalone daughterboard test (`firmware/daughterboard_test`), passed on the board
-- [ ] Commit the hardware work in progress (section 1) on `hw-test`; add
-      KiCad's `*-backups/` and `fp-info-cache` to `.gitignore`
+- [x] Commit the hardware work (case, stand, README, KiCad files) on `hw-test`
+- [ ] Add KiCad's `*-backups/` and `fp-info-cache` to `.gitignore`
 - [ ] Fix `hardware/README.md`: it lists **GPIO0** as free, but GPIO0 is the
       battery ADC. The free pins were 2, 3 and 6 (plus 9 without BOOT)
 - [ ] Push `hw-test` and open a pull request into `main` for the owner
